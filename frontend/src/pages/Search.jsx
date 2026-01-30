@@ -147,6 +147,91 @@ const credibleResources = [
     credibility: 'CFI is a globally recognized financial education provider.',
     type: 'Professional Guide'
   },
+  // Taxation Resources
+  {
+    id: 'tax-1',
+    topic: 'Taxation',
+    category: 'Finance',
+    title: 'Introduction to Taxation - Khan Academy',
+    description: 'Understanding tax systems, progressive vs regressive taxes, and how taxation affects personal finance.',
+    keywords: ['taxation', 'tax', 'income tax', 'progressive tax', 'regressive tax', 'tax system'],
+    source: 'Khan Academy',
+    sourceUrl: 'https://www.khanacademy.org/economics-finance-domain/core-finance/taxes-topic',
+    credibility: 'Khan Academy provides free, accessible education on taxation basics.',
+    type: 'Video Course'
+  },
+  {
+    id: 'tax-2',
+    topic: 'Corporate Taxation',
+    category: 'Finance',
+    title: 'Corporate Tax Basics - Investopedia',
+    description: 'Guide to corporate taxation, tax rates, deductions, and tax planning strategies for businesses.',
+    keywords: ['corporate tax', 'business tax', 'tax rate', 'deduction', 'tax planning', 'corporate finance'],
+    source: 'Investopedia',
+    sourceUrl: 'https://www.investopedia.com/terms/c/corporatetax.asp',
+    credibility: 'Investopedia is a trusted financial education resource.',
+    type: 'Article'
+  },
+  {
+    id: 'tax-3',
+    topic: 'Tax Policy',
+    category: 'Economics',
+    title: 'Tax Policy - MIT OCW Public Finance',
+    description: 'Academic course on tax theory, optimal taxation, and public finance policy analysis.',
+    keywords: ['tax policy', 'public finance', 'optimal taxation', 'fiscal policy', 'government', 'mit'],
+    source: 'MIT OpenCourseWare',
+    sourceUrl: 'https://ocw.mit.edu/courses/14-41-public-finance-and-public-policy-fall-2010/',
+    credibility: 'MIT\'s public finance course covers taxation theory comprehensively.',
+    type: 'University Course'
+  },
+  {
+    id: 'tax-4',
+    topic: 'International Taxation',
+    category: 'Finance',
+    title: 'International Tax Principles',
+    description: 'Transfer pricing, tax treaties, cross-border taxation, and multinational tax planning.',
+    keywords: ['international tax', 'transfer pricing', 'tax treaty', 'cross-border', 'multinational', 'global tax'],
+    source: 'OECD',
+    sourceUrl: 'https://www.oecd.org/tax/',
+    credibility: 'OECD is the authoritative source for international tax standards.',
+    type: 'Government Resource'
+  },
+  {
+    id: 'gs-tax-1',
+    topic: 'Taxation Research',
+    category: 'Finance',
+    title: 'Google Scholar: Taxation Research',
+    description: 'Academic papers on tax policy, tax avoidance, corporate taxation, and fiscal effects.',
+    keywords: ['taxation', 'tax', 'tax policy', 'tax avoidance', 'fiscal', 'corporate tax', 'income tax', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=taxation+policy+economics',
+    credibility: 'Peer-reviewed taxation research from economics and accounting journals.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'tax-5',
+    topic: 'Personal Taxation',
+    category: 'Finance',
+    title: 'Personal Income Tax Guide',
+    description: 'Understanding personal income tax, tax brackets, deductions, credits, and tax-efficient investing.',
+    keywords: ['personal tax', 'income tax', 'tax bracket', 'deduction', 'tax credit', 'tax return'],
+    source: 'Investopedia',
+    sourceUrl: 'https://www.investopedia.com/terms/i/incometax.asp',
+    credibility: 'Comprehensive personal tax education from trusted financial resource.',
+    type: 'Article'
+  },
+  {
+    id: 'tax-6',
+    topic: 'Tax Accounting',
+    category: 'Finance',
+    title: 'Tax Accounting Principles',
+    description: 'Deferred taxes, tax provisions, GAAP vs tax reporting, and corporate tax accounting.',
+    keywords: ['tax accounting', 'deferred tax', 'tax provision', 'gaap', 'financial reporting', 'accounting'],
+    source: 'Corporate Finance Institute',
+    sourceUrl: 'https://corporatefinanceinstitute.com/resources/accounting/deferred-tax-asset/',
+    credibility: 'CFI provides professional-level tax accounting education.',
+    type: 'Professional Guide'
+  },
 
   // ==================== MATHEMATICS ====================
   {
@@ -1127,12 +1212,12 @@ function Search() {
   };
 
   const suggestions = {
-    'All': ['Calculus', 'Present Value', 'Probability', 'Newton', 'Supply Demand'],
-    'Finance': ['NPV', 'Compound Interest', 'CAPM', 'Bond Valuation', 'WACC'],
-    'Mathematics': ['Calculus', 'Linear Algebra', 'Differential Equations', 'Trigonometry'],
-    'Statistics': ['Probability', 'Hypothesis Testing', 'Regression', 'Bayesian'],
-    'Physics': ['Mechanics', 'Electromagnetism', 'Quantum', 'Thermodynamics'],
-    'Economics': ['Microeconomics', 'Macroeconomics', 'Game Theory', 'GDP']
+    'All': ['Taxation', 'Calculus', 'Present Value', 'Probability', 'Newton', 'Supply Demand'],
+    'Finance': ['Taxation', 'NPV', 'Compound Interest', 'CAPM', 'Bond Valuation', 'WACC', 'Derivatives'],
+    'Mathematics': ['Calculus', 'Linear Algebra', 'Differential Equations', 'Trigonometry', 'Algebra'],
+    'Statistics': ['Probability', 'Hypothesis Testing', 'Regression', 'Bayesian', 'Machine Learning'],
+    'Physics': ['Mechanics', 'Electromagnetism', 'Quantum', 'Thermodynamics', 'Relativity'],
+    'Economics': ['Microeconomics', 'Macroeconomics', 'Game Theory', 'GDP', 'Taxation', 'Trade']
   };
 
   return (
@@ -1234,20 +1319,206 @@ function Search() {
           )}
         </div>
         
-        {results.length === 0 ? (
-          <div className="text-center py-12 bg-nubia-surface border border-nubia-border rounded-lg">
-            <svg className="w-16 h-16 text-nubia-text-muted mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {results.length === 0 && query ? (
+          <div className="text-center py-8 bg-nubia-surface border border-nubia-border rounded-lg">
+            <svg className="w-12 h-12 text-nubia-text-muted mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <p className="text-nubia-text font-medium mb-2">No results found</p>
-            <p className="text-sm text-nubia-text-muted">Try different keywords or change the category filter</p>
+            <p className="text-nubia-text font-medium mb-2">No local results for "{query}"</p>
+            <p className="text-sm text-nubia-text-muted mb-6">Search directly on academic databases below:</p>
+            
+            {/* Dynamic External Search Links */}
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto px-4">
+              <a
+                href={`https://scholar.google.com/scholar?q=${encodeURIComponent(query)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 bg-nubia-bg border border-nubia-border rounded-lg hover:border-yellow-500 hover:bg-yellow-900/10 transition-all group"
+              >
+                <div className="w-10 h-10 rounded-lg bg-yellow-900/30 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-yellow-400" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 24a7 7 0 110-14 7 7 0 010 14zm0-24L0 9.5l4.838 3.94A8 8 0 0112 9a8 8 0 017.162 4.44L24 9.5 12 0z"/>
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-nubia-text group-hover:text-yellow-400 transition-colors">Google Scholar</p>
+                  <p className="text-xs text-nubia-text-muted">Peer-reviewed papers</p>
+                </div>
+                <svg className="w-4 h-4 text-nubia-text-muted ml-auto group-hover:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              
+              <a
+                href={`https://arxiv.org/search/?query=${encodeURIComponent(query)}&searchtype=all`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 bg-nubia-bg border border-nubia-border rounded-lg hover:border-lime-500 hover:bg-lime-900/10 transition-all group"
+              >
+                <div className="w-10 h-10 rounded-lg bg-lime-900/30 flex items-center justify-center flex-shrink-0">
+                  <span className="text-lime-400 font-bold text-sm">arXiv</span>
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-nubia-text group-hover:text-lime-400 transition-colors">arXiv.org</p>
+                  <p className="text-xs text-nubia-text-muted">Preprints & research</p>
+                </div>
+                <svg className="w-4 h-4 text-nubia-text-muted ml-auto group-hover:text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              
+              <a
+                href={`https://papers.ssrn.com/sol3/results.cfm?txtKey_Words=${encodeURIComponent(query)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 bg-nubia-bg border border-nubia-border rounded-lg hover:border-fuchsia-500 hover:bg-fuchsia-900/10 transition-all group"
+              >
+                <div className="w-10 h-10 rounded-lg bg-fuchsia-900/30 flex items-center justify-center flex-shrink-0">
+                  <span className="text-fuchsia-400 font-bold text-xs">SSRN</span>
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-nubia-text group-hover:text-fuchsia-400 transition-colors">SSRN</p>
+                  <p className="text-xs text-nubia-text-muted">Working papers</p>
+                </div>
+                <svg className="w-4 h-4 text-nubia-text-muted ml-auto group-hover:text-fuchsia-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              
+              <a
+                href={`https://www.jstor.org/action/doBasicSearch?Query=${encodeURIComponent(query)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 bg-nubia-bg border border-nubia-border rounded-lg hover:border-red-500 hover:bg-red-900/10 transition-all group"
+              >
+                <div className="w-10 h-10 rounded-lg bg-red-900/30 flex items-center justify-center flex-shrink-0">
+                  <span className="text-red-400 font-bold text-xs">JSTOR</span>
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-nubia-text group-hover:text-red-400 transition-colors">JSTOR</p>
+                  <p className="text-xs text-nubia-text-muted">Academic journals</p>
+                </div>
+                <svg className="w-4 h-4 text-nubia-text-muted ml-auto group-hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              
+              <a
+                href={`https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(query)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 bg-nubia-bg border border-nubia-border rounded-lg hover:border-blue-500 hover:bg-blue-900/10 transition-all group"
+              >
+                <div className="w-10 h-10 rounded-lg bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                  <span className="text-blue-400 font-bold text-xs">PM</span>
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-nubia-text group-hover:text-blue-400 transition-colors">PubMed</p>
+                  <p className="text-xs text-nubia-text-muted">Biomedical research</p>
+                </div>
+                <svg className="w-4 h-4 text-nubia-text-muted ml-auto group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              
+              <a
+                href={`https://www.semanticscholar.org/search?q=${encodeURIComponent(query)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 bg-nubia-bg border border-nubia-border rounded-lg hover:border-indigo-500 hover:bg-indigo-900/10 transition-all group"
+              >
+                <div className="w-10 h-10 rounded-lg bg-indigo-900/30 flex items-center justify-center flex-shrink-0">
+                  <span className="text-indigo-400 font-bold text-xs">S2</span>
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-nubia-text group-hover:text-indigo-400 transition-colors">Semantic Scholar</p>
+                  <p className="text-xs text-nubia-text-muted">AI-powered search</p>
+                </div>
+                <svg className="w-4 h-4 text-nubia-text-muted ml-auto group-hover:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        ) : results.length === 0 ? (
+          <div className="text-center py-12 bg-nubia-surface border border-nubia-border rounded-lg">
+            <p className="text-nubia-text font-medium mb-2">Enter a search term to find resources</p>
+            <p className="text-sm text-nubia-text-muted">Or try one of the popular searches above</p>
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2">
-            {results.map(resource => (
-              <SearchResultCard key={resource.id} resource={resource} />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-4 md:grid-cols-2">
+              {results.map(resource => (
+                <SearchResultCard key={resource.id} resource={resource} />
+              ))}
+            </div>
+            
+            {/* Always show external search options after results */}
+            {query && (
+              <div className="mt-6 p-4 bg-nubia-surface-alt border border-nubia-border rounded-lg">
+                <p className="text-sm text-nubia-text-secondary mb-3">
+                  <span className="font-medium text-nubia-text">Want more?</span> Search "{query}" directly on academic databases:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href={`https://scholar.google.com/scholar?q=${encodeURIComponent(query)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-yellow-900/20 text-yellow-400 border border-yellow-700 rounded-full text-sm hover:bg-yellow-900/40 transition-colors"
+                  >
+                    Google Scholar
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                  <a
+                    href={`https://arxiv.org/search/?query=${encodeURIComponent(query)}&searchtype=all`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-lime-900/20 text-lime-400 border border-lime-700 rounded-full text-sm hover:bg-lime-900/40 transition-colors"
+                  >
+                    arXiv
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                  <a
+                    href={`https://papers.ssrn.com/sol3/results.cfm?txtKey_Words=${encodeURIComponent(query)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-fuchsia-900/20 text-fuchsia-400 border border-fuchsia-700 rounded-full text-sm hover:bg-fuchsia-900/40 transition-colors"
+                  >
+                    SSRN
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                  <a
+                    href={`https://www.jstor.org/action/doBasicSearch?Query=${encodeURIComponent(query)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-900/20 text-red-400 border border-red-700 rounded-full text-sm hover:bg-red-900/40 transition-colors"
+                  >
+                    JSTOR
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                  <a
+                    href={`https://www.semanticscholar.org/search?q=${encodeURIComponent(query)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-900/20 text-indigo-400 border border-indigo-700 rounded-full text-sm hover:bg-indigo-900/40 transition-colors"
+                  >
+                    Semantic Scholar
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
       
