@@ -77,11 +77,51 @@ function ReviewCard({ name, course, text, date }) {
   );
 }
 
+// Default topics when backend is unavailable
+const defaultTopics = [
+  { id: 'time-value-of-money', title: 'Time Value of Money', description: 'Understanding present value, future value, and the fundamental principle that money today is worth more than the same amount in the future.', category: 'core-concepts' },
+  { id: 'compound-interest', title: 'Compound Interest', description: 'Learn how interest accumulates on both principal and previously earned interest over time.', category: 'core-concepts' },
+  { id: 'present-value', title: 'Present Value', description: 'Calculate the current worth of future cash flows discounted at an appropriate rate.', category: 'core-concepts' },
+  { id: 'future-value', title: 'Future Value', description: 'Determine the value of current assets at a specified date in the future based on an assumed growth rate.', category: 'core-concepts' },
+  { id: 'annuities', title: 'Annuities', description: 'Analyze series of equal payments made at regular intervals, including ordinary annuities and annuities due.', category: 'core-concepts' },
+  { id: 'perpetuities', title: 'Perpetuities', description: 'Value infinite streams of equal periodic payments.', category: 'core-concepts' },
+  { id: 'net-present-value', title: 'Net Present Value (NPV)', description: 'Evaluate investment opportunities by calculating the difference between present value of cash inflows and outflows.', category: 'capital-budgeting' },
+  { id: 'internal-rate-of-return', title: 'Internal Rate of Return (IRR)', description: 'Find the discount rate that makes the NPV of an investment equal to zero.', category: 'capital-budgeting' },
+  { id: 'bond-valuation', title: 'Bond Valuation', description: 'Calculate the fair price of bonds using present value of future coupon payments and face value.', category: 'fixed-income' },
+  { id: 'stock-valuation', title: 'Stock Valuation', description: 'Value equity securities using dividend discount models and other approaches.', category: 'equity' },
+  { id: 'capm', title: 'Capital Asset Pricing Model (CAPM)', description: 'Understand the relationship between systematic risk and expected return for assets.', category: 'risk-return' },
+  { id: 'portfolio-theory', title: 'Portfolio Theory', description: 'Learn how to construct optimal portfolios that maximize return for a given level of risk.', category: 'risk-return' },
+];
+
+// Sample reviews that show for everyone
+const sampleReviews = [
+  { id: 1, name: 'Kabo M.', course: 'BBA Finance - Year 3', text: 'Nubia has been incredibly helpful for my FIN 301 exam prep. The calculators save so much time and the explanations are clear.', date: 'Jan 2026' },
+  { id: 2, name: 'Lesego T.', course: 'BCom Accounting - Year 2', text: 'Finally a study resource made for us! The formulas are exactly what we need for our courses at UB.', date: 'Jan 2026' },
+  { id: 3, name: 'Thato K.', course: 'BBA Finance - Year 4', text: 'The Time Value of Money section helped me understand concepts I struggled with for months. Highly recommend to all finance students.', date: 'Dec 2025' },
+  { id: 4, name: 'Neo P.', course: 'BCom Finance - Year 3', text: 'Clean interface, no distractions. Just what I need when studying for tests. The worked examples are very useful.', date: 'Dec 2025' },
+];
+
 function Home() {
-  const { topics } = useOutletContext();
+  const { topics: backendTopics } = useOutletContext();
   const [reviewText, setReviewText] = useState('');
   const [reviews, setReviews] = useState([]);
   const [submitStatus, setSubmitStatus] = useState('');
+
+  // Use backend topics if available, otherwise use defaults
+  const topics = (backendTopics && backendTopics.length > 0) ? backendTopics : defaultTopics;
+
+  // Load user reviews from localStorage on mount
+  useEffect(() => {
+    const savedReviews = localStorage.getItem('nubia-reviews');
+    if (savedReviews) {
+      try {
+        const parsed = JSON.parse(savedReviews);
+        setReviews(parsed);
+      } catch (e) {
+        console.error('Error loading reviews:', e);
+      }
+    }
+  }, []);
 
   // Group topics by category
   const groupedTopics = (topics || []).reduce((acc, topic) => {
@@ -110,12 +150,18 @@ function Home() {
         text: reviewText,
         date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
       };
-      setReviews([newReview, ...reviews]);
+      const updatedReviews = [newReview, ...reviews];
+      setReviews(updatedReviews);
+      // Save to localStorage
+      localStorage.setItem('nubia-reviews', JSON.stringify(updatedReviews));
       setReviewText('');
       setSubmitStatus('Thank you for your feedback!');
       setTimeout(() => setSubmitStatus(''), 3000);
     }
   };
+
+  // Combine sample reviews with user reviews (user reviews first)
+  const allReviews = [...reviews, ...sampleReviews];
 
   const currentYear = new Date().getFullYear();
 
@@ -518,20 +564,11 @@ function Home() {
           </div>
           
           {/* Reviews List */}
-          {reviews.length > 0 ? (
-            <div className="space-y-4">
-              {reviews.map(review => (
-                <ReviewCard key={review.id} {...review} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 nubia-card">
-              <svg className="w-12 h-12 mx-auto text-nubia-text-faint mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              <p className="font-sans text-sm text-nubia-text-muted">No reviews yet. Be the first to share your experience!</p>
-            </div>
-          )}
+          <div className="space-y-4">
+            {allReviews.map(review => (
+              <ReviewCard key={review.id} {...review} />
+            ))}
+          </div>
         </div>
       </Section>
 
