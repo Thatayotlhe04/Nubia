@@ -1,6 +1,6 @@
 # Nubia
 
-A premium finance study companion designed specifically for Motswana university students, particularly those studying finance-related courses at the University of Botswana.
+A premium finance study companion designed specifically for Batswana university students, particularly those studying finance-related courses at the University of Botswana.
 
 ## Philosophy
 
