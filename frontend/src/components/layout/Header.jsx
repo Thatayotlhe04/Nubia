@@ -45,6 +45,9 @@ function Header({ onToggleMenu, menuOpen }) {
           <span className="font-sans text-base md:text-lg font-semibold text-nubia-text tracking-tight">
             Nubia
           </span>
+          <span className="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded">
+            Beta
+          </span>
           <span className="hidden md:inline font-sans text-sm text-nubia-text-muted">
             Finance Study Companion
           </span>

@@ -271,6 +271,19 @@ function MenuDrawer({ isOpen, onClose, topics = [], loading = false }) {
                 <span>+267 77 625 997</span>
               </a>
             </div>
+            
+            {/* Version Badge */}
+            <div className="mt-6 pt-4 border-t border-nubia-border">
+              <div className="flex items-center justify-center gap-2">
+                <span className="px-2 py-1 text-[10px] font-bold uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded">
+                  Early Access Beta
+                </span>
+                <span className="text-[10px] text-nubia-text-muted">v1.0.0</span>
+              </div>
+              <p className="text-[10px] text-nubia-text-muted text-center mt-2">
+                © 2026 Nubia • Built for UB Students
+              </p>
+            </div>
           </div>
         </div>
       </div>
