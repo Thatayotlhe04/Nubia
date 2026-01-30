@@ -267,13 +267,15 @@ function ResultCard({ result }) {
           {result.category}
         </span>
         {result.isCurated && (
-          <span className="text-xs font-medium px-2 py-0.5 rounded bg-nubia-accent/20 text-nubia-accent border border-nubia-accent/50">
-            ⭐ Nubia Pick
+          <span className="text-xs font-medium px-2 py-0.5 rounded bg-nubia-accent/20 text-nubia-accent border border-nubia-accent/50 inline-flex items-center gap-1">
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Nubia Pick
           </span>
         )}
         {result.hasOpenAccess && (
-          <span className="text-xs font-medium px-2 py-0.5 rounded bg-green-900/30 text-green-400 border border-green-700">
-            🔓 Open Access
+          <span className="text-xs font-medium px-2 py-0.5 rounded bg-green-900/30 text-green-400 border border-green-700 inline-flex items-center gap-1">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+            Open Access
           </span>
         )}
         {result.year && (
@@ -558,7 +560,7 @@ function Search() {
       {/* Suggestions - Only show when no search */}
       {!searchPerformed && (
         <div className="mb-8">
-          <p className="text-sm text-nubia-text-muted mb-3">🔥 Popular finance topics:</p>
+          <p className="text-sm text-nubia-text-muted mb-3 flex items-center gap-1.5"><svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 23c-4.97 0-9-4.03-9-9 0-4.03 2.86-8.18 6.14-10.97.68-.57 1.72-.15 1.82.73.27 2.47 1.37 4.13 2.89 5.34.23.18.56.03.61-.25.21-1.21.69-2.55 1.85-4.14.51-.71 1.58-.56 1.87.27C19.67 8.47 21 11.89 21 14c0 4.97-4.03 9-9 9z"/></svg>Popular finance topics:</p>
           <div className="flex flex-wrap gap-2">
             {suggestions.map(suggestion => (
               <button
@@ -601,7 +603,7 @@ function Search() {
             { key: 'semantic', label: 'Semantic Scholar' },
             { key: 'openalex', label: 'OpenAlex' },
             { key: 'crossref', label: 'CrossRef' },
-            { key: 'curated', label: '⭐ Nubia Picks' }
+            { key: 'curated', label: 'Nubia Picks' }
           ].map(source => (
             <button
               key={source.key}
@@ -696,7 +698,8 @@ function Search() {
                   rel="noopener noreferrer"
                   className="px-4 py-2.5 bg-yellow-900/20 text-yellow-400 border border-yellow-700 rounded-lg text-sm font-medium hover:bg-yellow-900/40 transition-colors flex items-center gap-2"
                 >
-                  <span>🎓</span> Google Scholar
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+                  Google Scholar
                 </a>
                 <a
                   href={`https://www.jstor.org/action/doBasicSearch?Query=${encodeURIComponent(query)}`}
@@ -704,7 +707,8 @@ function Search() {
                   rel="noopener noreferrer"
                   className="px-4 py-2.5 bg-red-900/20 text-red-400 border border-red-700 rounded-lg text-sm font-medium hover:bg-red-900/40 transition-colors flex items-center gap-2"
                 >
-                  <span>📚</span> JSTOR
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                  JSTOR
                 </a>
                 <a
                   href={`https://arxiv.org/search/?query=${encodeURIComponent(query)}&searchtype=all`}
@@ -712,7 +716,8 @@ function Search() {
                   rel="noopener noreferrer"
                   className="px-4 py-2.5 bg-orange-900/20 text-orange-400 border border-orange-700 rounded-lg text-sm font-medium hover:bg-orange-900/40 transition-colors flex items-center gap-2"
                 >
-                  <span>📄</span> arXiv
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  arXiv
                 </a>
                 <a
                   href={`https://papers.ssrn.com/sol3/results.cfm?txtKey_Words=${encodeURIComponent(query)}`}
@@ -720,7 +725,8 @@ function Search() {
                   rel="noopener noreferrer"
                   className="px-4 py-2.5 bg-blue-900/20 text-blue-400 border border-blue-700 rounded-lg text-sm font-medium hover:bg-blue-900/40 transition-colors flex items-center gap-2"
                 >
-                  <span>💼</span> SSRN
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                  SSRN
                 </a>
               </div>
             </div>
@@ -734,7 +740,7 @@ function Search() {
 
               {/* More search options after results */}
               <div className="mt-8 p-5 bg-nubia-surface-alt border border-nubia-border rounded-xl">
-                <h3 className="font-sans text-base font-semibold text-nubia-text mb-3">🔍 Want more results?</h3>
+                <h3 className="font-sans text-base font-semibold text-nubia-text mb-3 flex items-center gap-2"><svg className="w-5 h-5 text-nubia-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>Want more results?</h3>
                 <p className="text-sm text-nubia-text-secondary mb-4">Search directly on these academic databases:</p>
                 <div className="flex flex-wrap gap-2">
                   <a
@@ -780,7 +786,8 @@ function Search() {
       {!searchPerformed && (
         <div className="mt-8">
           <h2 className="font-sans text-lg font-semibold text-nubia-text mb-4 flex items-center gap-2">
-            <span>⭐</span> Nubia Picks - Hand-Curated Resources
+            <svg className="w-5 h-5 text-nubia-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Nubia Picks - Hand-Curated Resources
           </h2>
           <div className="grid gap-4 md:grid-cols-2">
             {curatedResources.map(result => (
@@ -800,23 +807,23 @@ function Search() {
                 <h3 className="font-sans text-lg font-bold text-nubia-text mb-3">How Dynamic Search Works</h3>
                 <ul className="text-sm text-nubia-text-secondary space-y-2">
                   <li className="flex items-start gap-2">
-                    <span className="text-green-400">✓</span>
+                    <svg className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
                     <span><strong className="text-nubia-text">Real-time search</strong> across 200M+ academic papers from 3 APIs simultaneously</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-400">✓</span>
+                    <svg className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
                     <span><strong className="text-nubia-text">Finance-focused</strong> - results are optimized for finance, economics, and business</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-400">✓</span>
-                    <span>Look for <span className="text-green-400 font-medium">🔓 Open Access</span> badges for free full-text PDFs</span>
+                    <svg className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
+                    <span>Look for <span className="text-green-400 font-medium">Open Access</span> badges for free full-text PDFs</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-400">✓</span>
+                    <svg className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
                     <span>Results sorted by <strong className="text-nubia-text">citations + recency</strong> for quality</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-nubia-accent">⭐</span>
+                    <svg className="w-4 h-4 text-nubia-accent flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     <span><strong className="text-nubia-accent">Nubia Picks</strong> are hand-curated by UB students for maximum relevance</span>
                   </li>
                 </ul>
