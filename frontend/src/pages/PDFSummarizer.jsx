@@ -1,8 +1,8 @@
 import React, { useState, useRef, useCallback } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 
-// Set up PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// Set up PDF.js worker - use unpkg as fallback CDN
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
 function PDFSummarizer() {
   const [file, setFile] = useState(null);
@@ -14,52 +14,45 @@ function PDFSummarizer() {
   const [progress, setProgress] = useState({ stage: '', percent: 0 });
   const fileInputRef = useRef(null);
 
-  // Optimized parallel text extraction from PDF
+  // Text extraction from PDF - sequential for reliability
   const extractTextFromPDF = async (file, onProgress) => {
-    const arrayBuffer = await file.arrayBuffer();
-    onProgress?.('Loading PDF...', 5);
-    
-    const pdf = await pdfjsLib.getDocument({ 
-      data: arrayBuffer,
-      useWorkerFetch: true,
-      isEvalSupported: true,
-      useSystemFonts: true
-    }).promise;
-    
-    const numPages = pdf.numPages;
-    onProgress?.('Extracting text...', 10);
-    
-    // Process pages in parallel batches for speed
-    const BATCH_SIZE = 5;
-    const pageTexts = new Array(numPages).fill('');
-    
-    for (let batchStart = 0; batchStart < numPages; batchStart += BATCH_SIZE) {
-      const batchEnd = Math.min(batchStart + BATCH_SIZE, numPages);
-      const batchPromises = [];
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      onProgress?.('Loading PDF...', 5);
       
-      for (let i = batchStart; i < batchEnd; i++) {
-        batchPromises.push(
-          pdf.getPage(i + 1).then(async (page) => {
-            const textContent = await page.getTextContent();
-            return {
-              index: i,
-              text: textContent.items.map(item => item.str).join(' ')
-            };
-          })
-        );
-      }
-      
-      const batchResults = await Promise.all(batchPromises);
-      batchResults.forEach(({ index, text }) => {
-        pageTexts[index] = text;
+      const loadingTask = pdfjsLib.getDocument({ 
+        data: arrayBuffer,
+        verbosity: 0 // Suppress console warnings
       });
       
-      // Update progress
-      const percentComplete = 10 + Math.round((batchEnd / numPages) * 70);
-      onProgress?.(`Extracting page ${batchEnd} of ${numPages}...`, percentComplete);
+      const pdf = await loadingTask.promise;
+      const numPages = pdf.numPages;
+      onProgress?.('Extracting text...', 10);
+      
+      let fullText = '';
+      
+      // Process pages sequentially for reliability
+      for (let i = 1; i <= numPages; i++) {
+        try {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map(item => item.str).join(' ');
+          fullText += pageText + '\n\n';
+          
+          // Update progress
+          const percentComplete = 10 + Math.round((i / numPages) * 70);
+          onProgress?.(`Extracting page ${i} of ${numPages}...`, percentComplete);
+        } catch (pageError) {
+          console.warn(`Error on page ${i}:`, pageError);
+          // Continue with other pages
+        }
+      }
+      
+      return fullText;
+    } catch (err) {
+      console.error('PDF extraction error:', err);
+      throw new Error('Failed to read PDF. The file may be corrupted or password-protected.');
     }
-    
-    return pageTexts.join('\n\n');
   };
 
   // Optimized summary generation with chunking
