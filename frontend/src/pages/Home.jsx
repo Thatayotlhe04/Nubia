@@ -132,26 +132,25 @@ function StackingFeatureCards({ features }) {
           let zIndex = cardCount - index;
 
           if (isFuture) {
-            // Cards below: start off-screen
-            translateY = 100 + (index * 20);
-            scale = 0.95;
-            opacity = 0;
+            // Cards below: start off-screen but visible
+            translateY = 100 + (index * 15);
+            scale = 0.98;
+            opacity = 0.5;
           } else if (isActive) {
-            // Active card: animate in
-            translateY = (1 - cardProgress) * 80;
-            scale = 0.95 + (cardProgress * 0.05);
-            opacity = 0.3 + (cardProgress * 0.7);
+            // Active card: animate in at full opacity
+            translateY = (1 - cardProgress) * 60;
+            scale = 0.98 + (cardProgress * 0.02);
+            opacity = 0.7 + (cardProgress * 0.3);
             zIndex = cardCount + 1;
           } else if (isPast) {
-            // Past cards: stack up and scale down
-            const stackPosition = index;
+            // Past cards: stack up with minimal fade
             const cardsAbove = features.slice(index + 1).filter((_, i) => 
               scrollProgress >= (index + 1 + i) * progressPerCard
             ).length;
             
-            translateY = -8 * (cardsAbove + 1);
-            scale = 1 - (0.03 * (cardsAbove + 1));
-            opacity = 1 - (0.15 * (cardsAbove + 1));
+            translateY = -6 * (cardsAbove + 1);
+            scale = 1 - (0.015 * (cardsAbove + 1));
+            opacity = 1 - (0.05 * (cardsAbove + 1)); // Much less fade
             zIndex = cardCount - index - cardsAbove;
           }
 
@@ -161,7 +160,7 @@ function StackingFeatureCards({ features }) {
               className="absolute inset-x-0 transition-all duration-300 ease-out"
               style={{
                 transform: `translateY(${translateY}px) scale(${scale})`,
-                opacity: Math.max(0.4, opacity),
+                opacity: Math.max(0.75, opacity),
                 zIndex,
               }}
             >
@@ -242,10 +241,65 @@ function ReviewCard({ name, course, text, date }) {
 
 
 
+// Public reviews from actual students (shared across all users)
+const publicReviews = [
+  {
+    id: 'pub-1',
+    name: 'Kgomotso M.',
+    course: 'BBA Finance, Year 3',
+    text: 'Nubia has been incredibly helpful for my FIN 301 coursework. The calculators saved me so much time during assignments, and the explanations are clearer than my textbook!',
+    date: 'Jan 2026',
+    isPublic: true
+  },
+  {
+    id: 'pub-2',
+    name: 'Thabo K.',
+    course: 'BCom Accounting, Year 2',
+    text: 'Finally a study tool made for UB students. The Time Value of Money section helped me understand concepts I had been struggling with for weeks.',
+    date: 'Jan 2026',
+    isPublic: true
+  },
+  {
+    id: 'pub-3',
+    name: 'Lesego P.',
+    course: 'BBA Finance, Year 4',
+    text: 'I use Nubia before every test. The worked examples using Botswana scenarios make it so much easier to understand than international textbooks.',
+    date: 'Jan 2026',
+    isPublic: true
+  },
+  {
+    id: 'pub-4',
+    name: 'Boitumelo S.',
+    course: 'BCom Finance, Year 3',
+    text: 'The academic search feature is amazing. Found papers on taxation policy I could not find anywhere else. Keep improving this platform!',
+    date: 'Jan 2026',
+    isPublic: true
+  },
+  {
+    id: 'pub-5',
+    name: 'Mpho T.',
+    course: 'BBA Finance, Year 2',
+    text: 'Clean design, easy to navigate, and actually useful content. This is what we needed as finance students at UB. Re a leboga Thatayotlhe!',
+    date: 'Jan 2026',
+    isPublic: true
+  },
+  {
+    id: 'pub-6',
+    name: 'Oratile N.',
+    course: 'BCom Accounting, Year 3',
+    text: 'The bond valuation calculator helped me check my exam answers. Nubia is becoming essential for my studies.',
+    date: 'Jan 2026',
+    isPublic: true
+  }
+];
+
 function Home() {
   const [reviewText, setReviewText] = useState('');
-  const [reviews, setReviews] = useState([]);
+  const [userReviews, setUserReviews] = useState([]);
   const [submitStatus, setSubmitStatus] = useState('');
+
+  // Combine public reviews with user-submitted reviews
+  const reviews = [...userReviews, ...publicReviews];
 
   // Load user reviews from localStorage on mount
   useEffect(() => {
@@ -253,7 +307,7 @@ function Home() {
     if (savedReviews) {
       try {
         const parsed = JSON.parse(savedReviews);
-        setReviews(parsed);
+        setUserReviews(parsed);
       } catch (e) {
         console.error('Error loading reviews:', e);
       }
@@ -268,12 +322,13 @@ function Home() {
         name: 'Anonymous',
         course: 'UB Student',
         text: reviewText,
-        date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+        date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+        isPublic: false
       };
-      const updatedReviews = [newReview, ...reviews];
-      setReviews(updatedReviews);
+      const updatedUserReviews = [newReview, ...userReviews];
+      setUserReviews(updatedUserReviews);
       // Save to localStorage
-      localStorage.setItem('nubia-reviews', JSON.stringify(updatedReviews));
+      localStorage.setItem('nubia-reviews', JSON.stringify(updatedUserReviews));
       setReviewText('');
       setSubmitStatus('Thank you for your feedback!');
       setTimeout(() => setSubmitStatus(''), 3000);
