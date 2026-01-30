@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 // Nubia Logo Component - Pulse/Heartbeat style
@@ -25,7 +25,7 @@ export function NubiaLogo({ className = "w-8 h-8" }) {
   );
 }
 
-// Feature Card Component
+// Feature Card Component (standard - for desktop)
 function FeatureCard({ icon, title, children }) {
   return (
     <div className="nubia-card p-5 md:p-6">
@@ -39,6 +39,169 @@ function FeatureCard({ icon, title, children }) {
             {children}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// Stacking Feature Cards Component (for mobile scroll animation)
+function StackingFeatureCards({ features }) {
+  const containerRef = useRef(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      
+      const container = containerRef.current;
+      const rect = container.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      // Calculate how far through the container we've scrolled
+      const containerTop = rect.top;
+      const containerHeight = rect.height;
+      
+      // Start animation when container enters viewport
+      const scrollStart = windowHeight * 0.8;
+      const scrollEnd = -containerHeight + windowHeight * 0.2;
+      
+      if (containerTop <= scrollStart && containerTop >= scrollEnd) {
+        const progress = (scrollStart - containerTop) / (scrollStart - scrollEnd);
+        setScrollProgress(Math.max(0, Math.min(1, progress)));
+      } else if (containerTop > scrollStart) {
+        setScrollProgress(0);
+      } else {
+        setScrollProgress(1);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial check
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile]);
+
+  // Desktop: render as normal grid
+  if (!isMobile) {
+    return (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6">
+        {features.map((feature, index) => (
+          <FeatureCard key={index} icon={feature.icon} title={feature.title}>
+            {feature.description}
+          </FeatureCard>
+        ))}
+      </div>
+    );
+  }
+
+  // Mobile: stacking cards animation
+  const cardCount = features.length;
+  const progressPerCard = 1 / cardCount;
+
+  return (
+    <div 
+      ref={containerRef}
+      className="relative mb-6"
+      style={{ height: `${cardCount * 180 + 200}px` }} // Extra height for scroll room
+    >
+      <div className="sticky top-24" style={{ height: '320px' }}>
+        {features.map((feature, index) => {
+          // Calculate individual card progress
+          const cardStart = index * progressPerCard;
+          const cardEnd = (index + 1) * progressPerCard;
+          const cardProgress = Math.max(0, Math.min(1, (scrollProgress - cardStart) / progressPerCard));
+          
+          // Is this card the active one?
+          const isActive = scrollProgress >= cardStart && scrollProgress < cardEnd;
+          const isPast = scrollProgress >= cardEnd;
+          const isFuture = scrollProgress < cardStart;
+          
+          // Calculate transforms
+          let translateY = 0;
+          let scale = 1;
+          let opacity = 1;
+          let zIndex = cardCount - index;
+
+          if (isFuture) {
+            // Cards below: start off-screen
+            translateY = 100 + (index * 20);
+            scale = 0.95;
+            opacity = 0;
+          } else if (isActive) {
+            // Active card: animate in
+            translateY = (1 - cardProgress) * 80;
+            scale = 0.95 + (cardProgress * 0.05);
+            opacity = 0.3 + (cardProgress * 0.7);
+            zIndex = cardCount + 1;
+          } else if (isPast) {
+            // Past cards: stack up and scale down
+            const stackPosition = index;
+            const cardsAbove = features.slice(index + 1).filter((_, i) => 
+              scrollProgress >= (index + 1 + i) * progressPerCard
+            ).length;
+            
+            translateY = -8 * (cardsAbove + 1);
+            scale = 1 - (0.03 * (cardsAbove + 1));
+            opacity = 1 - (0.15 * (cardsAbove + 1));
+            zIndex = cardCount - index - cardsAbove;
+          }
+
+          return (
+            <div
+              key={index}
+              className="absolute inset-x-0 transition-all duration-300 ease-out"
+              style={{
+                transform: `translateY(${translateY}px) scale(${scale})`,
+                opacity: Math.max(0.4, opacity),
+                zIndex,
+              }}
+            >
+              <div className="nubia-card p-5 mx-1 shadow-lg">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-nubia-surface-alt flex items-center justify-center text-nubia-accent">
+                    {feature.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-sans text-base font-medium text-nubia-text mb-2">
+                      {feature.title}
+                    </h3>
+                    <div className="font-serif text-sm text-nubia-text-secondary leading-relaxed">
+                      {feature.description}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      
+      {/* Progress indicator */}
+      <div className="fixed right-3 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-1.5">
+        {features.map((_, index) => {
+          const cardStart = index * progressPerCard;
+          const isActive = scrollProgress >= cardStart && scrollProgress < (index + 1) * progressPerCard;
+          const isPast = scrollProgress >= (index + 1) * progressPerCard;
+          
+          return (
+            <div
+              key={index}
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${
+                isActive ? 'bg-nubia-accent scale-125' : 
+                isPast ? 'bg-nubia-accent/60' : 'bg-nubia-border'
+              }`}
+            />
+          );
+        })}
       </div>
     </div>
   );
@@ -147,73 +310,65 @@ function Home() {
           </p>
         </div>
         
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6">
-          <FeatureCard 
-            title="Topic Explanations"
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
+        {/* Stacking Cards - animated on mobile, grid on desktop */}
+        <StackingFeatureCards 
+          features={[
+            {
+              title: "Topic Explanations",
+              icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              ),
+              description: "Core concepts written in clear academic language, aligned with your course syllabus."
+            },
+            {
+              title: "Verified Formulas",
+              icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              ),
+              description: "Mathematical expressions with complete variable definitions and usage context."
+            },
+            {
+              title: "Interactive Calculators",
+              icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              ),
+              description: "Hands-on tools for practicing calculations and checking your own work."
+            },
+            {
+              title: "Worked Examples",
+              icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+              ),
+              description: "Step-by-step solutions using scenarios relevant to Botswana and local coursework."
+            },
+            {
+              title: "Academic Resources",
+              icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+              ),
+              description: "Curated links to trusted textbooks, lecture materials, and supplementary readings."
+            },
+            {
+              title: "Personal Uploads",
+              icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+              ),
+              description: "Attach your own notes and materials to topics for a personal study archive."
             }
-          >
-            Core concepts written in clear academic language, aligned with your course syllabus.
-          </FeatureCard>
-          
-          <FeatureCard 
-            title="Verified Formulas"
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            }
-          >
-            Mathematical expressions with complete variable definitions and usage context.
-          </FeatureCard>
-          
-          <FeatureCard 
-            title="Interactive Calculators"
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-              </svg>
-            }
-          >
-            Hands-on tools for practicing calculations and checking your own work.
-          </FeatureCard>
-          
-          <FeatureCard 
-            title="Worked Examples"
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-              </svg>
-            }
-          >
-            Step-by-step solutions using scenarios relevant to Botswana and local coursework.
-          </FeatureCard>
-          
-          <FeatureCard 
-            title="Academic Resources"
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-              </svg>
-            }
-          >
-            Curated links to trusted textbooks, lecture materials, and supplementary readings.
-          </FeatureCard>
-          
-          <FeatureCard 
-            title="Personal Uploads"
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-              </svg>
-            }
-          >
-            Attach your own notes and materials to topics for a personal study archive.
-          </FeatureCard>
-        </div>
+          ]}
+        />
         
         <p className="nubia-caption text-nubia-text-muted">
           By consolidating these elements, Nubia reduces the need to jump between random websites 
