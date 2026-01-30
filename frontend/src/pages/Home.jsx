@@ -93,19 +93,12 @@ const defaultTopics = [
   { id: 'portfolio-theory', title: 'Portfolio Theory', description: 'Learn how to construct optimal portfolios that maximize return for a given level of risk.', category: 'risk-return' },
 ];
 
-// Sample reviews that show for everyone
-const sampleReviews = [
-  { id: 1, name: 'Kabo M.', course: 'BBA Finance - Year 3', text: 'Nubia has been incredibly helpful for my FIN 301 exam prep. The calculators save so much time and the explanations are clear.', date: 'Jan 2026' },
-  { id: 2, name: 'Lesego T.', course: 'BCom Accounting - Year 2', text: 'Finally a study resource made for us! The formulas are exactly what we need for our courses at UB.', date: 'Jan 2026' },
-  { id: 3, name: 'Thato K.', course: 'BBA Finance - Year 4', text: 'The Time Value of Money section helped me understand concepts I struggled with for months. Highly recommend to all finance students.', date: 'Dec 2025' },
-  { id: 4, name: 'Neo P.', course: 'BCom Finance - Year 3', text: 'Clean interface, no distractions. Just what I need when studying for tests. The worked examples are very useful.', date: 'Dec 2025' },
-];
-
 function Home() {
   const { topics: backendTopics } = useOutletContext();
   const [reviewText, setReviewText] = useState('');
   const [reviews, setReviews] = useState([]);
   const [submitStatus, setSubmitStatus] = useState('');
+  const [topicsExpanded, setTopicsExpanded] = useState(false);
 
   // Use backend topics if available, otherwise use defaults
   const topics = (backendTopics && backendTopics.length > 0) ? backendTopics : defaultTopics;
@@ -159,9 +152,6 @@ function Home() {
       setTimeout(() => setSubmitStatus(''), 3000);
     }
   };
-
-  // Combine sample reviews with user reviews (user reviews first)
-  const allReviews = [...reviews, ...sampleReviews];
 
   const currentYear = new Date().getFullYear();
 
@@ -485,45 +475,66 @@ function Home() {
         </div>
       </Section>
 
-      {/* Topic listing */}
+      {/* Topic listing - Collapsible */}
       <Section id="topics" title="Available Topics">
-        {Object.keys(groupedTopics).length === 0 ? (
-          <div className="py-12 text-center">
-            <p className="nubia-caption">Loading topics...</p>
-          </div>
-        ) : (
-          <div className="space-y-8">
-            {Object.entries(groupedTopics).map(([category, categoryTopics]) => (
-              <div key={category}>
-                <h3 className="font-sans text-sm font-semibold text-nubia-text-muted uppercase tracking-wider mb-4">
-                  {formatCategory(category)}
-                </h3>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {categoryTopics.map(topic => (
-                    <Link
-                      key={topic.id}
-                      to={`/topic/${topic.id}`}
-                      className="group nubia-card p-5 hover:border-nubia-border-strong transition-colors"
-                    >
-                      <h4 className="font-sans text-base font-medium text-nubia-text group-hover:text-nubia-accent transition-colors">
-                        {topic.title}
-                      </h4>
-                      <p className="mt-2 font-serif text-sm text-nubia-text-secondary line-clamp-2">
-                        {topic.description}
-                      </p>
-                      <span className="mt-3 inline-flex items-center gap-1 font-sans text-sm text-nubia-accent opacity-0 group-hover:opacity-100 transition-opacity">
-                        Study topic
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </span>
-                    </Link>
-                  ))}
-                </div>
+        <div>
+          <button
+            onClick={() => setTopicsExpanded(!topicsExpanded)}
+            className="flex items-center gap-2 text-nubia-accent hover:text-nubia-accent/80 transition-colors mb-4"
+          >
+            <svg 
+              className={`w-5 h-5 transform transition-transform ${topicsExpanded ? 'rotate-90' : ''}`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="font-sans text-sm font-medium">
+              {topicsExpanded ? 'Hide Topics' : `Show ${topics.length} Available Topics`}
+            </span>
+          </button>
+          
+          {topicsExpanded && (
+            Object.keys(groupedTopics).length === 0 ? (
+              <div className="py-12 text-center">
+                <p className="nubia-caption">Loading topics...</p>
               </div>
-            ))}
-          </div>
-        )}
+            ) : (
+              <div className="space-y-8 animate-fade-in">
+                {Object.entries(groupedTopics).map(([category, categoryTopics]) => (
+                  <div key={category}>
+                    <h3 className="font-sans text-sm font-semibold text-nubia-text-muted uppercase tracking-wider mb-4">
+                      {formatCategory(category)}
+                    </h3>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {categoryTopics.map(topic => (
+                        <Link
+                          key={topic.id}
+                          to={`/topic/${topic.id}`}
+                          className="group nubia-card p-5 hover:border-nubia-border-strong transition-colors"
+                        >
+                          <h4 className="font-sans text-base font-medium text-nubia-text group-hover:text-nubia-accent transition-colors">
+                            {topic.title}
+                          </h4>
+                          <p className="mt-2 font-serif text-sm text-nubia-text-secondary line-clamp-2">
+                            {topic.description}
+                          </p>
+                          <span className="mt-3 inline-flex items-center gap-1 font-sans text-sm text-nubia-accent opacity-0 group-hover:opacity-100 transition-opacity">
+                            Study topic
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+        </div>
       </Section>
 
       {/* Student Reviews Section */}
@@ -563,12 +574,24 @@ function Home() {
             </form>
           </div>
           
-          {/* Reviews List */}
-          <div className="space-y-4">
-            {allReviews.map(review => (
-              <ReviewCard key={review.id} {...review} />
-            ))}
-          </div>
+          {/* Reviews List - Horizontal Scroll */}
+          {reviews.length === 0 ? (
+            <div className="nubia-card p-6 text-center">
+              <p className="font-sans text-sm text-nubia-text-muted">
+                No reviews yet. Be the first to share your experience!
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto pb-4 -mx-4 px-4">
+              <div className="flex gap-4" style={{ minWidth: 'max-content' }}>
+                {reviews.map(review => (
+                  <div key={review.id} className="w-72 flex-shrink-0">
+                    <ReviewCard {...review} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </Section>
 
