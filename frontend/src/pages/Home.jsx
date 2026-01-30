@@ -241,73 +241,18 @@ function ReviewCard({ name, course, text, date }) {
 
 
 
-// Public reviews from actual students (shared across all users)
-const publicReviews = [
-  {
-    id: 'pub-1',
-    name: 'Kgomotso M.',
-    course: 'BBA Finance, Year 3',
-    text: 'Nubia has been incredibly helpful for my FIN 301 coursework. The calculators saved me so much time during assignments, and the explanations are clearer than my textbook!',
-    date: 'Jan 2026',
-    isPublic: true
-  },
-  {
-    id: 'pub-2',
-    name: 'Thabo K.',
-    course: 'BCom Accounting, Year 2',
-    text: 'Finally a study tool made for UB students. The Time Value of Money section helped me understand concepts I had been struggling with for weeks.',
-    date: 'Jan 2026',
-    isPublic: true
-  },
-  {
-    id: 'pub-3',
-    name: 'Lesego P.',
-    course: 'BBA Finance, Year 4',
-    text: 'I use Nubia before every test. The worked examples using Botswana scenarios make it so much easier to understand than international textbooks.',
-    date: 'Jan 2026',
-    isPublic: true
-  },
-  {
-    id: 'pub-4',
-    name: 'Boitumelo S.',
-    course: 'BCom Finance, Year 3',
-    text: 'The academic search feature is amazing. Found papers on taxation policy I could not find anywhere else. Keep improving this platform!',
-    date: 'Jan 2026',
-    isPublic: true
-  },
-  {
-    id: 'pub-5',
-    name: 'Mpho T.',
-    course: 'BBA Finance, Year 2',
-    text: 'Clean design, easy to navigate, and actually useful content. This is what we needed as finance students at UB. Re a leboga Thatayotlhe!',
-    date: 'Jan 2026',
-    isPublic: true
-  },
-  {
-    id: 'pub-6',
-    name: 'Oratile N.',
-    course: 'BCom Accounting, Year 3',
-    text: 'The bond valuation calculator helped me check my exam answers. Nubia is becoming essential for my studies.',
-    date: 'Jan 2026',
-    isPublic: true
-  }
-];
-
 function Home() {
   const [reviewText, setReviewText] = useState('');
-  const [userReviews, setUserReviews] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [submitStatus, setSubmitStatus] = useState('');
 
-  // Combine public reviews with user-submitted reviews
-  const reviews = [...userReviews, ...publicReviews];
-
-  // Load user reviews from localStorage on mount
+  // Load reviews from localStorage on mount
   useEffect(() => {
     const savedReviews = localStorage.getItem('nubia-reviews');
     if (savedReviews) {
       try {
         const parsed = JSON.parse(savedReviews);
-        setUserReviews(parsed);
+        setReviews(parsed);
       } catch (e) {
         console.error('Error loading reviews:', e);
       }
@@ -322,13 +267,12 @@ function Home() {
         name: 'Anonymous',
         course: 'UB Student',
         text: reviewText,
-        date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        isPublic: false
+        date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
       };
-      const updatedUserReviews = [newReview, ...userReviews];
-      setUserReviews(updatedUserReviews);
+      const updatedReviews = [newReview, ...reviews];
+      setReviews(updatedReviews);
       // Save to localStorage
-      localStorage.setItem('nubia-reviews', JSON.stringify(updatedUserReviews));
+      localStorage.setItem('nubia-reviews', JSON.stringify(updatedReviews));
       setReviewText('');
       setSubmitStatus('Thank you for your feedback!');
       setTimeout(() => setSubmitStatus(''), 3000);
