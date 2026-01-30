@@ -511,6 +511,478 @@ const credibleResources = [
     sourceUrl: 'https://www.coursera.org/learn/duke-behavioral-economics',
     credibility: 'Dan Ariely is a renowned behavioral economist.',
     type: 'Online Course'
+  },
+
+  // ==================== GOOGLE SCHOLAR & ACADEMIC PAPERS ====================
+  // Finance Academic Papers
+  {
+    id: 'gs-finance-1',
+    topic: 'Asset Pricing',
+    category: 'Finance',
+    title: 'Google Scholar: Asset Pricing Research',
+    description: 'Search academic papers on asset pricing, CAPM, factor models, and risk premiums from peer-reviewed journals.',
+    keywords: ['asset pricing', 'capm', 'fama french', 'factor model', 'risk premium', 'academic', 'research', 'paper'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=asset+pricing+models+finance',
+    credibility: 'Google Scholar indexes peer-reviewed academic papers from reputable journals worldwide.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-finance-2',
+    topic: 'Corporate Finance',
+    category: 'Finance',
+    title: 'Google Scholar: Capital Structure Research',
+    description: 'Academic papers on capital structure, Modigliani-Miller, leverage, and financing decisions.',
+    keywords: ['capital structure', 'modigliani miller', 'leverage', 'debt', 'equity', 'financing', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=capital+structure+corporate+finance',
+    credibility: 'Access to thousands of peer-reviewed corporate finance papers.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-finance-3',
+    topic: 'Portfolio Theory',
+    category: 'Finance',
+    title: 'Google Scholar: Portfolio Management Research',
+    description: 'Academic research on portfolio optimization, diversification, and modern portfolio theory.',
+    keywords: ['portfolio', 'markowitz', 'optimization', 'diversification', 'efficient frontier', 'mpt', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=portfolio+optimization+markowitz',
+    credibility: 'Peer-reviewed research from leading finance journals.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-finance-4',
+    topic: 'Market Efficiency',
+    category: 'Finance',
+    title: 'Google Scholar: Efficient Market Hypothesis',
+    description: 'Research papers on EMH, market anomalies, behavioral finance, and price discovery.',
+    keywords: ['efficient market', 'emh', 'market anomaly', 'behavioral finance', 'price discovery', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=efficient+market+hypothesis+finance',
+    credibility: 'Academic papers from top finance and economics journals.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-finance-5',
+    topic: 'Derivatives',
+    category: 'Finance',
+    title: 'Google Scholar: Options and Derivatives Research',
+    description: 'Academic papers on options pricing, Black-Scholes, futures, and derivatives markets.',
+    keywords: ['options', 'derivatives', 'black scholes', 'futures', 'hedging', 'pricing', 'academic'],
+    formula: 'C = S_0N(d_1) - Ke^{-rT}N(d_2)',
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=options+pricing+black+scholes',
+    credibility: 'Peer-reviewed derivatives research from academic journals.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-finance-6',
+    topic: 'Risk Management',
+    category: 'Finance',
+    title: 'Google Scholar: Risk Management Research',
+    description: 'Academic papers on VaR, risk measurement, hedging strategies, and financial risk.',
+    keywords: ['risk management', 'var', 'value at risk', 'hedging', 'credit risk', 'market risk', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=financial+risk+management+var',
+    credibility: 'Research from risk management and finance journals.',
+    type: 'Academic Database'
+  },
+
+  // Mathematics Academic Papers
+  {
+    id: 'gs-math-1',
+    topic: 'Number Theory',
+    category: 'Mathematics',
+    title: 'Google Scholar: Number Theory Research',
+    description: 'Academic papers on prime numbers, cryptography, algebraic number theory, and analytic methods.',
+    keywords: ['number theory', 'prime numbers', 'cryptography', 'algebraic', 'fermat', 'riemann', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=number+theory+mathematics',
+    credibility: 'Peer-reviewed mathematics papers from leading journals.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-math-2',
+    topic: 'Analysis',
+    category: 'Mathematics',
+    title: 'Google Scholar: Mathematical Analysis Research',
+    description: 'Academic papers on real analysis, complex analysis, functional analysis, and measure theory.',
+    keywords: ['analysis', 'real analysis', 'complex analysis', 'functional analysis', 'measure theory', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=mathematical+analysis+real+complex',
+    credibility: 'Research from top mathematics journals worldwide.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-math-3',
+    topic: 'Applied Mathematics',
+    category: 'Mathematics',
+    title: 'Google Scholar: Applied Mathematics Research',
+    description: 'Academic papers on numerical methods, optimization, mathematical modeling, and applications.',
+    keywords: ['applied mathematics', 'numerical methods', 'optimization', 'modeling', 'simulation', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=applied+mathematics+numerical+methods',
+    credibility: 'Peer-reviewed applied mathematics research.',
+    type: 'Academic Database'
+  },
+
+  // Statistics Academic Papers
+  {
+    id: 'gs-stat-1',
+    topic: 'Statistical Methods',
+    category: 'Statistics',
+    title: 'Google Scholar: Statistical Methodology Research',
+    description: 'Academic papers on regression, ANOVA, non-parametric methods, and statistical inference.',
+    keywords: ['statistical methods', 'regression', 'anova', 'inference', 'estimation', 'hypothesis testing', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=statistical+methods+regression+inference',
+    credibility: 'Papers from top statistics journals like JASA, Biometrika, and Annals of Statistics.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-stat-2',
+    topic: 'Machine Learning',
+    category: 'Statistics',
+    title: 'Google Scholar: Machine Learning Research',
+    description: 'Academic papers on supervised learning, neural networks, deep learning, and statistical learning.',
+    keywords: ['machine learning', 'deep learning', 'neural network', 'classification', 'prediction', 'ai', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=machine+learning+deep+learning+statistics',
+    credibility: 'Research from JMLR, NeurIPS, ICML, and other leading ML venues.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-stat-3',
+    topic: 'Biostatistics',
+    category: 'Statistics',
+    title: 'Google Scholar: Biostatistics Research',
+    description: 'Academic papers on clinical trials, survival analysis, epidemiology, and medical statistics.',
+    keywords: ['biostatistics', 'clinical trial', 'survival analysis', 'epidemiology', 'medical statistics', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=biostatistics+clinical+trials+survival+analysis',
+    credibility: 'Peer-reviewed biostatistics research from medical and statistical journals.',
+    type: 'Academic Database'
+  },
+
+  // Physics Academic Papers
+  {
+    id: 'gs-phys-1',
+    topic: 'Quantum Physics',
+    category: 'Physics',
+    title: 'Google Scholar: Quantum Mechanics Research',
+    description: 'Academic papers on quantum computing, entanglement, quantum field theory, and foundations.',
+    keywords: ['quantum mechanics', 'quantum computing', 'entanglement', 'qft', 'wave function', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=quantum+mechanics+entanglement+computing',
+    credibility: 'Research from Physical Review, Nature Physics, and other leading journals.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-phys-2',
+    topic: 'Condensed Matter',
+    category: 'Physics',
+    title: 'Google Scholar: Condensed Matter Research',
+    description: 'Academic papers on superconductivity, semiconductors, materials physics, and solid state.',
+    keywords: ['condensed matter', 'superconductivity', 'semiconductor', 'solid state', 'materials', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=condensed+matter+physics+superconductivity',
+    credibility: 'Peer-reviewed condensed matter physics research.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-phys-3',
+    topic: 'Astrophysics',
+    category: 'Physics',
+    title: 'Google Scholar: Astrophysics Research',
+    description: 'Academic papers on cosmology, black holes, dark matter, and astronomical observations.',
+    keywords: ['astrophysics', 'cosmology', 'black hole', 'dark matter', 'dark energy', 'astronomy', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=astrophysics+cosmology+dark+matter',
+    credibility: 'Research from ApJ, MNRAS, A&A, and other astronomy journals.',
+    type: 'Academic Database'
+  },
+
+  // Economics Academic Papers
+  {
+    id: 'gs-econ-1',
+    topic: 'Development Economics',
+    category: 'Economics',
+    title: 'Google Scholar: Development Economics Research',
+    description: 'Academic papers on poverty, growth, inequality, and economic development.',
+    keywords: ['development economics', 'poverty', 'growth', 'inequality', 'developing countries', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=development+economics+poverty+growth',
+    credibility: 'Research from AER, QJE, Econometrica, and development journals.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-econ-2',
+    topic: 'Labor Economics',
+    category: 'Economics',
+    title: 'Google Scholar: Labor Economics Research',
+    description: 'Academic papers on employment, wages, human capital, and labor markets.',
+    keywords: ['labor economics', 'employment', 'wages', 'human capital', 'unemployment', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=labor+economics+employment+wages',
+    credibility: 'Peer-reviewed labor economics research.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-econ-3',
+    topic: 'International Trade',
+    category: 'Economics',
+    title: 'Google Scholar: International Trade Research',
+    description: 'Academic papers on trade policy, tariffs, globalization, and comparative advantage.',
+    keywords: ['international trade', 'tariffs', 'globalization', 'comparative advantage', 'exports', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=international+trade+economics+tariffs',
+    credibility: 'Research from leading international economics journals.',
+    type: 'Academic Database'
+  },
+
+  // Additional Academic Resources - Open Access Journals
+  {
+    id: 'arxiv-1',
+    topic: 'Quantitative Finance',
+    category: 'Finance',
+    title: 'arXiv: Quantitative Finance Papers',
+    description: 'Preprints and working papers on quantitative finance, algorithmic trading, and financial mathematics.',
+    keywords: ['quantitative finance', 'algorithmic trading', 'financial mathematics', 'preprint', 'arxiv', 'academic'],
+    source: 'arXiv.org',
+    sourceUrl: 'https://arxiv.org/list/q-fin/recent',
+    credibility: 'arXiv is a trusted preprint server hosted by Cornell University.',
+    type: 'Preprint Server'
+  },
+  {
+    id: 'arxiv-2',
+    topic: 'Mathematics',
+    category: 'Mathematics',
+    title: 'arXiv: Mathematics Papers',
+    description: 'Latest mathematics research including algebra, analysis, geometry, and applied math.',
+    keywords: ['mathematics', 'algebra', 'geometry', 'topology', 'preprint', 'arxiv', 'research'],
+    source: 'arXiv.org',
+    sourceUrl: 'https://arxiv.org/list/math/recent',
+    credibility: 'arXiv hosts preprints from mathematicians worldwide.',
+    type: 'Preprint Server'
+  },
+  {
+    id: 'arxiv-3',
+    topic: 'Statistics',
+    category: 'Statistics',
+    title: 'arXiv: Statistics Papers',
+    description: 'Preprints on statistical theory, machine learning, methodology, and applications.',
+    keywords: ['statistics', 'machine learning', 'methodology', 'preprint', 'arxiv', 'research'],
+    source: 'arXiv.org',
+    sourceUrl: 'https://arxiv.org/list/stat/recent',
+    credibility: 'Leading preprint server for statistics research.',
+    type: 'Preprint Server'
+  },
+  {
+    id: 'arxiv-4',
+    topic: 'Physics',
+    category: 'Physics',
+    title: 'arXiv: Physics Papers',
+    description: 'Preprints across all physics subdisciplines from researchers worldwide.',
+    keywords: ['physics', 'quantum', 'condensed matter', 'high energy', 'preprint', 'arxiv', 'research'],
+    source: 'arXiv.org',
+    sourceUrl: 'https://arxiv.org/list/physics/recent',
+    credibility: 'The original preprint server, foundational to physics research.',
+    type: 'Preprint Server'
+  },
+  {
+    id: 'arxiv-5',
+    topic: 'Economics',
+    category: 'Economics',
+    title: 'arXiv: Economics Papers',
+    description: 'Working papers on economic theory, econometrics, and quantitative economics.',
+    keywords: ['economics', 'econometrics', 'economic theory', 'preprint', 'arxiv', 'research'],
+    source: 'arXiv.org',
+    sourceUrl: 'https://arxiv.org/list/econ/recent',
+    credibility: 'Growing repository of economics research.',
+    type: 'Preprint Server'
+  },
+
+  // NBER and SSRN
+  {
+    id: 'nber-1',
+    topic: 'Economics Research',
+    category: 'Economics',
+    title: 'NBER Working Papers',
+    description: 'Working papers from the National Bureau of Economic Research on all economics topics.',
+    keywords: ['nber', 'working paper', 'economics', 'research', 'policy', 'macroeconomics', 'academic'],
+    source: 'NBER',
+    sourceUrl: 'https://www.nber.org/papers',
+    credibility: 'NBER is the premier economics research organization in the United States.',
+    type: 'Working Papers'
+  },
+  {
+    id: 'ssrn-1',
+    topic: 'Finance Research',
+    category: 'Finance',
+    title: 'SSRN Finance Network',
+    description: 'Working papers and preprints on all finance topics from researchers worldwide.',
+    keywords: ['ssrn', 'working paper', 'finance', 'research', 'preprint', 'academic'],
+    source: 'SSRN',
+    sourceUrl: 'https://www.ssrn.com/index.cfm/en/fin/',
+    credibility: 'SSRN is the leading social science research network.',
+    type: 'Working Papers'
+  },
+  {
+    id: 'ssrn-2',
+    topic: 'Economics Research',
+    category: 'Economics',
+    title: 'SSRN Economics Network',
+    description: 'Working papers on economics, public policy, and related social sciences.',
+    keywords: ['ssrn', 'working paper', 'economics', 'policy', 'research', 'academic'],
+    source: 'SSRN',
+    sourceUrl: 'https://www.ssrn.com/index.cfm/en/ern/',
+    credibility: 'SSRN hosts research from leading economists globally.',
+    type: 'Working Papers'
+  },
+
+  // Free Textbooks
+  {
+    id: 'openstax-1',
+    topic: 'Statistics',
+    category: 'Statistics',
+    title: 'OpenStax: Introductory Statistics',
+    description: 'Free peer-reviewed statistics textbook covering descriptive stats, probability, and inference.',
+    keywords: ['statistics', 'textbook', 'free', 'openstax', 'intro', 'probability', 'inference'],
+    source: 'OpenStax',
+    sourceUrl: 'https://openstax.org/details/books/introductory-statistics',
+    credibility: 'OpenStax textbooks are peer-reviewed and used at thousands of institutions.',
+    type: 'Free Textbook'
+  },
+  {
+    id: 'openstax-2',
+    topic: 'Calculus',
+    category: 'Mathematics',
+    title: 'OpenStax: Calculus (3 volumes)',
+    description: 'Complete free calculus textbook series covering single and multivariable calculus.',
+    keywords: ['calculus', 'textbook', 'free', 'openstax', 'derivative', 'integral', 'multivariable'],
+    source: 'OpenStax',
+    sourceUrl: 'https://openstax.org/details/books/calculus-volume-1',
+    credibility: 'Peer-reviewed, free textbooks from Rice University.',
+    type: 'Free Textbook'
+  },
+  {
+    id: 'openstax-3',
+    topic: 'Physics',
+    category: 'Physics',
+    title: 'OpenStax: University Physics (3 volumes)',
+    description: 'Comprehensive free physics textbook covering mechanics, E&M, and modern physics.',
+    keywords: ['physics', 'textbook', 'free', 'openstax', 'mechanics', 'electromagnetism', 'quantum'],
+    source: 'OpenStax',
+    sourceUrl: 'https://openstax.org/details/books/university-physics-volume-1',
+    credibility: 'Free, peer-reviewed physics textbook used at universities worldwide.',
+    type: 'Free Textbook'
+  },
+  {
+    id: 'openstax-4',
+    topic: 'Microeconomics',
+    category: 'Economics',
+    title: 'OpenStax: Principles of Economics',
+    description: 'Free economics textbook covering micro and macroeconomics principles.',
+    keywords: ['economics', 'textbook', 'free', 'openstax', 'microeconomics', 'macroeconomics'],
+    source: 'OpenStax',
+    sourceUrl: 'https://openstax.org/details/books/principles-economics-3e',
+    credibility: 'Peer-reviewed free textbook from OpenStax.',
+    type: 'Free Textbook'
+  },
+
+  // Additional Finance Topics
+  {
+    id: 'gs-banking-1',
+    topic: 'Banking',
+    category: 'Finance',
+    title: 'Google Scholar: Banking Research',
+    description: 'Academic papers on bank regulation, lending, monetary policy transmission, and financial stability.',
+    keywords: ['banking', 'bank regulation', 'lending', 'monetary policy', 'financial stability', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=banking+regulation+financial+stability',
+    credibility: 'Research from Journal of Banking & Finance, JFE, and other finance journals.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-corporate-1',
+    topic: 'Corporate Governance',
+    category: 'Finance',
+    title: 'Google Scholar: Corporate Governance Research',
+    description: 'Academic papers on board structure, executive compensation, shareholder rights, and agency theory.',
+    keywords: ['corporate governance', 'board', 'executive compensation', 'shareholder', 'agency', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=corporate+governance+board+structure',
+    credibility: 'Peer-reviewed corporate governance research.',
+    type: 'Academic Database'
+  },
+  {
+    id: 'gs-ipo-1',
+    topic: 'IPO and Capital Markets',
+    category: 'Finance',
+    title: 'Google Scholar: IPO Research',
+    description: 'Academic papers on IPO underpricing, SEOs, capital raising, and market microstructure.',
+    keywords: ['ipo', 'underpricing', 'capital markets', 'seo', 'equity issuance', 'academic'],
+    source: 'Google Scholar',
+    sourceUrl: 'https://scholar.google.com/scholar?q=ipo+underpricing+capital+markets',
+    credibility: 'Research from top finance and accounting journals.',
+    type: 'Academic Database'
+  },
+
+  // CFA Institute Resources
+  {
+    id: 'cfa-1',
+    topic: 'Investment Management',
+    category: 'Finance',
+    title: 'CFA Institute Research Foundation',
+    description: 'Professional research publications on portfolio management, ethics, and investment practices.',
+    keywords: ['cfa', 'investment', 'portfolio', 'professional', 'ethics', 'research'],
+    source: 'CFA Institute',
+    sourceUrl: 'https://www.cfainstitute.org/research/foundation',
+    credibility: 'CFA Institute is the global association of investment professionals.',
+    type: 'Professional Research'
+  },
+
+  // Federal Reserve Research
+  {
+    id: 'fed-1',
+    topic: 'Monetary Economics',
+    category: 'Economics',
+    title: 'Federal Reserve Research Papers',
+    description: 'Working papers on monetary policy, financial markets, and economic analysis.',
+    keywords: ['federal reserve', 'monetary policy', 'interest rates', 'fed', 'central bank', 'research'],
+    source: 'Federal Reserve',
+    sourceUrl: 'https://www.federalreserve.gov/econres/feds/index.htm',
+    credibility: 'Research from the U.S. central bank economists.',
+    type: 'Government Research'
+  },
+
+  // World Bank Research
+  {
+    id: 'worldbank-1',
+    topic: 'Development Economics',
+    category: 'Economics',
+    title: 'World Bank Research Papers',
+    description: 'Working papers on development, poverty, growth, and global economic issues.',
+    keywords: ['world bank', 'development', 'poverty', 'growth', 'international', 'research'],
+    source: 'World Bank',
+    sourceUrl: 'https://www.worldbank.org/en/research',
+    credibility: 'Research from World Bank economists on global development.',
+    type: 'International Organization'
+  },
+
+  // IMF Research
+  {
+    id: 'imf-1',
+    topic: 'International Finance',
+    category: 'Economics',
+    title: 'IMF Working Papers',
+    description: 'Research on international monetary systems, exchange rates, and global financial stability.',
+    keywords: ['imf', 'international', 'exchange rate', 'monetary', 'global', 'research'],
+    source: 'International Monetary Fund',
+    sourceUrl: 'https://www.imf.org/en/Publications/WP',
+    credibility: 'Research from IMF economists on global finance.',
+    type: 'International Organization'
   }
 ];
 
@@ -535,7 +1007,14 @@ const typeColors = {
   'Professional Certification Material': 'bg-teal-900/30 text-teal-400 border-teal-700',
   'Academic Lecture': 'bg-rose-900/30 text-rose-400 border-rose-700',
   'University Course': 'bg-violet-900/30 text-violet-400 border-violet-700',
-  'Online Course': 'bg-pink-900/30 text-pink-400 border-pink-700'
+  'Online Course': 'bg-pink-900/30 text-pink-400 border-pink-700',
+  'Academic Database': 'bg-yellow-900/30 text-yellow-400 border-yellow-700',
+  'Preprint Server': 'bg-lime-900/30 text-lime-400 border-lime-700',
+  'Working Papers': 'bg-fuchsia-900/30 text-fuchsia-400 border-fuchsia-700',
+  'Free Textbook': 'bg-sky-900/30 text-sky-400 border-sky-700',
+  'Professional Research': 'bg-teal-900/30 text-teal-400 border-teal-700',
+  'Government Research': 'bg-amber-900/30 text-amber-400 border-amber-700',
+  'International Organization': 'bg-emerald-900/30 text-emerald-400 border-emerald-700'
 };
 
 // Search function
