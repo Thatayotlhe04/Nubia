@@ -8,6 +8,7 @@ import Examples from './pages/Examples';
 import Uploads from './pages/Uploads';
 import Resources from './pages/Resources';
 import Search from './pages/Search';
+import PDFSummarizer from './pages/PDFSummarizer';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="uploads" element={<Uploads />} />
         <Route path="resources" element={<Resources />} />
         <Route path="search" element={<Search />} />
+        <Route path="summarizer" element={<PDFSummarizer />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
