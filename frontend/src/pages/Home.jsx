@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useOutletContext } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // Nubia Logo Component - Pulse/Heartbeat style
 export function NubiaLogo({ className = "w-8 h-8" }) {
@@ -77,31 +77,12 @@ function ReviewCard({ name, course, text, date }) {
   );
 }
 
-// Default topics when backend is unavailable
-const defaultTopics = [
-  { id: 'time-value-of-money', title: 'Time Value of Money', description: 'Understanding present value, future value, and the fundamental principle that money today is worth more than the same amount in the future.', category: 'core-concepts' },
-  { id: 'compound-interest', title: 'Compound Interest', description: 'Learn how interest accumulates on both principal and previously earned interest over time.', category: 'core-concepts' },
-  { id: 'present-value', title: 'Present Value', description: 'Calculate the current worth of future cash flows discounted at an appropriate rate.', category: 'core-concepts' },
-  { id: 'future-value', title: 'Future Value', description: 'Determine the value of current assets at a specified date in the future based on an assumed growth rate.', category: 'core-concepts' },
-  { id: 'annuities', title: 'Annuities', description: 'Analyze series of equal payments made at regular intervals, including ordinary annuities and annuities due.', category: 'core-concepts' },
-  { id: 'perpetuities', title: 'Perpetuities', description: 'Value infinite streams of equal periodic payments.', category: 'core-concepts' },
-  { id: 'net-present-value', title: 'Net Present Value (NPV)', description: 'Evaluate investment opportunities by calculating the difference between present value of cash inflows and outflows.', category: 'capital-budgeting' },
-  { id: 'internal-rate-of-return', title: 'Internal Rate of Return (IRR)', description: 'Find the discount rate that makes the NPV of an investment equal to zero.', category: 'capital-budgeting' },
-  { id: 'bond-valuation', title: 'Bond Valuation', description: 'Calculate the fair price of bonds using present value of future coupon payments and face value.', category: 'fixed-income' },
-  { id: 'stock-valuation', title: 'Stock Valuation', description: 'Value equity securities using dividend discount models and other approaches.', category: 'equity' },
-  { id: 'capm', title: 'Capital Asset Pricing Model (CAPM)', description: 'Understand the relationship between systematic risk and expected return for assets.', category: 'risk-return' },
-  { id: 'portfolio-theory', title: 'Portfolio Theory', description: 'Learn how to construct optimal portfolios that maximize return for a given level of risk.', category: 'risk-return' },
-];
+
 
 function Home() {
-  const { topics: backendTopics } = useOutletContext();
   const [reviewText, setReviewText] = useState('');
   const [reviews, setReviews] = useState([]);
   const [submitStatus, setSubmitStatus] = useState('');
-  const [topicsExpanded, setTopicsExpanded] = useState(false);
-
-  // Use backend topics if available, otherwise use defaults
-  const topics = (backendTopics && backendTopics.length > 0) ? backendTopics : defaultTopics;
 
   // Load user reviews from localStorage on mount
   useEffect(() => {
@@ -115,23 +96,6 @@ function Home() {
       }
     }
   }, []);
-
-  // Group topics by category
-  const groupedTopics = (topics || []).reduce((acc, topic) => {
-    const category = topic.category || 'general';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(topic);
-    return acc;
-  }, {});
-
-  const formatCategory = (category) => {
-    return category
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
 
   const handleReviewSubmit = (e) => {
     e.preventDefault();
@@ -472,68 +436,6 @@ function Home() {
             Use the feedback form available on each topic page to submit your observations. 
             Constructive feedback contributes to gradual, meaningful improvements.
           </p>
-        </div>
-      </Section>
-
-      {/* Topic listing - Collapsible */}
-      <Section id="topics" title="Available Topics">
-        <div>
-          <button
-            onClick={() => setTopicsExpanded(!topicsExpanded)}
-            className="flex items-center gap-2 text-nubia-accent hover:text-nubia-accent/80 transition-colors mb-4"
-          >
-            <svg 
-              className={`w-5 h-5 transform transition-transform ${topicsExpanded ? 'rotate-90' : ''}`} 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-            <span className="font-sans text-sm font-medium">
-              {topicsExpanded ? 'Hide Topics' : `Show ${topics.length} Available Topics`}
-            </span>
-          </button>
-          
-          {topicsExpanded && (
-            Object.keys(groupedTopics).length === 0 ? (
-              <div className="py-12 text-center">
-                <p className="nubia-caption">Loading topics...</p>
-              </div>
-            ) : (
-              <div className="space-y-8 animate-fade-in">
-                {Object.entries(groupedTopics).map(([category, categoryTopics]) => (
-                  <div key={category}>
-                    <h3 className="font-sans text-sm font-semibold text-nubia-text-muted uppercase tracking-wider mb-4">
-                      {formatCategory(category)}
-                    </h3>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      {categoryTopics.map(topic => (
-                        <Link
-                          key={topic.id}
-                          to={`/topic/${topic.id}`}
-                          className="group nubia-card p-5 hover:border-nubia-border-strong transition-colors"
-                        >
-                          <h4 className="font-sans text-base font-medium text-nubia-text group-hover:text-nubia-accent transition-colors">
-                            {topic.title}
-                          </h4>
-                          <p className="mt-2 font-serif text-sm text-nubia-text-secondary line-clamp-2">
-                            {topic.description}
-                          </p>
-                          <span className="mt-3 inline-flex items-center gap-1 font-sans text-sm text-nubia-accent opacity-0 group-hover:opacity-100 transition-opacity">
-                            Study topic
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )
-          )}
         </div>
       </Section>
 
