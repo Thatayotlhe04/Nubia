@@ -245,37 +245,78 @@ function Home() {
   const [reviewText, setReviewText] = useState('');
   const [reviews, setReviews] = useState([]);
   const [submitStatus, setSubmitStatus] = useState('');
+  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Load reviews from localStorage on mount
+  // Load reviews from API on mount
   useEffect(() => {
-    const savedReviews = localStorage.getItem('nubia-reviews');
-    if (savedReviews) {
+    const fetchReviews = async () => {
       try {
-        const parsed = JSON.parse(savedReviews);
-        setReviews(parsed);
-      } catch (e) {
-        console.error('Error loading reviews:', e);
+        const response = await fetch('/api/reviews');
+        if (response.ok) {
+          const data = await response.json();
+          setReviews(data.reviews || []);
+        }
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+        // Fallback to localStorage if API fails
+        const savedReviews = localStorage.getItem('nubia-reviews');
+        if (savedReviews) {
+          try {
+            setReviews(JSON.parse(savedReviews));
+          } catch (e) {
+            console.error('Error loading local reviews:', e);
+          }
+        }
+      } finally {
+        setIsLoadingReviews(false);
       }
-    }
+    };
+    fetchReviews();
   }, []);
 
-  const handleReviewSubmit = (e) => {
+  const handleReviewSubmit = async (e) => {
     e.preventDefault();
-    if (reviewText.trim()) {
-      const newReview = {
-        id: Date.now(),
-        name: 'Anonymous',
-        course: 'UB Student',
-        text: reviewText,
-        date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-      };
-      const updatedReviews = [newReview, ...reviews];
-      setReviews(updatedReviews);
-      // Save to localStorage
-      localStorage.setItem('nubia-reviews', JSON.stringify(updatedReviews));
-      setReviewText('');
-      setSubmitStatus('Thank you for your feedback!');
-      setTimeout(() => setSubmitStatus(''), 3000);
+    if (reviewText.trim() && !isSubmitting) {
+      setIsSubmitting(true);
+      try {
+        const response = await fetch('/api/reviews', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: reviewText,
+            name: 'Anonymous',
+            course: 'UB Student'
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setReviews(prev => [data.review, ...prev]);
+          setReviewText('');
+          setSubmitStatus('Thank you! Your review is now public.');
+        } else {
+          throw new Error('Failed to submit');
+        }
+      } catch (error) {
+        console.error('Error submitting review:', error);
+        // Fallback to localStorage
+        const newReview = {
+          id: Date.now(),
+          name: 'Anonymous',
+          course: 'UB Student',
+          text: reviewText,
+          date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+        };
+        const updatedReviews = [newReview, ...reviews];
+        setReviews(updatedReviews);
+        localStorage.setItem('nubia-reviews', JSON.stringify(updatedReviews));
+        setReviewText('');
+        setSubmitStatus('Saved locally (server unavailable)');
+      } finally {
+        setIsSubmitting(false);
+        setTimeout(() => setSubmitStatus(''), 4000);
+      }
     }
   };
 
@@ -619,19 +660,40 @@ function Home() {
               <div className="flex items-center justify-between">
                 <button
                   type="submit"
-                  className="px-4 py-2 font-sans text-sm font-medium text-white bg-nubia-accent rounded-lg hover:bg-nubia-accent-hover transition-colors"
+                  disabled={isSubmitting}
+                  className="px-4 py-2 font-sans text-sm font-medium text-white bg-nubia-accent rounded-lg hover:bg-nubia-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  Submit Anonymously
+                  {isSubmitting ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Submitting...
+                    </>
+                  ) : (
+                    'Submit Anonymously'
+                  )}
                 </button>
                 {submitStatus && (
-                  <span className="font-sans text-sm text-green-600">{submitStatus}</span>
+                  <span className={`font-sans text-sm ${submitStatus.includes('unavailable') ? 'text-yellow-600' : 'text-green-600'}`}>{submitStatus}</span>
                 )}
               </div>
             </form>
           </div>
           
           {/* Reviews List - Horizontal Scroll */}
-          {reviews.length === 0 ? (
+          {isLoadingReviews ? (
+            <div className="nubia-card p-6 text-center">
+              <div className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5 text-nubia-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p className="font-sans text-sm text-nubia-text-muted">Loading reviews...</p>
+              </div>
+            </div>
+          ) : reviews.length === 0 ? (
             <div className="nubia-card p-6 text-center">
               <p className="font-sans text-sm text-nubia-text-muted">
                 No reviews yet. Be the first to share your experience!
