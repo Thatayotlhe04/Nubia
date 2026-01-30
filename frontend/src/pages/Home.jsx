@@ -50,6 +50,16 @@ function StackingFeatureCards({ features }) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Card color palette - subtle, complementary colors that match the UI
+  const cardColors = [
+    { bg: 'bg-gradient-to-br from-slate-50 to-slate-100', border: 'border-slate-200', icon: 'bg-slate-100 text-slate-600' },
+    { bg: 'bg-gradient-to-br from-stone-50 to-stone-100', border: 'border-stone-200', icon: 'bg-stone-100 text-stone-600' },
+    { bg: 'bg-gradient-to-br from-zinc-50 to-zinc-100', border: 'border-zinc-200', icon: 'bg-zinc-100 text-zinc-600' },
+    { bg: 'bg-gradient-to-br from-neutral-50 to-neutral-100', border: 'border-neutral-200', icon: 'bg-neutral-100 text-neutral-600' },
+    { bg: 'bg-gradient-to-br from-gray-50 to-gray-100', border: 'border-gray-200', icon: 'bg-gray-100 text-gray-600' },
+    { bg: 'bg-gradient-to-br from-slate-50 to-stone-50', border: 'border-slate-200', icon: 'bg-slate-100 text-slate-600' },
+  ];
+
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -67,13 +77,12 @@ function StackingFeatureCards({ features }) {
       const rect = container.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       
-      // Calculate how far through the container we've scrolled
+      // Smoother scroll tracking
       const containerTop = rect.top;
       const containerHeight = rect.height;
       
-      // Start animation when container enters viewport
-      const scrollStart = windowHeight * 0.8;
-      const scrollEnd = -containerHeight + windowHeight * 0.2;
+      const scrollStart = windowHeight * 0.7;
+      const scrollEnd = -containerHeight + windowHeight * 0.3;
       
       if (containerTop <= scrollStart && containerTop >= scrollEnd) {
         const progress = (scrollStart - containerTop) / (scrollStart - scrollEnd);
@@ -86,24 +95,42 @@ function StackingFeatureCards({ features }) {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial check
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile]);
 
-  // Desktop: render as normal grid
+  // Desktop: render as normal grid with colored cards
   if (!isMobile) {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6">
-        {features.map((feature, index) => (
-          <FeatureCard key={index} icon={feature.icon} title={feature.title}>
-            {feature.description}
-          </FeatureCard>
-        ))}
+        {features.map((feature, index) => {
+          const colors = cardColors[index % cardColors.length];
+          return (
+            <div 
+              key={index} 
+              className={`${colors.bg} ${colors.border} border rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300`}
+            >
+              <div className="flex items-start gap-4">
+                <div className={`flex-shrink-0 w-10 h-10 rounded-lg ${colors.icon} flex items-center justify-center`}>
+                  {feature.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-sans text-base font-semibold text-nubia-text mb-2">
+                    {feature.title}
+                  </h3>
+                  <div className="font-serif text-sm text-nubia-text-secondary leading-relaxed">
+                    {feature.description}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
   }
 
-  // Mobile: stacking cards animation
+  // Mobile: improved stacking cards animation
   const cardCount = features.length;
   const progressPerCard = 1 / cardCount;
 
@@ -111,66 +138,75 @@ function StackingFeatureCards({ features }) {
     <div 
       ref={containerRef}
       className="relative mb-6"
-      style={{ height: `${cardCount * 180 + 200}px` }} // Extra height for scroll room
+      style={{ height: `${cardCount * 160 + 250}px` }}
     >
-      <div className="sticky top-24" style={{ height: '320px' }}>
+      <div className="sticky top-20" style={{ height: '300px' }}>
         {features.map((feature, index) => {
-          // Calculate individual card progress
+          const colors = cardColors[index % cardColors.length];
+          
+          // Smoother progress calculation
           const cardStart = index * progressPerCard;
           const cardEnd = (index + 1) * progressPerCard;
-          const cardProgress = Math.max(0, Math.min(1, (scrollProgress - cardStart) / progressPerCard));
+          const rawProgress = (scrollProgress - cardStart) / progressPerCard;
+          const cardProgress = Math.max(0, Math.min(1, rawProgress));
           
-          // Is this card the active one?
           const isActive = scrollProgress >= cardStart && scrollProgress < cardEnd;
           const isPast = scrollProgress >= cardEnd;
           const isFuture = scrollProgress < cardStart;
           
-          // Calculate transforms
+          // Smooth easing function
+          const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+          const easedProgress = easeOut(cardProgress);
+          
+          // Calculate transforms with smoother values
           let translateY = 0;
           let scale = 1;
           let opacity = 1;
           let zIndex = cardCount - index;
+          let blur = 0;
 
           if (isFuture) {
-            // Cards below: start off-screen but visible
-            translateY = 100 + (index * 15);
-            scale = 0.98;
-            opacity = 0.5;
+            // Future cards: positioned below, waiting
+            const futureIndex = index - Math.floor(scrollProgress / progressPerCard);
+            translateY = 60 + (futureIndex * 8);
+            scale = 0.95;
+            opacity = 0.4;
+            blur = 1;
           } else if (isActive) {
-            // Active card: animate in at full opacity
-            translateY = (1 - cardProgress) * 60;
-            scale = 0.98 + (cardProgress * 0.02);
-            opacity = 0.7 + (cardProgress * 0.3);
-            zIndex = cardCount + 1;
+            // Active card: smoothly animate into view
+            translateY = (1 - easedProgress) * 50;
+            scale = 0.95 + (easedProgress * 0.05);
+            opacity = 0.6 + (easedProgress * 0.4);
+            zIndex = cardCount + 10;
+            blur = (1 - easedProgress) * 1;
           } else if (isPast) {
-            // Past cards: stack up with minimal fade
-            const cardsAbove = features.slice(index + 1).filter((_, i) => 
-              scrollProgress >= (index + 1 + i) * progressPerCard
-            ).length;
-            
-            translateY = -6 * (cardsAbove + 1);
-            scale = 1 - (0.015 * (cardsAbove + 1));
-            opacity = 1 - (0.05 * (cardsAbove + 1)); // Much less fade
-            zIndex = cardCount - index - cardsAbove;
+            // Past cards: neatly stacked with subtle depth
+            const stackIndex = Math.floor(scrollProgress / progressPerCard) - index - 1;
+            translateY = -(stackIndex + 1) * 4;
+            scale = 1 - ((stackIndex + 1) * 0.02);
+            opacity = 1 - ((stackIndex + 1) * 0.08);
+            zIndex = cardCount - stackIndex;
           }
 
           return (
             <div
               key={index}
-              className="absolute inset-x-0 transition-all duration-300 ease-out"
+              className="absolute inset-x-2 will-change-transform"
               style={{
                 transform: `translateY(${translateY}px) scale(${scale})`,
-                opacity: Math.max(0.75, opacity),
+                opacity: Math.max(0.6, Math.min(1, opacity)),
                 zIndex,
+                filter: blur > 0 ? `blur(${blur}px)` : 'none',
+                transition: 'transform 0.15s ease-out, opacity 0.15s ease-out, filter 0.15s ease-out',
               }}
             >
-              <div className="nubia-card p-5 mx-1 shadow-lg">
+              <div className={`${colors.bg} ${colors.border} border rounded-xl p-5 shadow-lg`}>
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-nubia-surface-alt flex items-center justify-center text-nubia-accent">
+                  <div className={`flex-shrink-0 w-10 h-10 rounded-lg ${colors.icon} flex items-center justify-center`}>
                     {feature.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-sans text-base font-medium text-nubia-text mb-2">
+                    <h3 className="font-sans text-base font-semibold text-nubia-text mb-2">
                       {feature.title}
                     </h3>
                     <div className="font-serif text-sm text-nubia-text-secondary leading-relaxed">
@@ -184,8 +220,8 @@ function StackingFeatureCards({ features }) {
         })}
       </div>
       
-      {/* Progress indicator */}
-      <div className="fixed right-3 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-1.5">
+      {/* Improved progress indicator */}
+      <div className="fixed right-4 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-2">
         {features.map((_, index) => {
           const cardStart = index * progressPerCard;
           const isActive = scrollProgress >= cardStart && scrollProgress < (index + 1) * progressPerCard;
@@ -194,9 +230,12 @@ function StackingFeatureCards({ features }) {
           return (
             <div
               key={index}
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${
-                isActive ? 'bg-nubia-accent scale-125' : 
-                isPast ? 'bg-nubia-accent/60' : 'bg-nubia-border'
+              className={`rounded-full transition-all duration-300 ${
+                isActive 
+                  ? 'w-2 h-2 bg-nubia-accent shadow-sm' 
+                  : isPast 
+                    ? 'w-1.5 h-1.5 bg-nubia-accent/50' 
+                    : 'w-1.5 h-1.5 bg-nubia-border'
               }`}
             />
           );
