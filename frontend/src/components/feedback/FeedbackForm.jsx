@@ -3,6 +3,8 @@ import { submitFeedback } from '../../utils/api';
 
 function FeedbackForm({ pageContext }) {
   const [message, setMessage] = useState('');
+  const [email, setEmail] = useState('');
+  const [wantsReply, setWantsReply] = useState(false);
   const [status, setStatus] = useState('idle'); // idle, submitting, success, error
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -14,9 +16,11 @@ function FeedbackForm({ pageContext }) {
     setStatus('submitting');
     
     try {
-      await submitFeedback(message, pageContext);
+      await submitFeedback(message, pageContext, wantsReply ? email : null);
       setStatus('success');
       setMessage('');
+      setEmail('');
+      setWantsReply(false);
       setTimeout(() => {
         setStatus('idle');
         setIsExpanded(false);
@@ -58,6 +62,33 @@ function FeedbackForm({ pageContext }) {
             disabled={status === 'submitting'}
           />
           
+          {/* Optional email for reply */}
+          <div className="mt-3">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={wantsReply}
+                onChange={(e) => setWantsReply(e.target.checked)}
+                className="w-4 h-4 rounded border-nubia-border text-nubia-accent focus:ring-nubia-accent"
+                disabled={status === 'submitting'}
+              />
+              <span className="font-sans text-sm text-nubia-text-secondary">
+                I'd like to receive a reply
+              </span>
+            </label>
+            
+            {wantsReply && (
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your.email@example.com"
+                className="mt-2 w-full px-3 py-2 text-sm border border-nubia-border rounded-lg bg-nubia-surface focus:outline-none focus:ring-1 focus:ring-nubia-accent"
+                disabled={status === 'submitting'}
+              />
+            )}
+          </div>
+          
           <div className="mt-3 flex items-center justify-between">
             <span className="font-sans text-xs text-nubia-text-muted">
               {message.length}/2000 characters
@@ -69,6 +100,8 @@ function FeedbackForm({ pageContext }) {
                 onClick={() => {
                   setIsExpanded(false);
                   setMessage('');
+                  setEmail('');
+                  setWantsReply(false);
                 }}
                 className="font-sans text-sm text-nubia-text-muted hover:text-nubia-text transition-colors"
                 disabled={status === 'submitting'}
@@ -79,7 +112,7 @@ function FeedbackForm({ pageContext }) {
               <button
                 type="submit"
                 className="nubia-button"
-                disabled={!message.trim() || status === 'submitting'}
+                disabled={!message.trim() || status === 'submitting' || (wantsReply && !email.trim())}
               >
                 {status === 'submitting' ? 'Sending...' : 'Send Feedback'}
               </button>
@@ -90,7 +123,7 @@ function FeedbackForm({ pageContext }) {
           {status === 'success' && (
             <div className="mt-3 p-3 bg-nubia-success-subtle border border-nubia-success/20 rounded-md animate-fade-in">
               <p className="font-sans text-sm text-nubia-success">
-                Thank you for your feedback! It helps us improve Nubia.
+                Thank you for your feedback! {wantsReply ? "We'll reply to your email soon." : "It helps us improve Nubia."}
               </p>
             </div>
           )}
