@@ -1,7 +1,7 @@
 {
   "name": "nubia",
   "version": "1.0.0",
-  "description": "A finance study companion for Motswana university students",
+  "description": "A finance study companion for Batswana university students",
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
