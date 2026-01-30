@@ -281,7 +281,7 @@ function MenuDrawer({ isOpen, onClose, topics = [], loading = false }) {
                 <span className="text-[10px] text-nubia-text-muted">v1.0.0</span>
               </div>
               <p className="text-[10px] text-nubia-text-muted text-center mt-2">
-                © 2026 Nubia • Built for UB Students
+                © 2026 Nubia • Built for University Students
               </p>
             </div>
           </div>
