@@ -383,7 +383,7 @@ function Home() {
       <Section id="study-environment" title="A Complete Study Environment">
         <div className="nubia-prose mb-6">
           <p>
-            Nubia centralizes everything you need to master finance coursework at the University of Botswana. 
+            Nubia centralizes everything you need to master finance and finance related coursework at the University level of education. 
             Rather than piecing together resources from scattered websites, you can access all essential 
             study materials from a single, reliable platform.
           </p>
