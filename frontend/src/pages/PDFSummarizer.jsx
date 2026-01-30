@@ -11,40 +11,75 @@ function PDFSummarizer() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [progress, setProgress] = useState({ stage: '', percent: 0 });
   const fileInputRef = useRef(null);
 
-  // Extract text from PDF
-  const extractTextFromPDF = async (file) => {
+  // Optimized parallel text extraction from PDF
+  const extractTextFromPDF = async (file, onProgress) => {
     const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    let fullText = '';
+    onProgress?.('Loading PDF...', 5);
     
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const textContent = await page.getTextContent();
-      const pageText = textContent.items.map(item => item.str).join(' ');
-      fullText += pageText + '\n\n';
+    const pdf = await pdfjsLib.getDocument({ 
+      data: arrayBuffer,
+      useWorkerFetch: true,
+      isEvalSupported: true,
+      useSystemFonts: true
+    }).promise;
+    
+    const numPages = pdf.numPages;
+    onProgress?.('Extracting text...', 10);
+    
+    // Process pages in parallel batches for speed
+    const BATCH_SIZE = 5;
+    const pageTexts = new Array(numPages).fill('');
+    
+    for (let batchStart = 0; batchStart < numPages; batchStart += BATCH_SIZE) {
+      const batchEnd = Math.min(batchStart + BATCH_SIZE, numPages);
+      const batchPromises = [];
+      
+      for (let i = batchStart; i < batchEnd; i++) {
+        batchPromises.push(
+          pdf.getPage(i + 1).then(async (page) => {
+            const textContent = await page.getTextContent();
+            return {
+              index: i,
+              text: textContent.items.map(item => item.str).join(' ')
+            };
+          })
+        );
+      }
+      
+      const batchResults = await Promise.all(batchPromises);
+      batchResults.forEach(({ index, text }) => {
+        pageTexts[index] = text;
+      });
+      
+      // Update progress
+      const percentComplete = 10 + Math.round((batchEnd / numPages) * 70);
+      onProgress?.(`Extracting page ${batchEnd} of ${numPages}...`, percentComplete);
     }
     
-    return fullText;
+    return pageTexts.join('\n\n');
   };
 
-  // Generate summary from extracted text
-  const generateSummary = (text) => {
+  // Optimized summary generation with chunking
+  const generateSummary = (text, onProgress) => {
+    onProgress?.('Analyzing content...', 85);
+    
     // Clean and normalize the text
     const cleanText = text
       .replace(/\s+/g, ' ')
       .replace(/\n+/g, '\n')
       .trim();
 
-    // Split into sentences
+    // Split into sentences more efficiently
     const sentences = cleanText.match(/[^.!?]+[.!?]+/g) || [];
     
-    // Extract key information
-    const wordFrequency = {};
-    const words = cleanText.toLowerCase().match(/\b[a-z]{4,}\b/g) || [];
+    onProgress?.('Identifying keywords...', 90);
     
-    // Common stop words to ignore
+    // Extract words and build frequency map in one pass
+    const wordFrequency = {};
+    const words = [];
     const stopWords = new Set([
       'this', 'that', 'these', 'those', 'have', 'been', 'were', 'will', 'would', 'could',
       'should', 'being', 'which', 'their', 'there', 'where', 'when', 'what', 'about',
@@ -52,11 +87,16 @@ function PDFSummarizer() {
       'some', 'such', 'only', 'other', 'each', 'very', 'just', 'over', 'after', 'before'
     ]);
 
-    words.forEach(word => {
+    // Use regex exec for better performance on large texts
+    const wordRegex = /\b[a-z]{4,}\b/gi;
+    let match;
+    while ((match = wordRegex.exec(cleanText)) !== null) {
+      const word = match[0].toLowerCase();
+      words.push(word);
       if (!stopWords.has(word)) {
         wordFrequency[word] = (wordFrequency[word] || 0) + 1;
       }
-    });
+    }
 
     // Get top keywords
     const sortedWords = Object.entries(wordFrequency)
@@ -64,21 +104,23 @@ function PDFSummarizer() {
       .slice(0, 15)
       .map(([word]) => word);
 
-    // Score sentences based on keyword presence
-    const scoredSentences = sentences.map((sentence, index) => {
-      const sentenceWords = sentence.toLowerCase().match(/\b[a-z]+\b/g) || [];
+    onProgress?.('Generating summary...', 95);
+
+    // Create keyword set for O(1) lookup
+    const keywordSet = new Set(sortedWords);
+
+    // Score sentences - optimized with Set lookup
+    const scoredSentences = sentences.slice(0, 500).map((sentence, index) => {
+      const sentenceWords = new Set(sentence.toLowerCase().match(/\b[a-z]+\b/g) || []);
       let score = 0;
       
       sortedWords.forEach((keyword, keyIndex) => {
-        if (sentenceWords.includes(keyword)) {
-          score += (15 - keyIndex); // Higher weight for more frequent keywords
+        if (sentenceWords.has(keyword)) {
+          score += (15 - keyIndex);
         }
       });
       
-      // Boost first few sentences (usually important)
       if (index < 3) score += 5;
-      
-      // Penalize very short or very long sentences
       if (sentence.length < 30 || sentence.length > 400) score -= 3;
       
       return { sentence: sentence.trim(), score, index };
@@ -88,10 +130,10 @@ function PDFSummarizer() {
     const topSentences = scoredSentences
       .sort((a, b) => b.score - a.score)
       .slice(0, 5)
-      .sort((a, b) => a.index - b.index) // Restore original order
+      .sort((a, b) => a.index - b.index)
       .map(s => s.sentence);
 
-    // Extract key points (sentences with keywords and important patterns)
+    // Extract key points with pattern matching
     const keyPointPatterns = [
       /important|key|main|primary|essential|critical|significant|major/i,
       /definition|defined as|refers to|means|is called/i,
@@ -102,20 +144,17 @@ function PDFSummarizer() {
     ];
 
     const keyPoints = sentences
+      .slice(0, 300) // Limit for performance
       .filter(sentence => {
-        const hasKeyword = sortedWords.some(kw => 
-          sentence.toLowerCase().includes(kw)
-        );
-        const hasPattern = keyPointPatterns.some(pattern => 
-          pattern.test(sentence)
-        );
+        const lowerSentence = sentence.toLowerCase();
+        const hasKeyword = sortedWords.some(kw => lowerSentence.includes(kw));
+        const hasPattern = keyPointPatterns.some(pattern => pattern.test(sentence));
         return (hasKeyword && sentence.length > 40) || hasPattern;
       })
       .slice(0, 8)
       .map(s => s.trim());
 
-    // Identify potential topics/sections
-    const topics = [];
+    // Identify topics/sections
     const topicPatterns = [
       /^[A-Z][A-Za-z\s]{2,30}:/,
       /^\d+\.\s+[A-Z]/,
@@ -124,26 +163,25 @@ function PDFSummarizer() {
       /^Section\s+\d+/i
     ];
 
-    sentences.forEach(sentence => {
-      if (topicPatterns.some(pattern => pattern.test(sentence.trim()))) {
-        topics.push(sentence.trim().slice(0, 60));
-      }
-    });
+    const topics = sentences
+      .slice(0, 200)
+      .filter(sentence => topicPatterns.some(pattern => pattern.test(sentence.trim())))
+      .map(s => s.trim().slice(0, 60))
+      .slice(0, 5);
 
-    // Calculate statistics
-    const stats = {
-      totalWords: words.length,
-      totalSentences: sentences.length,
-      totalPages: Math.ceil(cleanText.length / 3000), // Rough estimate
-      avgWordsPerSentence: Math.round(words.length / sentences.length) || 0
-    };
+    onProgress?.('Complete!', 100);
 
     return {
       overview: topSentences.join(' '),
       keyPoints: keyPoints.length > 0 ? keyPoints : topSentences.slice(0, 4),
       keywords: sortedWords.slice(0, 10),
-      topics: topics.slice(0, 5),
-      stats
+      topics,
+      stats: {
+        totalWords: words.length,
+        totalSentences: sentences.length,
+        totalPages: Math.ceil(cleanText.length / 3000),
+        avgWordsPerSentence: Math.round(words.length / sentences.length) || 0
+      }
     };
   };
 
@@ -157,9 +195,13 @@ function PDFSummarizer() {
     setError(null);
     setIsProcessing(true);
     setSummary(null);
+    setProgress({ stage: 'Starting...', percent: 0 });
 
     try {
-      const text = await extractTextFromPDF(selectedFile);
+      const text = await extractTextFromPDF(selectedFile, (stage, percent) => {
+        setProgress({ stage, percent });
+      });
+      
       setExtractedText(text);
       
       if (text.trim().length < 100) {
@@ -168,13 +210,20 @@ function PDFSummarizer() {
         return;
       }
 
-      const generatedSummary = generateSummary(text);
+      // Use requestIdleCallback or setTimeout to avoid blocking
+      await new Promise(resolve => setTimeout(resolve, 10));
+      
+      const generatedSummary = generateSummary(text, (stage, percent) => {
+        setProgress({ stage, percent });
+      });
+      
       setSummary(generatedSummary);
     } catch (err) {
       console.error('PDF processing error:', err);
       setError('Error processing PDF. Please try another file.');
     } finally {
       setIsProcessing(false);
+      setProgress({ stage: '', percent: 0 });
     }
   }, []);
 
@@ -273,10 +322,21 @@ function PDFSummarizer() {
 
       {/* Processing State */}
       {isProcessing && (
-        <div className="mt-6 text-center py-12 bg-nubia-surface border border-nubia-border rounded-lg">
-          <div className="animate-spin w-12 h-12 border-4 border-nubia-accent border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-nubia-text font-medium">Analyzing your PDF...</p>
-          <p className="text-sm text-nubia-text-muted mt-1">Extracting text and generating summary</p>
+        <div className="mt-6 py-12 bg-nubia-surface border border-nubia-border rounded-lg">
+          <div className="max-w-xs mx-auto">
+            {/* Progress bar */}
+            <div className="h-2 bg-nubia-surface-alt rounded-full overflow-hidden mb-4">
+              <div 
+                className="h-full bg-nubia-accent transition-all duration-300 ease-out"
+                style={{ width: `${progress.percent}%` }}
+              />
+            </div>
+            
+            <div className="text-center">
+              <p className="text-nubia-text font-medium">{progress.stage || 'Processing...'}</p>
+              <p className="text-sm text-nubia-text-muted mt-1">{progress.percent}% complete</p>
+            </div>
+          </div>
         </div>
       )}
 
