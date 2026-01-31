@@ -21,22 +21,43 @@ export default async function handler(req, res) {
   // GET - Fetch all reviews
   if (req.method === 'GET') {
     try {
-      const { data, error } = await supabase
+      // Fetch reviews
+      const { data: reviewsData, error: reviewsError } = await supabase
         .from('reviews')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(100);
 
-      if (error) throw error;
+      if (reviewsError) throw reviewsError;
+
+      // Fetch all replies
+      const { data: repliesData, error: repliesError } = await supabase
+        .from('review_replies')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (repliesError) throw repliesError;
+
+      // Group replies by review_id
+      const repliesByReview = (repliesData || []).reduce((acc, reply) => {
+        if (!acc[reply.review_id]) acc[reply.review_id] = [];
+        acc[reply.review_id].push({
+          id: reply.id,
+          text: reply.reply_text,
+          date: new Date(reply.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        });
+        return acc;
+      }, {});
 
       // Transform to match frontend format
-      const reviews = (data || []).map(r => ({
+      const reviews = (reviewsData || []).map(r => ({
         id: r.id,
         text: r.text,
         name: r.name || 'Anonymous',
         course: r.course || 'Student',
         date: new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        createdAt: r.created_at
+        createdAt: r.created_at,
+        replies: repliesByReview[r.id] || []
       }));
 
       return res.status(200).json({ reviews });

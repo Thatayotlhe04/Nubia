@@ -22,8 +22,22 @@ const reviewColors = [
   { bg: 'bg-purple-100', avatar: 'bg-purple-500', text: 'text-purple-900' },
 ];
 
-function ReviewCard({ name, course, text, date, index = 0 }) {
+function ReviewCard({ id, name, course, text, date, replies = [], index = 0, isAdmin, onReply }) {
   const colorScheme = reviewColors[index % reviewColors.length];
+  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [replyText, setReplyText] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleReplySubmit = async (e) => {
+    e.preventDefault();
+    if (replyText.trim() && !isSubmitting) {
+      setIsSubmitting(true);
+      await onReply(id, replyText);
+      setReplyText('');
+      setShowReplyForm(false);
+      setIsSubmitting(false);
+    }
+  };
   
   return (
     <div className={`${colorScheme.bg} rounded-xl p-4 md:p-5 border border-black/5 shadow-sm`}>
@@ -40,6 +54,63 @@ function ReviewCard({ name, course, text, date, index = 0 }) {
           </div>
           <p className="font-sans text-xs text-gray-600 mb-2 font-medium">{course}</p>
           <p className="font-serif text-sm text-gray-700 leading-relaxed">{text}</p>
+          
+          {/* Replies */}
+          {replies.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-black/10 space-y-2">
+              {replies.map((reply) => (
+                <div key={reply.id} className="bg-white/60 rounded-lg p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <NubiaLogo className="w-4 h-3 text-nubia-accent" />
+                    <span className="font-sans text-xs font-semibold text-nubia-accent">Nubia Team</span>
+                    <span className="font-sans text-xs text-gray-400">{reply.date}</span>
+                  </div>
+                  <p className="font-serif text-sm text-gray-700">{reply.text}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Admin Reply Button */}
+          {isAdmin && (
+            <div className="mt-3">
+              {!showReplyForm ? (
+                <button
+                  onClick={() => setShowReplyForm(true)}
+                  className="text-xs font-sans text-nubia-accent hover:text-nubia-accent-hover transition-colors"
+                >
+                  Reply
+                </button>
+              ) : (
+                <form onSubmit={handleReplySubmit} className="space-y-2">
+                  <textarea
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    placeholder="Write your reply..."
+                    className="w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:border-nubia-accent focus:outline-none resize-none"
+                    rows={2}
+                    maxLength={500}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      disabled={isSubmitting || !replyText.trim()}
+                      className="px-3 py-1 text-xs font-sans font-medium text-white bg-nubia-accent rounded hover:bg-nubia-accent-hover disabled:opacity-50 transition-colors"
+                    >
+                      {isSubmitting ? 'Sending...' : 'Send Reply'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setShowReplyForm(false); setReplyText(''); }}
+                      className="px-3 py-1 text-xs font-sans text-gray-500 hover:text-gray-700 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -53,6 +124,11 @@ function Overview() {
   const [submitStatus, setSubmitStatus] = useState('');
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Admin state
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
 
   // Load reviews from API on mount
   useEffect(() => {
@@ -333,10 +409,55 @@ function Overview() {
       {/* Student Reviews Section */}
       <Section id="reviews" title="Student Reviews">
         <div className="bg-gradient-to-br from-rose-50 via-pink-50 to-fuchsia-50 rounded-2xl p-6 md:p-8 border border-rose-200/50">
-          <p className="font-serif text-base text-gray-700 mb-6 leading-relaxed">
-            Read what fellow students have to say about their experience with Nubia, 
-            or share your own feedback to help improve the platform.
-          </p>
+          {/* Admin Login Toggle */}
+          <div className="flex justify-between items-start mb-4">
+            <p className="font-serif text-base text-gray-700 leading-relaxed flex-1">
+              Read what fellow students have to say about their experience with Nubia, 
+              or share your own feedback to help improve the platform.
+            </p>
+            {!isAdmin && (
+              <button
+                onClick={() => setShowAdminLogin(!showAdminLogin)}
+                className="text-xs text-gray-400 hover:text-gray-600 transition-colors ml-4 flex-shrink-0"
+                title="Admin login"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </button>
+            )}
+            {isAdmin && (
+              <span className="text-xs font-sans text-emerald-600 bg-emerald-100 px-2 py-1 rounded ml-4 flex-shrink-0">
+                Admin Mode
+              </span>
+            )}
+          </div>
+          
+          {/* Admin Login Form */}
+          {showAdminLogin && !isAdmin && (
+            <div className="bg-white/80 rounded-lg p-4 mb-4 border border-gray-200">
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                setAdminPassword(adminPassword);
+                setIsAdmin(true);
+                setShowAdminLogin(false);
+              }} className="flex gap-2">
+                <input
+                  type="password"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  placeholder="Admin password"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded focus:outline-none focus:border-nubia-accent"
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm font-medium text-white bg-nubia-accent rounded hover:bg-nubia-accent-hover transition-colors"
+                >
+                  Login
+                </button>
+              </form>
+            </div>
+          )}
           
           {/* Review Form */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 mb-6 border border-rose-200/30 shadow-sm">
@@ -422,7 +543,39 @@ function Overview() {
               <div className="flex gap-4" style={{ minWidth: 'max-content' }}>
                 {reviews.map((review, index) => (
                   <div key={review.id} className="w-72 flex-shrink-0">
-                    <ReviewCard {...review} index={index} />
+                    <ReviewCard 
+                      {...review} 
+                      index={index} 
+                      isAdmin={isAdmin}
+                      onReply={async (reviewId, replyText) => {
+                        try {
+                          const response = await fetch('/api/reply', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              review_id: reviewId,
+                              reply_text: replyText,
+                              password: adminPassword
+                            })
+                          });
+                          if (response.ok) {
+                            const data = await response.json();
+                            // Update reviews with new reply
+                            setReviews(prev => prev.map(r => 
+                              r.id === reviewId 
+                                ? { ...r, replies: [...(r.replies || []), data.reply] }
+                                : r
+                            ));
+                          } else {
+                            const err = await response.json();
+                            alert(err.error || 'Failed to send reply');
+                          }
+                        } catch (error) {
+                          console.error('Error sending reply:', error);
+                          alert('Failed to send reply');
+                        }
+                      }}
+                    />
                   </div>
                 ))}
               </div>
