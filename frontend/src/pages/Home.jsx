@@ -50,14 +50,14 @@ function StackingFeatureCards({ features }) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Card color palette - subtle, complementary colors that match the UI
+  // Card color palette - warm, vibrant colors that are aesthetic and readable
   const cardColors = [
-    { bg: 'bg-gradient-to-br from-slate-50 to-slate-100', border: 'border-slate-200', icon: 'bg-slate-100 text-slate-600' },
-    { bg: 'bg-gradient-to-br from-stone-50 to-stone-100', border: 'border-stone-200', icon: 'bg-stone-100 text-stone-600' },
-    { bg: 'bg-gradient-to-br from-zinc-50 to-zinc-100', border: 'border-zinc-200', icon: 'bg-zinc-100 text-zinc-600' },
-    { bg: 'bg-gradient-to-br from-neutral-50 to-neutral-100', border: 'border-neutral-200', icon: 'bg-neutral-100 text-neutral-600' },
-    { bg: 'bg-gradient-to-br from-gray-50 to-gray-100', border: 'border-gray-200', icon: 'bg-gray-100 text-gray-600' },
-    { bg: 'bg-gradient-to-br from-slate-50 to-stone-50', border: 'border-slate-200', icon: 'bg-slate-100 text-slate-600' },
+    { bg: 'bg-gradient-to-br from-amber-50 to-amber-100', border: 'border-amber-200', icon: 'bg-amber-500 text-white' },
+    { bg: 'bg-gradient-to-br from-rose-50 to-rose-100', border: 'border-rose-200', icon: 'bg-rose-500 text-white' },
+    { bg: 'bg-gradient-to-br from-emerald-50 to-emerald-100', border: 'border-emerald-200', icon: 'bg-emerald-500 text-white' },
+    { bg: 'bg-gradient-to-br from-orange-50 to-orange-100', border: 'border-orange-200', icon: 'bg-orange-500 text-white' },
+    { bg: 'bg-gradient-to-br from-teal-50 to-teal-100', border: 'border-teal-200', icon: 'bg-teal-500 text-white' },
+    { bg: 'bg-gradient-to-br from-purple-50 to-purple-100', border: 'border-purple-200', icon: 'bg-purple-500 text-white' },
   ];
 
   useEffect(() => {
@@ -99,28 +99,28 @@ function StackingFeatureCards({ features }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile]);
 
-  // Desktop: render as normal grid with colored cards
+  // Desktop: render as normal grid with colored cards - larger for better readability
   if (!isMobile) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-8">
         {features.map((feature, index) => {
           const colors = cardColors[index % cardColors.length];
           return (
             <div 
               key={index} 
-              className={`${colors.bg} ${colors.border} border rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300`}
+              className={`${colors.bg} ${colors.border} border-2 rounded-2xl p-6 md:p-7 shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-300`}
             >
-              <div className="flex items-start gap-4">
-                <div className={`flex-shrink-0 w-10 h-10 rounded-lg ${colors.icon} flex items-center justify-center`}>
-                  {feature.icon}
+              <div className="flex flex-col gap-4">
+                <div className={`w-14 h-14 rounded-xl ${colors.icon} flex items-center justify-center shadow-sm`}>
+                  <div className="scale-125">{feature.icon}</div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-sans text-base font-semibold text-nubia-text mb-2">
+                <div>
+                  <h3 className="font-sans text-lg font-bold text-gray-800 mb-2">
                     {feature.title}
                   </h3>
-                  <div className="font-serif text-sm text-nubia-text-secondary leading-relaxed">
+                  <p className="font-serif text-base text-gray-600 leading-relaxed">
                     {feature.description}
-                  </div>
+                  </p>
                 </div>
               </div>
             </div>
@@ -200,18 +200,18 @@ function StackingFeatureCards({ features }) {
                 transition: 'transform 0.15s ease-out, opacity 0.15s ease-out, filter 0.15s ease-out',
               }}
             >
-              <div className={`${colors.bg} ${colors.border} border rounded-xl p-5 shadow-lg`}>
-                <div className="flex items-start gap-4">
-                  <div className={`flex-shrink-0 w-10 h-10 rounded-lg ${colors.icon} flex items-center justify-center`}>
-                    {feature.icon}
+              <div className={`${colors.bg} ${colors.border} border-2 rounded-2xl p-6 shadow-xl`}>
+                <div className="flex flex-col gap-4">
+                  <div className={`w-14 h-14 rounded-xl ${colors.icon} flex items-center justify-center shadow-sm`}>
+                    <div className="scale-125">{feature.icon}</div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-sans text-base font-semibold text-nubia-text mb-2">
+                  <div>
+                    <h3 className="font-sans text-lg font-bold text-gray-800 mb-2">
                       {feature.title}
                     </h3>
-                    <div className="font-serif text-sm text-nubia-text-secondary leading-relaxed">
+                    <p className="font-serif text-base text-gray-600 leading-relaxed">
                       {feature.description}
-                    </div>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -690,14 +690,14 @@ function Home() {
 
       {/* Student Reviews Section */}
       <Section id="reviews" title="Student Reviews">
-        <div>
-          <p className="nubia-prose mb-6">
+        <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 rounded-2xl p-6 md:p-8 border border-amber-200/50">
+          <p className="font-serif text-base text-gray-700 mb-6 leading-relaxed">
             Read what fellow students have to say about their experience with Nubia, 
             or share your own feedback to help improve the platform.
           </p>
           
           {/* Review Form */}
-          <div className="nubia-card p-4 md:p-5 mb-6">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 mb-6 border border-amber-200/30 shadow-sm">
             <h4 className="font-sans text-sm font-semibold text-nubia-text mb-3">Share Your Experience</h4>
             <p className="font-sans text-xs text-nubia-text-muted mb-4">Your feedback is anonymous and helps improve Nubia for all students.</p>
             <form onSubmit={handleReviewSubmit} className="space-y-4">
@@ -795,8 +795,8 @@ function Home() {
           <div className="nubia-card p-5 md:p-6">
             <div className="flex flex-col sm:flex-row gap-6">
               <div className="flex-shrink-0">
-                <div className="w-20 h-20 rounded-full bg-nubia-accent flex items-center justify-center">
-                  <span className="font-sans text-2xl font-bold text-white">TT</span>
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+                  <NubiaLogo className="w-12 h-8 text-white" />
                 </div>
               </div>
               <div className="flex-1">
