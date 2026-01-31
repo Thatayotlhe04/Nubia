@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Nubia Logo Component - Pulse/Heartbeat style
 export function NubiaLogo({ className = "w-8 h-8" }) {
@@ -25,32 +25,13 @@ export function NubiaLogo({ className = "w-8 h-8" }) {
   );
 }
 
-// Feature Card Component (standard - for desktop)
-function FeatureCard({ icon, title, children }) {
-  return (
-    <div className="nubia-card p-5 md:p-6">
-      <div className="flex items-start gap-4">
-        <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-nubia-surface-alt flex items-center justify-center text-nubia-accent">
-          {icon}
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="font-sans text-base font-medium text-nubia-text mb-2">{title}</h3>
-          <div className="font-serif text-sm text-nubia-text-secondary leading-relaxed">
-            {children}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Stacking Feature Cards Component (for mobile scroll animation)
+// Stacking Feature Cards Component
 function StackingFeatureCards({ features }) {
   const containerRef = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Card color palette - warm, vibrant colors that are aesthetic and readable
+  // Card color palette - warm, vibrant colors
   const cardColors = [
     { bg: 'bg-gradient-to-br from-amber-50 to-amber-100', border: 'border-amber-200', icon: 'bg-amber-500 text-white' },
     { bg: 'bg-gradient-to-br from-rose-50 to-rose-100', border: 'border-rose-200', icon: 'bg-rose-500 text-white' },
@@ -77,7 +58,6 @@ function StackingFeatureCards({ features }) {
       const rect = container.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       
-      // Smoother scroll tracking
       const containerTop = rect.top;
       const containerHeight = rect.height;
       
@@ -99,7 +79,7 @@ function StackingFeatureCards({ features }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile]);
 
-  // Desktop: render as normal grid with colored cards - larger for better readability
+  // Desktop: render as grid
   if (!isMobile) {
     return (
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-8">
@@ -130,7 +110,7 @@ function StackingFeatureCards({ features }) {
     );
   }
 
-  // Mobile: improved stacking cards animation
+  // Mobile: stacking cards animation
   const cardCount = features.length;
   const progressPerCard = 1 / cardCount;
 
@@ -144,7 +124,6 @@ function StackingFeatureCards({ features }) {
         {features.map((feature, index) => {
           const colors = cardColors[index % cardColors.length];
           
-          // Smoother progress calculation
           const cardStart = index * progressPerCard;
           const cardEnd = (index + 1) * progressPerCard;
           const rawProgress = (scrollProgress - cardStart) / progressPerCard;
@@ -154,11 +133,9 @@ function StackingFeatureCards({ features }) {
           const isPast = scrollProgress >= cardEnd;
           const isFuture = scrollProgress < cardStart;
           
-          // Smooth easing function
           const easeOut = (t) => 1 - Math.pow(1 - t, 3);
           const easedProgress = easeOut(cardProgress);
           
-          // Calculate transforms with smoother values
           let translateY = 0;
           let scale = 1;
           let opacity = 1;
@@ -166,21 +143,18 @@ function StackingFeatureCards({ features }) {
           let blur = 0;
 
           if (isFuture) {
-            // Future cards: positioned below, waiting
             const futureIndex = index - Math.floor(scrollProgress / progressPerCard);
             translateY = 60 + (futureIndex * 8);
             scale = 0.95;
             opacity = 0.4;
             blur = 1;
           } else if (isActive) {
-            // Active card: smoothly animate into view
             translateY = (1 - easedProgress) * 50;
             scale = 0.95 + (easedProgress * 0.05);
             opacity = 0.6 + (easedProgress * 0.4);
             zIndex = cardCount + 10;
             blur = (1 - easedProgress) * 1;
           } else if (isPast) {
-            // Past cards: neatly stacked with subtle depth
             const stackIndex = Math.floor(scrollProgress / progressPerCard) - index - 1;
             translateY = -(stackIndex + 1) * 4;
             scale = 1 - ((stackIndex + 1) * 0.02);
@@ -220,7 +194,7 @@ function StackingFeatureCards({ features }) {
         })}
       </div>
       
-      {/* Improved progress indicator */}
+      {/* Progress indicator */}
       <div className="fixed right-4 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-2">
         {features.map((_, index) => {
           const cardStart = index * progressPerCard;
@@ -232,9 +206,9 @@ function StackingFeatureCards({ features }) {
               key={index}
               className={`rounded-full transition-all duration-300 ${
                 isActive 
-                  ? 'w-2 h-2 bg-nubia-accent shadow-sm' 
+                  ? 'w-2 h-2 bg-amber-500 shadow-sm' 
                   : isPast 
-                    ? 'w-1.5 h-1.5 bg-nubia-accent/50' 
+                    ? 'w-1.5 h-1.5 bg-amber-500/50' 
                     : 'w-1.5 h-1.5 bg-nubia-border'
               }`}
             />
@@ -245,724 +219,210 @@ function StackingFeatureCards({ features }) {
   );
 }
 
-// Section Component
-function Section({ id, title, children, className = "" }) {
-  return (
-    <section id={id} className={`mb-12 md:mb-16 ${className}`}>
-      <h2 className="nubia-heading-3 mb-4 md:mb-6">{title}</h2>
-      {children}
-    </section>
-  );
-}
-
-// Review Card Component - Warm aesthetic palette
-const reviewColors = [
-  { bg: 'bg-amber-100', avatar: 'bg-amber-600', text: 'text-amber-900' },
-  { bg: 'bg-rose-100', avatar: 'bg-rose-500', text: 'text-rose-900' },
-  { bg: 'bg-emerald-100', avatar: 'bg-emerald-600', text: 'text-emerald-900' },
-  { bg: 'bg-orange-100', avatar: 'bg-orange-500', text: 'text-orange-900' },
-  { bg: 'bg-teal-100', avatar: 'bg-teal-600', text: 'text-teal-900' },
-  { bg: 'bg-purple-100', avatar: 'bg-purple-500', text: 'text-purple-900' },
-];
-
-function ReviewCard({ name, course, text, date, index = 0 }) {
-  const colorScheme = reviewColors[index % reviewColors.length];
-  
-  return (
-    <div className={`${colorScheme.bg} rounded-xl p-4 md:p-5 border border-black/5 shadow-sm`}>
-      <div className="flex items-start gap-3">
-        <div className={`w-10 h-10 rounded-full ${colorScheme.avatar} flex items-center justify-center flex-shrink-0 shadow-sm`}>
-          <span className="font-sans text-sm font-semibold text-white">
-            {name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-          </span>
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2 mb-1">
-            <h4 className={`font-sans text-sm font-semibold ${colorScheme.text}`}>{name}</h4>
-            <span className="font-sans text-xs text-gray-500 flex-shrink-0">{date}</span>
-          </div>
-          <p className="font-sans text-xs text-gray-600 mb-2 font-medium">{course}</p>
-          <p className="font-serif text-sm text-gray-700 leading-relaxed">{text}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-
 function Home() {
-  const [reviewText, setReviewText] = useState('');
-  const [reviewUniversity, setReviewUniversity] = useState('');
-  const [reviews, setReviews] = useState([]);
-  const [submitStatus, setSubmitStatus] = useState('');
-  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
-  // Load reviews from API on mount
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const response = await fetch('/api/reviews');
-        if (response.ok) {
-          const data = await response.json();
-          setReviews(data.reviews || []);
-        }
-      } catch (error) {
-        console.error('Error fetching reviews:', error);
-        // Fallback to localStorage if API fails
-        const savedReviews = localStorage.getItem('nubia-reviews');
-        if (savedReviews) {
-          try {
-            setReviews(JSON.parse(savedReviews));
-          } catch (e) {
-            console.error('Error loading local reviews:', e);
-          }
-        }
-      } finally {
-        setIsLoadingReviews(false);
-      }
-    };
-    fetchReviews();
-  }, []);
-
-  const handleReviewSubmit = async (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
-    if (reviewText.trim() && !isSubmitting) {
-      setIsSubmitting(true);
-      const universityLabel = reviewUniversity || 'University Student';
-      try {
-        const response = await fetch('/api/reviews', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            text: reviewText,
-            name: 'Anonymous',
-            course: universityLabel
-          })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setReviews(prev => [data.review, ...prev]);
-          setReviewText('');
-          setReviewUniversity('');
-          setSubmitStatus('Thank you! Your review is now public.');
-        } else {
-          throw new Error('Failed to submit');
-        }
-      } catch (error) {
-        console.error('Error submitting review:', error);
-        // Fallback to localStorage
-        const newReview = {
-          id: Date.now(),
-          name: 'Anonymous',
-          course: universityLabel,
-          text: reviewText,
-          date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-        };
-        const updatedReviews = [newReview, ...reviews];
-        setReviews(updatedReviews);
-        localStorage.setItem('nubia-reviews', JSON.stringify(updatedReviews));
-        setReviewText('');
-        setReviewUniversity('');
-        setSubmitStatus('Saved locally (server unavailable)');
-      } finally {
-        setIsSubmitting(false);
-        setTimeout(() => setSubmitStatus(''), 4000);
-      }
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
     }
   };
 
-  const currentYear = new Date().getFullYear();
+  const features = [
+    {
+      title: "Topic Explanations",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      ),
+      description: "Core concepts written in clear academic language, aligned with your course syllabus."
+    },
+    {
+      title: "Verified Formulas",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+      ),
+      description: "Mathematical expressions with complete variable definitions and usage context."
+    },
+    {
+      title: "Interactive Calculators",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+        </svg>
+      ),
+      description: "Hands-on tools for practicing calculations and checking your own work."
+    },
+    {
+      title: "Worked Examples",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+      ),
+      description: "Step-by-step solutions using scenarios relevant to Botswana and local coursework."
+    },
+    {
+      title: "Academic Resources",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+        </svg>
+      ),
+      description: "Curated links to trusted textbooks, lecture materials, and supplementary readings."
+    },
+    {
+      title: "Personal Uploads",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+        </svg>
+      ),
+      description: "Attach your own notes and materials to topics for a personal study archive."
+    }
+  ];
 
   return (
     <div className="animate-fade-in">
-      {/* Hero */}
+      {/* Hero Section */}
       <header className="mb-12 md:mb-16">
-        <div className="flex items-center gap-3 mb-4">
-          <NubiaLogo className="w-12 h-8 md:w-14 md:h-9 text-nubia-accent" />
-          <h1 className="nubia-heading-1 text-3xl md:text-4xl">
-            Nubia
-          </h1>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+            <NubiaLogo className="w-9 h-6 md:w-10 md:h-7 text-white" />
+          </div>
+          <div>
+            <h1 className="nubia-heading-1 text-3xl md:text-4xl">
+              Nubia
+            </h1>
+            <p className="font-sans text-sm text-nubia-text-muted">Finance Study Companion</p>
+          </div>
         </div>
-        <p className="nubia-body text-base md:text-lg text-nubia-text-secondary leading-relaxed">
+        <p className="nubia-body text-base md:text-lg text-nubia-text-secondary leading-relaxed max-w-3xl">
           A self-contained finance study environment designed for Batswana university students. 
           Nubia brings together core concepts, verified formulas, interactive calculators, and 
-          curated academic resources in one structured workspace, so you can focus on learning 
-          instead of searching.
+          curated academic resources in one structured workspace.
         </p>
       </header>
 
-      {/* Section 1: A Complete Study Environment */}
-      <Section id="study-environment" title="A Complete Study Environment">
-        <div className="nubia-prose mb-6">
-          <p>
-            Nubia centralizes everything you need to master finance and finance related coursework at the University level of education. 
-            Rather than piecing together resources from scattered websites, you can access all essential 
-            study materials from a single, reliable platform.
+      {/* Search Section */}
+      <section className="mb-12 md:mb-16">
+        <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 rounded-2xl p-6 md:p-8 border border-amber-200/50">
+          <h2 className="font-sans text-lg font-semibold text-gray-800 mb-2">Search Finance Topics</h2>
+          <p className="font-sans text-sm text-gray-600 mb-4">
+            Find topic explanations, formulas, calculators, and academic resources.
           </p>
+          <form onSubmit={handleSearch} className="relative">
+            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search for topics like 'Time Value of Money', 'NPV', 'Bond Pricing'..."
+              className="w-full pl-12 pr-4 py-4 bg-white border border-amber-200 rounded-xl text-base text-gray-800 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 transition-all shadow-sm"
+            />
+            <button
+              type="submit"
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all shadow-sm"
+            >
+              Search
+            </button>
+          </form>
         </div>
+      </section>
+
+      {/* What Nubia Offers */}
+      <section className="mb-12 md:mb-16">
+        <h2 className="nubia-heading-3 mb-6">What Nubia Offers</h2>
+        <p className="nubia-prose mb-8">
+          Nubia centralizes everything you need to master finance coursework at the university level. 
+          Rather than piecing together resources from scattered websites, access all essential 
+          study materials from a single, reliable platform.
+        </p>
         
-        {/* Stacking Cards - animated on mobile, grid on desktop */}
-        <StackingFeatureCards 
-          features={[
-            {
-              title: "Topic Explanations",
-              icon: (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              ),
-              description: "Core concepts written in clear academic language, aligned with your course syllabus."
-            },
-            {
-              title: "Verified Formulas",
-              icon: (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-              ),
-              description: "Mathematical expressions with complete variable definitions and usage context."
-            },
-            {
-              title: "Interactive Calculators",
-              icon: (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-              ),
-              description: "Hands-on tools for practicing calculations and checking your own work."
-            },
-            {
-              title: "Worked Examples",
-              icon: (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
-              ),
-              description: "Step-by-step solutions using scenarios relevant to Botswana and local coursework."
-            },
-            {
-              title: "Academic Resources",
-              icon: (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                </svg>
-              ),
-              description: "Curated links to trusted textbooks, lecture materials, and supplementary readings."
-            },
-            {
-              title: "Personal Uploads",
-              icon: (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                </svg>
-              ),
-              description: "Attach your own notes and materials to topics for a personal study archive."
-            }
-          ]}
-        />
+        <StackingFeatureCards features={features} />
         
         <p className="nubia-caption text-nubia-text-muted">
           By consolidating these elements, Nubia reduces the need to jump between random websites 
           and helps you maintain focus during study sessions.
         </p>
-      </Section>
+      </section>
 
-      {/* Section 2: Integrated Academic Resources */}
-      <Section id="resources" title="Integrated Academic Resources">
-        <div className="nubia-prose">
-          <p>
-            Each topic in Nubia includes a Resources section linking to trusted external materials. 
-            These resources are selected based on academic credibility and relevance to your examinations.
-          </p>
-          
-          <div className="mt-6 p-4 md:p-5 bg-nubia-surface-alt rounded-lg border border-nubia-border-subtle">
-            <h4 className="font-sans text-sm font-semibold text-nubia-text mb-3">What you will find:</h4>
-            <ul className="space-y-2 text-sm">
-              <li className="flex items-start gap-2">
-                <span className="text-nubia-accent mt-0.5">—</span>
-                <span>Textbook chapters from established finance publishers</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-nubia-accent mt-0.5">—</span>
-                <span>Lecture notes and course materials from academic institutions</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-nubia-accent mt-0.5">—</span>
-                <span>Supplementary PDFs and video explanations</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-nubia-accent mt-0.5">—</span>
-                <span>Past examination resources where available</span>
-              </li>
-            </ul>
-          </div>
-          
-          <p className="mt-6">
-            All external links open in a new tab, keeping Nubia as your central workspace. 
-            Resources are organized by topic, so you always know where to find deeper reading 
-            for the concept you are studying.
-          </p>
-          
-          <p className="mt-4 text-nubia-text-muted text-sm">
-            Quality, relevance, and exam alignment take priority over volume. Nubia links only 
-            to materials that add genuine value to your preparation.
-          </p>
-        </div>
-      </Section>
-
-      {/* Section 3: Built-In Resource Search */}
-      <Section id="search" title="Built-In Resource Search">
-        <div className="nubia-prose">
-          <p>
-            Nubia includes a straightforward search feature that helps you discover topic-specific 
-            academic resources without leaving the platform.
-          </p>
-          
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <div className="p-4 bg-nubia-surface rounded-lg border border-nubia-border">
-              <h4 className="font-sans text-sm font-semibold text-nubia-text mb-2">How it works</h4>
-              <p className="text-sm text-nubia-text-secondary">
-                Enter a topic or concept, and Nubia returns curated results filtered by academic 
-                relevance. Results link to verified materials rather than general web pages.
-              </p>
-            </div>
-            <div className="p-4 bg-nubia-surface rounded-lg border border-nubia-border">
-              <h4 className="font-sans text-sm font-semibold text-nubia-text mb-2">Limitations</h4>
-              <p className="text-sm text-nubia-text-secondary">
-                Search results are limited to curated academic resources. This is intentional to 
-                maintain quality and relevance for your studies.
-              </p>
-            </div>
-          </div>
-          
-          <p className="mt-6">
-            This approach ensures you receive consistent, academically sound results instead of 
-            the variable quality found in open web searches.
-          </p>
-        </div>
-      </Section>
-
-      {/* Section 4: Personal Study Uploads */}
-      <Section id="uploads" title="Personal Study Uploads">
-        <div className="nubia-prose">
-          <p>
-            Nubia allows you to upload your own study materials and attach them to specific topics. 
-            This transforms the platform into a personal academic archive that grows alongside your coursework.
-          </p>
-          
-          <div className="mt-6 p-4 md:p-5 bg-nubia-surface-alt rounded-lg border border-nubia-border-subtle">
-            <h4 className="font-sans text-sm font-semibold text-nubia-text mb-3">You can upload:</h4>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-              <div className="flex items-center gap-2 text-nubia-text-secondary">
-                <svg className="w-4 h-4 text-nubia-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>Notes</span>
-              </div>
-              <div className="flex items-center gap-2 text-nubia-text-secondary">
-                <svg className="w-4 h-4 text-nubia-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-                <span>PDFs</span>
-              </div>
-              <div className="flex items-center gap-2 text-nubia-text-secondary">
-                <svg className="w-4 h-4 text-nubia-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span>Images</span>
-              </div>
-              <div className="flex items-center gap-2 text-nubia-text-secondary">
-                <svg className="w-4 h-4 text-nubia-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-                <span>Videos</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-6 p-4 border-l-2 border-nubia-accent bg-nubia-surface">
-            <p className="text-sm text-nubia-text-secondary">
-              <strong className="text-nubia-text">Privacy note:</strong> Your uploaded content is private by default. 
-              Nubia is not a social platform or content-sharing network. The purpose is personal organization 
-              and learning continuity, not public visibility.
-            </p>
-          </div>
-          
-          <p className="mt-6">
-            By keeping your materials attached to relevant topics, you build a structured study system 
-            that remains useful across semesters and exam periods.
-          </p>
-        </div>
-      </Section>
-
-      {/* Section 5: Why Nubia Avoids Random Web Searching */}
-      <Section id="structured-learning" title="Why Nubia Avoids Random Web Searching">
-        <div className="nubia-prose">
-          <p>
-            Open web searches for finance concepts often return inconsistent, outdated, or 
-            incorrectly explained material. Students waste time evaluating sources instead of learning.
-          </p>
-          
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div className="text-center p-4">
-              <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-nubia-surface-alt flex items-center justify-center">
-                <svg className="w-5 h-5 text-nubia-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h4 className="font-sans text-sm font-semibold text-nubia-text mb-1">Correctness</h4>
-              <p className="text-xs text-nubia-text-secondary">Verified formulas and explanations you can trust</p>
-            </div>
-            <div className="text-center p-4">
-              <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-nubia-surface-alt flex items-center justify-center">
-                <svg className="w-5 h-5 text-nubia-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                </svg>
-              </div>
-              <h4 className="font-sans text-sm font-semibold text-nubia-text mb-1">Structure</h4>
-              <p className="text-xs text-nubia-text-secondary">Organized by topic for logical study flow</p>
-            </div>
-            <div className="text-center p-4">
-              <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-nubia-surface-alt flex items-center justify-center">
-                <svg className="w-5 h-5 text-nubia-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <h4 className="font-sans text-sm font-semibold text-nubia-text mb-1">Relevance</h4>
-              <p className="text-xs text-nubia-text-secondary">Aligned with UB finance curriculum</p>
-            </div>
-          </div>
-          
-          <p className="mt-6">
-            Nubia prioritizes academic integrity and time efficiency. By staying within one system, 
-            you reduce confusion and maintain consistent study momentum.
-          </p>
-        </div>
-      </Section>
-
-      {/* Section 6: Feedback and Continuous Improvement */}
-      <Section id="feedback" title="Feedback and Continuous Improvement">
-        <div className="nubia-prose">
-          <p>
-            Nubia improves through student feedback. If you encounter issues or have suggestions, 
-            your input helps refine the platform for all users.
-          </p>
-          
-          <div className="mt-6 space-y-3">
-            <div className="flex items-start gap-3 p-3 bg-nubia-surface rounded-lg border border-nubia-border">
-              <svg className="w-5 h-5 text-nubia-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      {/* Quick Links */}
+      <section className="mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Link 
+            to="/overview" 
+            className="bg-white border border-nubia-border rounded-xl p-4 hover:border-amber-300 hover:shadow-md transition-all group"
+          >
+            <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center mb-3 group-hover:bg-amber-200 transition-colors">
+              <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <div>
-                <h4 className="font-sans text-sm font-semibold text-nubia-text">Report incorrect content</h4>
-                <p className="text-sm text-nubia-text-secondary">Flag errors in formulas, explanations, or calculations</p>
-              </div>
             </div>
-            <div className="flex items-start gap-3 p-3 bg-nubia-surface rounded-lg border border-nubia-border">
-              <svg className="w-5 h-5 text-nubia-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            <h3 className="font-sans text-sm font-semibold text-gray-800">Overview</h3>
+            <p className="font-sans text-xs text-gray-500">Platform features</p>
+          </Link>
+
+          <Link 
+            to="/overview#reviews" 
+            className="bg-white border border-nubia-border rounded-xl p-4 hover:border-rose-300 hover:shadow-md transition-all group"
+          >
+            <div className="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center mb-3 group-hover:bg-rose-200 transition-colors">
+              <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
-              <div>
-                <h4 className="font-sans text-sm font-semibold text-nubia-text">Report broken links</h4>
-                <p className="text-sm text-nubia-text-secondary">Let us know when external resources become unavailable</p>
-              </div>
             </div>
-            <div className="flex items-start gap-3 p-3 bg-nubia-surface rounded-lg border border-nubia-border">
-              <svg className="w-5 h-5 text-nubia-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            <h3 className="font-sans text-sm font-semibold text-gray-800">Reviews</h3>
+            <p className="font-sans text-xs text-gray-500">Student feedback</p>
+          </Link>
+
+          <Link 
+            to="/overview#about" 
+            className="bg-white border border-nubia-border rounded-xl p-4 hover:border-emerald-300 hover:shadow-md transition-all group"
+          >
+            <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center mb-3 group-hover:bg-emerald-200 transition-colors">
+              <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <div>
-                <h4 className="font-sans text-sm font-semibold text-nubia-text">Suggest resources</h4>
-                <p className="text-sm text-nubia-text-secondary">Recommend high-quality academic materials for inclusion</p>
-              </div>
             </div>
-          </div>
-          
-          <p className="mt-6 text-nubia-text-muted text-sm">
-            Use the feedback form available on each topic page to submit your observations. 
-            Constructive feedback contributes to gradual, meaningful improvements.
-          </p>
+            <h3 className="font-sans text-sm font-semibold text-gray-800">About</h3>
+            <p className="font-sans text-xs text-gray-500">About Nubia</p>
+          </Link>
+
+          <Link 
+            to="/summarizer" 
+            className="bg-white border border-nubia-border rounded-xl p-4 hover:border-purple-300 hover:shadow-md transition-all group"
+          >
+            <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center mb-3 group-hover:bg-purple-200 transition-colors">
+              <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 className="font-sans text-sm font-semibold text-gray-800">PDF Summarizer</h3>
+            <p className="font-sans text-xs text-gray-500">AI-powered tool</p>
+          </Link>
         </div>
-      </Section>
+      </section>
 
-      {/* Student Reviews Section */}
-      <Section id="reviews" title="Student Reviews">
-        <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 rounded-2xl p-6 md:p-8 border border-amber-200/50">
-          <p className="font-serif text-base text-gray-700 mb-6 leading-relaxed">
-            Read what fellow students have to say about their experience with Nubia, 
-            or share your own feedback to help improve the platform.
-          </p>
-          
-          {/* Review Form */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 mb-6 border border-amber-200/30 shadow-sm">
-            <h4 className="font-sans text-sm font-semibold text-nubia-text mb-3">Share Your Experience</h4>
-            <p className="font-sans text-xs text-nubia-text-muted mb-4">Your feedback is anonymous and helps improve Nubia for all students.</p>
-            <form onSubmit={handleReviewSubmit} className="space-y-4">
-              <div>
-                <textarea
-                  value={reviewText}
-                  onChange={(e) => setReviewText(e.target.value)}
-                  placeholder="Share how Nubia has helped your studies..."
-                  rows={3}
-                  className="w-full px-3 py-2 text-sm border border-nubia-border rounded-lg bg-nubia-surface focus:outline-none focus:ring-1 focus:ring-nubia-accent resize-none"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="review-university" className="block font-sans text-xs text-nubia-text-muted mb-1">Your university (optional)</label>
-                <select
-                  id="review-university"
-                  value={reviewUniversity}
-                  onChange={(e) => setReviewUniversity(e.target.value)}
-                  className="w-full px-3 py-2 text-sm text-nubia-text border border-nubia-border rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-nubia-accent appearance-none cursor-pointer"
-                  style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
-                >
-                  <option value="">Select your university...</option>
-                  <option value="University of Botswana (UB)">University of Botswana (UB)</option>
-                  <option value="BIUST">Botswana International University of Science & Technology (BIUST)</option>
-                  <option value="Botswana Accountancy College (BAC)">Botswana Accountancy College (BAC)</option>
-                  <option value="Botswana Open University (BOU)">Botswana Open University (BOU)</option>
-                  <option value="Limkokwing University">Limkokwing University</option>
-                  <option value="BA ISAGO University">BA ISAGO University</option>
-                  <option value="Botho University">Botho University</option>
-                  <option value="ABM University College">ABM University College</option>
-                  <option value="GUC">Gaborone University College of Law and Professional Studies (GUC)</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div className="flex items-center justify-between">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-4 py-2 font-sans text-sm font-medium text-white bg-nubia-accent rounded-lg hover:bg-nubia-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Submitting...
-                    </>
-                  ) : (
-                    'Submit Anonymously'
-                  )}
-                </button>
-                {submitStatus && (
-                  <span className={`font-sans text-sm ${submitStatus.includes('unavailable') ? 'text-yellow-600' : 'text-green-600'}`}>{submitStatus}</span>
-                )}
-              </div>
-            </form>
+      {/* Footer note */}
+      <footer className="text-center py-8 border-t border-nubia-border-subtle">
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+            <NubiaLogo className="w-4 h-3 text-white" />
           </div>
-          
-          {/* Reviews List - Horizontal Scroll */}
-          {isLoadingReviews ? (
-            <div className="nubia-card p-6 text-center">
-              <div className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5 text-nubia-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <p className="font-sans text-sm text-nubia-text-muted">Loading reviews...</p>
-              </div>
-            </div>
-          ) : reviews.length === 0 ? (
-            <div className="nubia-card p-6 text-center">
-              <p className="font-sans text-sm text-nubia-text-muted">
-                No reviews yet. Be the first to share your experience!
-              </p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto pb-4 -mx-4 px-4">
-              <div className="flex gap-4" style={{ minWidth: 'max-content' }}>
-                {reviews.map((review, index) => (
-                  <div key={review.id} className="w-72 flex-shrink-0">
-                    <ReviewCard {...review} index={index} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <span className="font-sans text-sm font-medium text-nubia-text">Nubia</span>
         </div>
-      </Section>
-
-      {/* About Section */}
-      <Section id="about" title="About Nubia">
-        <div className="nubia-prose">
-          <div className="nubia-card p-5 md:p-6">
-            <div className="flex flex-col sm:flex-row gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
-                  <NubiaLogo className="w-12 h-8 text-white" />
-                </div>
-              </div>
-              <div className="flex-1">
-                <h3 className="font-sans text-lg font-semibold text-nubia-text mb-2">
-                  Thatayotlhe Tsenang
-                </h3>
-                <p className="font-sans text-sm text-nubia-text-muted mb-4">
-                  Creator and Developer
-                </p>
-                <p className="text-sm text-nubia-text-secondary leading-relaxed mb-4">
-                  Nubia was created by Thatayotlhe Tsenang, a 21-year-old student at the University of Botswana. 
-                  With a passion for both web development and financial engineering, Thatayotlhe built Nubia to 
-                  address a real need: providing Batswana finance students with a reliable, structured, and 
-                  locally relevant study companion.
-                </p>
-                <p className="text-sm text-nubia-text-secondary leading-relaxed mb-4">
-                  The platform combines technical expertise in modern web technologies with a deep understanding 
-                  of the challenges finance students face when preparing for coursework and examinations. 
-                  Nubia represents the intersection of these skills: clean, functional design meets rigorous 
-                  academic content.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-2 py-1 text-xs font-sans bg-nubia-surface-alt text-nubia-text-secondary rounded">
-                    Web Development
-                  </span>
-                  <span className="px-2 py-1 text-xs font-sans bg-nubia-surface-alt text-nubia-text-secondary rounded">
-                    Financial Engineering
-                  </span>
-                  <span className="px-2 py-1 text-xs font-sans bg-nubia-surface-alt text-nubia-text-secondary rounded">
-                    University of Botswana
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-6 p-4 border-l-2 border-nubia-accent bg-nubia-surface">
-            <p className="text-sm text-nubia-text-secondary italic">
-              "I built Nubia because I wanted something I could rely on during my own studies. 
-              If it helps even one other student understand finance concepts better, then the 
-              effort was worth it."
-            </p>
-            <p className="mt-2 font-sans text-xs text-nubia-text-muted">— Thatayotlhe Tsenang</p>
-          </div>
-        </div>
-      </Section>
-
-      {/* Footer */}
-      <footer className="mt-20 pt-12 border-t border-nubia-border">
-        {/* Main Footer Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-          {/* Brand Column */}
-          <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <NubiaLogo className="w-8 h-5 text-nubia-accent" />
-              <span className="font-sans text-lg font-semibold text-nubia-text">Nubia</span>
-            </div>
-            <p className="text-sm text-nubia-text-secondary mb-4 leading-relaxed">
-              Your academic study companion for finance, mathematics, and beyond.
-            </p>
-            <p className="text-xs text-nubia-text-muted">
-              Built for University of Botswana students.
-            </p>
-          </div>
-
-          {/* Product Column */}
-          <div>
-            <h4 className="font-sans text-sm font-semibold text-nubia-text mb-4">Product</h4>
-            <ul className="space-y-3">
-              <li>
-                <Link to="/topics" className="text-sm text-nubia-text-secondary hover:text-nubia-accent transition-colors">
-                  Topics
-                </Link>
-              </li>
-              <li>
-                <Link to="/calculators" className="text-sm text-nubia-text-secondary hover:text-nubia-accent transition-colors">
-                  Calculators
-                </Link>
-              </li>
-              <li>
-                <Link to="/search" className="text-sm text-nubia-text-secondary hover:text-nubia-accent transition-colors">
-                  Academic Search
-                </Link>
-              </li>
-              <li>
-                <Link to="/summarizer" className="text-sm text-nubia-text-secondary hover:text-nubia-accent transition-colors">
-                  PDF Summarizer
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company Column */}
-          <div>
-            <h4 className="font-sans text-sm font-semibold text-nubia-text mb-4">Company</h4>
-            <ul className="space-y-3">
-              <li>
-                <Link to="/about" className="text-sm text-nubia-text-secondary hover:text-nubia-accent transition-colors">
-                  About Nubia
-                </Link>
-              </li>
-              <li>
-                <a href="#roadmap" className="text-sm text-nubia-text-secondary hover:text-nubia-accent transition-colors inline-flex items-center gap-1.5">
-                  Roadmap
-                  <span className="text-[10px] px-1.5 py-0.5 bg-nubia-accent/20 text-nubia-accent rounded">Beta</span>
-                </a>
-              </li>
-              <li>
-                <a href="#trust" className="text-sm text-nubia-text-secondary hover:text-nubia-accent transition-colors">
-                  Trust & Safety
-                </a>
-              </li>
-              <li>
-                <a href="mailto:tsenangthatayotlhe04@gmail.com" className="text-sm text-nubia-text-secondary hover:text-nubia-accent transition-colors">
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Developers Column */}
-          <div>
-            <h4 className="font-sans text-sm font-semibold text-nubia-text mb-4">Developers</h4>
-            <ul className="space-y-3">
-              <li>
-                <a 
-                  href="https://github.com/Thatayotlhe04/Nubia" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-nubia-text-secondary hover:text-nubia-accent transition-colors inline-flex items-center gap-1.5"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                  GitHub
-                </a>
-              </li>
-              <li>
-                <span className="text-sm text-nubia-text-muted inline-flex items-center gap-1.5">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                  API
-                  <span className="text-[10px] px-1.5 py-0.5 bg-slate-700/50 text-slate-400 rounded">Soon</span>
-                </span>
-              </li>
-              <li>
-                <a href="#changelog" className="text-sm text-nubia-text-secondary hover:text-nubia-accent transition-colors">
-                  Changelog
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Bottom Bar */}
-        <div className="pt-6 border-t border-nubia-border-subtle">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            {/* Legal Links */}
-            <div className="flex items-center gap-6 text-xs text-nubia-text-muted">
-              <a href="#privacy" className="hover:text-nubia-text-secondary transition-colors">Privacy Policy</a>
-              <a href="#terms" className="hover:text-nubia-text-secondary transition-colors">Terms of Service</a>
-            </div>
-            
-            {/* Copyright */}
-            <p className="font-sans text-xs text-nubia-text-muted">
-              © {currentYear} Nubia · v1.0 · Beta
-            </p>
-          </div>
-        </div>
+        <p className="font-sans text-xs text-nubia-text-muted">
+          Built for University Students · © {new Date().getFullYear()}
+        </p>
       </footer>
     </div>
   );

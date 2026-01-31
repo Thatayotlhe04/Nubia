@@ -41,11 +41,13 @@ function Header({ onToggleMenu, menuOpen }) {
         
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 md:gap-2.5 group">
-          <NubiaLogo className="w-10 h-6 md:w-12 md:h-7 text-nubia-accent group-hover:text-nubia-accent-hover transition-colors" />
+          <div className="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+            <NubiaLogo className="w-6 h-4 md:w-7 md:h-5 text-white" />
+          </div>
           <span className="font-sans text-base md:text-lg font-semibold text-nubia-text tracking-tight">
             Nubia
           </span>
-          <span className="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded">
+          <span className="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide bg-amber-500/20 text-amber-600 border border-amber-500/30 rounded">
             Beta
           </span>
           <span className="hidden md:inline font-sans text-sm text-nubia-text-muted">

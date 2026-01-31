@@ -5,7 +5,7 @@ import { NubiaLogo } from '../../pages/Home';
 function MenuDrawer({ isOpen, onClose, topics = [], loading = false }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [expandedSections, setExpandedSections] = useState({ home: true, topics: false, tools: false });
+  const [expandedSections, setExpandedSections] = useState({ overview: true, topics: false, tools: false });
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -14,8 +14,8 @@ function MenuDrawer({ isOpen, onClose, topics = [], loading = false }) {
   const scrollToSection = (sectionId) => {
     onClose();
     
-    if (location.pathname !== '/') {
-      navigate('/');
+    if (location.pathname !== '/overview') {
+      navigate('/overview');
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
@@ -77,7 +77,9 @@ function MenuDrawer({ isOpen, onClose, topics = [], loading = false }) {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-nubia-border">
           <div className="flex items-center gap-2">
-            <NubiaLogo className="w-8 h-5 text-nubia-accent" />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <NubiaLogo className="w-5 h-3 text-white" />
+            </div>
             <span className="font-sans text-base font-semibold text-nubia-text">Nubia</span>
           </div>
           <button
@@ -93,26 +95,39 @@ function MenuDrawer({ isOpen, onClose, topics = [], loading = false }) {
         
         {/* Menu Content */}
         <div className="overflow-y-auto h-[calc(100%-4rem)]">
-          {/* Home Section */}
+          {/* Home - Direct link */}
           <div className="border-b border-nubia-border">
             <button
-              onClick={() => toggleSection('home')}
+              onClick={goHome}
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-nubia-surface-alt transition-colors"
+            >
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                <NubiaLogo className="w-5 h-3 text-white" />
+              </div>
+              <span className="font-sans text-sm font-medium text-nubia-text">Home</span>
+            </button>
+          </div>
+
+          {/* Overview Section */}
+          <div className="border-b border-nubia-border">
+            <button
+              onClick={() => toggleSection('overview')}
               className="w-full flex items-center justify-between px-4 py-3 hover:bg-nubia-surface-alt transition-colors"
             >
               <div className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-nubia-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <span className="font-sans text-sm font-medium text-nubia-text">Home</span>
+                <span className="font-sans text-sm font-medium text-nubia-text">Overview</span>
               </div>
-              <svg className={`w-4 h-4 text-nubia-text-muted transition-transform ${expandedSections.home ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-4 h-4 text-nubia-text-muted transition-transform ${expandedSections.overview ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            {expandedSections.home && (
+            {expandedSections.overview && (
               <div className="px-4 pb-3 space-y-1">
-                <button onClick={goHome} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-nubia-text-secondary hover:text-nubia-text hover:bg-nubia-surface-alt rounded-md transition-colors text-left">
-                  <span>Overview</span>
+                <button onClick={() => goToPage('/overview')} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-nubia-text-secondary hover:text-nubia-text hover:bg-nubia-surface-alt rounded-md transition-colors text-left">
+                  <span>Platform Overview</span>
                 </button>
                 <button onClick={() => scrollToSection('resources')} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-nubia-text-secondary hover:text-nubia-text hover:bg-nubia-surface-alt rounded-md transition-colors text-left">
                   <span>Academic Resources</span>
@@ -124,7 +139,7 @@ function MenuDrawer({ isOpen, onClose, topics = [], loading = false }) {
                   <span>Student Reviews</span>
                 </button>
                 <button onClick={() => scrollToSection('about')} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-nubia-text-secondary hover:text-nubia-text hover:bg-nubia-surface-alt rounded-md transition-colors text-left">
-                  <span>About</span>
+                  <span>About Nubia</span>
                 </button>
               </div>
             )}

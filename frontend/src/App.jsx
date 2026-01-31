@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
+import Overview from './pages/Overview';
 import Topic from './pages/Topic';
 import Calculators from './pages/Calculators';
 import Examples from './pages/Examples';
@@ -15,6 +16,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
+        <Route path="overview" element={<Overview />} />
         <Route path="topic/:topicId" element={<Topic />} />
         <Route path="calculators" element={<Calculators />} />
         <Route path="examples" element={<Examples />} />
