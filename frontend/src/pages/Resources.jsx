@@ -5,22 +5,40 @@ const resources = [
     category: 'Textbooks & References',
     items: [
       {
-        title: 'Corporate Finance (Ross, Westerfield & Jaffe)',
-        description: 'Comprehensive corporate finance textbook covering all fundamental concepts',
+        title: 'Introduction to Corporate Finance (Open Textbook)',
+        description: 'Free, comprehensive open textbook covering corporate finance fundamentals - time value of money, capital budgeting, and more',
         type: 'Textbook',
-        link: '#'
+        link: 'https://open.umn.edu/opentextbooks/textbooks/47'
       },
       {
-        title: 'Principles of Corporate Finance (Brealey & Myers)',
-        description: 'Classic finance textbook with real-world applications',
+        title: 'Principles of Finance (OpenStax)',
+        description: 'Free peer-reviewed textbook covering financial management, markets, institutions, and investment analysis',
         type: 'Textbook',
-        link: '#'
+        link: 'https://openstax.org/details/books/principles-finance'
       },
       {
-        title: 'Financial Management: Theory & Practice (Brigham)',
-        description: 'Detailed coverage of financial management principles',
+        title: 'Corporate Finance Institute - Free Resources',
+        description: 'Free learning materials on financial analysis, valuation, and corporate finance concepts',
+        type: 'Reference',
+        link: 'https://corporatefinanceinstitute.com/resources/'
+      },
+      {
+        title: 'Damodaran Online - Valuation & Corporate Finance',
+        description: 'Free course materials, datasets, and lecture notes from NYU Professor Aswath Damodaran',
         type: 'Textbook',
-        link: '#'
+        link: 'https://pages.stern.nyu.edu/~adamodar/'
+      },
+      {
+        title: 'Financial Accounting (Lumen Learning)',
+        description: 'Free open educational resource covering accounting principles and financial statements',
+        type: 'Textbook',
+        link: 'https://courses.lumenlearning.com/wm-financialaccounting/'
+      },
+      {
+        title: 'Introduction to Financial Analysis (Saylor Academy)',
+        description: 'Free self-paced course with textbook materials on financial statement analysis',
+        type: 'Textbook',
+        link: 'https://learn.saylor.org/course/BUS103'
       }
     ]
   },
