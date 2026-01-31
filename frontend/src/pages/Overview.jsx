@@ -793,7 +793,7 @@ function Overview() {
                 </a>
               </li>
               <li>
-                <a href="mailto:tsenangthatayotlhe04@gmail.com" className="text-sm text-nubia-text-secondary hover:text-nubia-accent transition-colors">
+                <a href="mailto:getnubiafsc@gmail.com" className="text-sm text-nubia-text-secondary hover:text-nubia-accent transition-colors">
                   Contact
                 </a>
               </li>

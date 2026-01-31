@@ -315,7 +315,7 @@ function Resources() {
           Know of a great resource that should be on this list? We'd love to hear from you!
         </p>
         <a 
-          href="mailto:tsenangthatayotlhe04@gmail.com?subject=Resource Suggestion for Nubia"
+          href="mailto:getnubiafsc@gmail.com?subject=Resource Suggestion for Nubia"
           className="inline-flex items-center gap-2 px-4 py-2 bg-nubia-accent text-white rounded-md hover:bg-nubia-accent-hover transition-colors text-sm font-medium"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
