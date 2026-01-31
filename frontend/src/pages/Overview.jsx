@@ -22,11 +22,39 @@ const reviewColors = [
   { bg: 'bg-purple-100', avatar: 'bg-purple-500', text: 'text-purple-900' },
 ];
 
-function ReviewCard({ id, name, course, text, date, replies = [], index = 0, isAdmin, onReply }) {
+function ReviewCard({ id, name, course, text, date, likes = 0, replies = [], index = 0, isAdmin, onReply, onLike }) {
   const colorScheme = reviewColors[index % reviewColors.length];
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [localLikes, setLocalLikes] = useState(likes);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
+
+  // Check localStorage for liked status on mount
+  useEffect(() => {
+    const likedReviews = JSON.parse(localStorage.getItem('nubia-liked-reviews') || '[]');
+    setHasLiked(likedReviews.includes(id));
+  }, [id]);
+
+  const handleLike = async () => {
+    if (hasLiked || isLiking) return;
+    setIsLiking(true);
+    try {
+      const newLikes = await onLike(id);
+      if (newLikes !== null) {
+        setLocalLikes(newLikes);
+        setHasLiked(true);
+        // Save to localStorage
+        const likedReviews = JSON.parse(localStorage.getItem('nubia-liked-reviews') || '[]');
+        likedReviews.push(id);
+        localStorage.setItem('nubia-liked-reviews', JSON.stringify(likedReviews));
+      }
+    } catch (e) {
+      console.error('Error liking:', e);
+    }
+    setIsLiking(false);
+  };
 
   const handleReplySubmit = async (e) => {
     e.preventDefault();
@@ -54,6 +82,28 @@ function ReviewCard({ id, name, course, text, date, replies = [], index = 0, isA
           </div>
           <p className="font-sans text-xs text-gray-600 mb-2 font-medium">{course}</p>
           <p className="font-serif text-sm text-gray-700 leading-relaxed">{text}</p>
+          
+          {/* Like Button */}
+          <div className="mt-3 flex items-center gap-2">
+            <button
+              onClick={handleLike}
+              disabled={hasLiked || isLiking}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-sans transition-all ${
+                hasLiked 
+                  ? 'bg-rose-100 text-rose-600 cursor-default' 
+                  : 'bg-white/60 text-gray-500 hover:bg-rose-50 hover:text-rose-500'
+              }`}
+            >
+              <svg 
+                className={`w-3.5 h-3.5 ${hasLiked ? 'fill-rose-500' : 'fill-none stroke-current'}`} 
+                viewBox="0 0 24 24" 
+                strokeWidth={hasLiked ? 0 : 2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+              </svg>
+              <span>{localLikes}</span>
+            </button>
+          </div>
           
           {/* Replies */}
           {replies.length > 0 && (
@@ -574,6 +624,22 @@ function Overview() {
                           console.error('Error sending reply:', error);
                           alert('Failed to send reply');
                         }
+                      }}
+                      onLike={async (reviewId) => {
+                        try {
+                          const response = await fetch('/api/reviews', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: reviewId })
+                          });
+                          if (response.ok) {
+                            const data = await response.json();
+                            return data.likes;
+                          }
+                        } catch (error) {
+                          console.error('Error liking review:', error);
+                        }
+                        return null;
                       }}
                     />
                   </div>

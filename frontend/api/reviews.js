@@ -11,7 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
@@ -57,6 +57,7 @@ export default async function handler(req, res) {
         course: r.course || 'Student',
         date: new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
         createdAt: r.created_at,
+        likes: r.likes || 0,
         replies: repliesByReview[r.id] || []
       }));
 
@@ -98,13 +99,50 @@ export default async function handler(req, res) {
         name: data.name,
         course: data.course,
         date: new Date(data.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        createdAt: data.created_at
+        createdAt: data.created_at,
+        likes: 0,
+        replies: []
       };
 
       return res.status(201).json({ success: true, review });
     } catch (error) {
       console.error('Error saving review:', error);
       return res.status(500).json({ error: 'Failed to save review' });
+    }
+  }
+
+  // PATCH - Like a review
+  if (req.method === 'PATCH') {
+    try {
+      const { id } = req.body;
+
+      if (!id) {
+        return res.status(400).json({ error: 'Review ID is required' });
+      }
+
+      // Get current likes
+      const { data: current, error: fetchError } = await supabase
+        .from('reviews')
+        .select('likes')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // Increment likes
+      const { data, error } = await supabase
+        .from('reviews')
+        .update({ likes: (current.likes || 0) + 1 })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return res.status(200).json({ success: true, likes: data.likes });
+    } catch (error) {
+      console.error('Error liking review:', error);
+      return res.status(500).json({ error: 'Failed to like review' });
     }
   }
 
