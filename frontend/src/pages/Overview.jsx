@@ -28,30 +28,49 @@ function ReviewCard({ id, name, course, text, date, likes = 0, replies = [], ind
   const [replyText, setReplyText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [localLikes, setLocalLikes] = useState(likes);
-  const [hasLiked, setHasLiked] = useState(false);
+  const [hasLiked, setHasLiked] = useState(() => {
+    // Check localStorage immediately on init
+    try {
+      const likedReviews = JSON.parse(localStorage.getItem('nubia-liked-reviews') || '[]');
+      return likedReviews.includes(id);
+    } catch {
+      return false;
+    }
+  });
   const [isLiking, setIsLiking] = useState(false);
-
-  // Check localStorage for liked status on mount
-  useEffect(() => {
-    const likedReviews = JSON.parse(localStorage.getItem('nubia-liked-reviews') || '[]');
-    setHasLiked(likedReviews.includes(id));
-  }, [id]);
 
   const handleLike = async () => {
     if (hasLiked || isLiking) return;
+    
+    // Optimistic update
+    setHasLiked(true);
+    setLocalLikes(prev => prev + 1);
     setIsLiking(true);
+    
     try {
       const newLikes = await onLike(id);
-      if (newLikes !== null) {
+      if (newLikes !== null && newLikes !== undefined) {
         setLocalLikes(newLikes);
-        setHasLiked(true);
         // Save to localStorage
-        const likedReviews = JSON.parse(localStorage.getItem('nubia-liked-reviews') || '[]');
-        likedReviews.push(id);
-        localStorage.setItem('nubia-liked-reviews', JSON.stringify(likedReviews));
+        try {
+          const likedReviews = JSON.parse(localStorage.getItem('nubia-liked-reviews') || '[]');
+          if (!likedReviews.includes(id)) {
+            likedReviews.push(id);
+            localStorage.setItem('nubia-liked-reviews', JSON.stringify(likedReviews));
+          }
+        } catch (e) {
+          console.error('localStorage error:', e);
+        }
+      } else {
+        // Revert on failure
+        setHasLiked(false);
+        setLocalLikes(prev => prev - 1);
       }
     } catch (e) {
       console.error('Error liking:', e);
+      // Revert on error
+      setHasLiked(false);
+      setLocalLikes(prev => prev - 1);
     }
     setIsLiking(false);
   };
