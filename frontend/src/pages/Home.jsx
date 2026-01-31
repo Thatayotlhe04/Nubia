@@ -206,9 +206,9 @@ function StackingFeatureCards({ features }) {
               key={index}
               className={`rounded-full transition-all duration-300 ${
                 isActive 
-                  ? 'w-2 h-2 bg-rose-500 shadow-sm' 
+                  ? 'w-2 h-2 bg-orange-500 shadow-sm' 
                   : isPast 
-                    ? 'w-1.5 h-1.5 bg-rose-500/50' 
+                    ? 'w-1.5 h-1.5 bg-orange-500/50' 
                     : 'w-1.5 h-1.5 bg-nubia-border'
               }`}
             />
@@ -293,10 +293,7 @@ function Home() {
       {/* Hero Section */}
       <header className="mb-12 md:mb-16">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center shadow-lg">
-            <NubiaLogo className="w-9 h-6 md:w-10 md:h-7 text-white" />
-          </div>
-          </div>
+          <NubiaLogo className="w-14 h-9 md:w-16 md:h-10 text-nubia-accent" />
           <div>
             <h1 className="nubia-heading-1 text-3xl md:text-4xl">
               Nubia
@@ -416,9 +413,7 @@ function Home() {
       {/* Footer note */}
       <footer className="text-center py-8 border-t border-nubia-border-subtle">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
-            <NubiaLogo className="w-4 h-3 text-white" />
-          </div>
+          <NubiaLogo className="w-6 h-4 text-nubia-accent" />
           <span className="font-sans text-sm font-medium text-nubia-text">Nubia</span>
         </div>
         <p className="font-sans text-xs text-nubia-text-muted">
