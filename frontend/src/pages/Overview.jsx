@@ -438,7 +438,7 @@ function Overview() {
             <div className="flex flex-col sm:flex-row gap-6">
               <div className="flex-shrink-0">
                 <div className="w-20 h-20 rounded-full bg-nubia-surface-alt border-2 border-nubia-border flex items-center justify-center">
-                  <span className="font-sans text-2xl font-bold text-nubia-accent">TT</span>
+                  <NubiaLogo className="w-12 h-8 text-nubia-accent" />
                 </div>
               </div>
               <div className="flex-1">
