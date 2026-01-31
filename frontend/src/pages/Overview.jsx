@@ -49,7 +49,9 @@ function ReviewCard({ id, name, course, text, date, likes = 0, replies = [], ind
     
     try {
       const newLikes = await onLike(id);
-      if (newLikes !== null && newLikes !== undefined) {
+      // Only revert if we got an explicit null (error case)
+      // If we get a number (including 0), keep it
+      if (typeof newLikes === 'number') {
         setLocalLikes(newLikes);
         // Save to localStorage
         try {
@@ -62,7 +64,7 @@ function ReviewCard({ id, name, course, text, date, likes = 0, replies = [], ind
           console.error('localStorage error:', e);
         }
       } else {
-        // Revert on failure
+        // Revert on failure (null returned)
         setHasLiked(false);
         setLocalLikes(prev => prev - 1);
       }
@@ -651,14 +653,16 @@ function Overview() {
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ id: reviewId })
                           });
-                          if (response.ok) {
-                            const data = await response.json();
+                          const data = await response.json();
+                          if (response.ok && typeof data.likes === 'number') {
                             return data.likes;
                           }
+                          console.error('Like API error:', data);
+                          return null;
                         } catch (error) {
                           console.error('Error liking review:', error);
+                          return null;
                         }
-                        return null;
                       }}
                     />
                   </div>
