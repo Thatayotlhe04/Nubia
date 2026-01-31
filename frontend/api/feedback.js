@@ -21,7 +21,7 @@ export default async function handler(req, res) {
   // POST - Submit feedback
   if (req.method === 'POST') {
     try {
-      const { message, pageContext, email } = req.body;
+      const { message, pageContext, email, university } = req.body;
 
       if (!message || typeof message !== 'string' || message.trim().length === 0) {
         return res.status(400).json({ error: 'Feedback message is required' });
@@ -42,6 +42,7 @@ export default async function handler(req, res) {
           message: message.trim(),
           page_context: pageContext || null,
           email: email || null,
+          university: university || null,
           status: 'pending'
         }])
         .select()

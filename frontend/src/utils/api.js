@@ -64,10 +64,10 @@ export async function getExamples(topicId = null) {
 /**
  * Submit anonymous feedback
  */
-export async function submitFeedback(message, pageContext = null, email = null) {
+export async function submitFeedback(message, pageContext = null, email = null, university = null) {
   const data = await fetchAPI('/feedback', {
     method: 'POST',
-    body: JSON.stringify({ message, pageContext, email }),
+    body: JSON.stringify({ message, pageContext, email, university }),
   });
   return data;
 }

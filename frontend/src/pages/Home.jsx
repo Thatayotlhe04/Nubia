@@ -255,23 +255,34 @@ function Section({ id, title, children, className = "" }) {
   );
 }
 
-// Review Card Component
-function ReviewCard({ name, course, text, date }) {
+// Review Card Component - Warm aesthetic palette
+const reviewColors = [
+  { bg: 'bg-amber-100', avatar: 'bg-amber-600', text: 'text-amber-900' },
+  { bg: 'bg-rose-100', avatar: 'bg-rose-500', text: 'text-rose-900' },
+  { bg: 'bg-emerald-100', avatar: 'bg-emerald-600', text: 'text-emerald-900' },
+  { bg: 'bg-orange-100', avatar: 'bg-orange-500', text: 'text-orange-900' },
+  { bg: 'bg-teal-100', avatar: 'bg-teal-600', text: 'text-teal-900' },
+  { bg: 'bg-purple-100', avatar: 'bg-purple-500', text: 'text-purple-900' },
+];
+
+function ReviewCard({ name, course, text, date, index = 0 }) {
+  const colorScheme = reviewColors[index % reviewColors.length];
+  
   return (
-    <div className="nubia-card p-4 md:p-5">
+    <div className={`${colorScheme.bg} rounded-xl p-4 md:p-5 border border-black/5 shadow-sm`}>
       <div className="flex items-start gap-3">
-        <div className="w-10 h-10 rounded-full bg-nubia-accent flex items-center justify-center flex-shrink-0">
+        <div className={`w-10 h-10 rounded-full ${colorScheme.avatar} flex items-center justify-center flex-shrink-0 shadow-sm`}>
           <span className="font-sans text-sm font-semibold text-white">
             {name.split(' ').map(n => n[0]).join('').slice(0, 2)}
           </span>
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-1">
-            <h4 className="font-sans text-sm font-medium text-nubia-text truncate">{name}</h4>
-            <span className="font-sans text-xs text-nubia-text-faint flex-shrink-0">{date}</span>
+            <h4 className={`font-sans text-sm font-semibold ${colorScheme.text}`}>{name}</h4>
+            <span className="font-sans text-xs text-gray-500 flex-shrink-0">{date}</span>
           </div>
-          <p className="font-sans text-xs text-nubia-text-muted mb-2">{course}</p>
-          <p className="font-serif text-sm text-nubia-text-secondary leading-relaxed">{text}</p>
+          <p className="font-sans text-xs text-gray-600 mb-2 font-medium">{course}</p>
+          <p className="font-serif text-sm text-gray-700 leading-relaxed">{text}</p>
         </div>
       </div>
     </div>
@@ -282,6 +293,7 @@ function ReviewCard({ name, course, text, date }) {
 
 function Home() {
   const [reviewText, setReviewText] = useState('');
+  const [reviewUniversity, setReviewUniversity] = useState('');
   const [reviews, setReviews] = useState([]);
   const [submitStatus, setSubmitStatus] = useState('');
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
@@ -318,6 +330,7 @@ function Home() {
     e.preventDefault();
     if (reviewText.trim() && !isSubmitting) {
       setIsSubmitting(true);
+      const universityLabel = reviewUniversity || 'University Student';
       try {
         const response = await fetch('/api/reviews', {
           method: 'POST',
@@ -325,7 +338,7 @@ function Home() {
           body: JSON.stringify({
             text: reviewText,
             name: 'Anonymous',
-            course: 'UB Student'
+            course: universityLabel
           })
         });
 
@@ -333,6 +346,7 @@ function Home() {
           const data = await response.json();
           setReviews(prev => [data.review, ...prev]);
           setReviewText('');
+          setReviewUniversity('');
           setSubmitStatus('Thank you! Your review is now public.');
         } else {
           throw new Error('Failed to submit');
@@ -343,7 +357,7 @@ function Home() {
         const newReview = {
           id: Date.now(),
           name: 'Anonymous',
-          course: 'UB Student',
+          course: universityLabel,
           text: reviewText,
           date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
         };
@@ -351,6 +365,7 @@ function Home() {
         setReviews(updatedReviews);
         localStorage.setItem('nubia-reviews', JSON.stringify(updatedReviews));
         setReviewText('');
+        setReviewUniversity('');
         setSubmitStatus('Saved locally (server unavailable)');
       } finally {
         setIsSubmitting(false);
@@ -696,6 +711,28 @@ function Home() {
                   required
                 />
               </div>
+              <div>
+                <label htmlFor="review-university" className="block font-sans text-xs text-nubia-text-muted mb-1">Your university (optional)</label>
+                <select
+                  id="review-university"
+                  value={reviewUniversity}
+                  onChange={(e) => setReviewUniversity(e.target.value)}
+                  className="w-full px-3 py-2 text-sm text-nubia-text border border-nubia-border rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-nubia-accent appearance-none cursor-pointer"
+                  style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
+                >
+                  <option value="">Select your university...</option>
+                  <option value="University of Botswana (UB)">University of Botswana (UB)</option>
+                  <option value="BIUST">Botswana International University of Science & Technology (BIUST)</option>
+                  <option value="Botswana Accountancy College (BAC)">Botswana Accountancy College (BAC)</option>
+                  <option value="Botswana Open University (BOU)">Botswana Open University (BOU)</option>
+                  <option value="Limkokwing University">Limkokwing University</option>
+                  <option value="BA ISAGO University">BA ISAGO University</option>
+                  <option value="Botho University">Botho University</option>
+                  <option value="ABM University College">ABM University College</option>
+                  <option value="GUC">Gaborone University College of Law and Professional Studies (GUC)</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
               <div className="flex items-center justify-between">
                 <button
                   type="submit"
@@ -741,9 +778,9 @@ function Home() {
           ) : (
             <div className="overflow-x-auto pb-4 -mx-4 px-4">
               <div className="flex gap-4" style={{ minWidth: 'max-content' }}>
-                {reviews.map(review => (
+                {reviews.map((review, index) => (
                   <div key={review.id} className="w-72 flex-shrink-0">
-                    <ReviewCard {...review} />
+                    <ReviewCard {...review} index={index} />
                   </div>
                 ))}
               </div>

@@ -4,6 +4,7 @@ import { submitFeedback } from '../../utils/api';
 function FeedbackForm({ pageContext }) {
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
+  const [university, setUniversity] = useState('');
   const [wantsReply, setWantsReply] = useState(false);
   const [status, setStatus] = useState('idle'); // idle, submitting, success, error
   const [isExpanded, setIsExpanded] = useState(false);
@@ -16,10 +17,11 @@ function FeedbackForm({ pageContext }) {
     setStatus('submitting');
     
     try {
-      await submitFeedback(message, pageContext, wantsReply ? email : null);
+      await submitFeedback(message, pageContext, wantsReply ? email : null, university || null);
       setStatus('success');
       setMessage('');
       setEmail('');
+      setUniversity('');
       setWantsReply(false);
       setTimeout(() => {
         setStatus('idle');
@@ -62,6 +64,33 @@ function FeedbackForm({ pageContext }) {
             disabled={status === 'submitting'}
           />
           
+          {/* University selection */}
+          <div className="mt-3">
+            <label htmlFor="university" className="block font-sans text-xs text-nubia-text-muted mb-1">
+              Your university (optional)
+            </label>
+            <select
+              id="university"
+              value={university}
+              onChange={(e) => setUniversity(e.target.value)}
+              className="w-full px-3 py-2 text-sm text-nubia-text border border-nubia-border rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-nubia-accent appearance-none cursor-pointer"
+              style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
+              disabled={status === 'submitting'}
+            >
+              <option value="">Select your university...</option>
+              <option value="University of Botswana">University of Botswana (UB)</option>
+              <option value="Botswana International University of Science and Technology">BIUST</option>
+              <option value="Botswana Accountancy College">Botswana Accountancy College (BAC)</option>
+              <option value="Botswana Open University">Botswana Open University (BOU)</option>
+              <option value="Limkokwing University">Limkokwing University</option>
+              <option value="BA ISAGO University">BA ISAGO University</option>
+              <option value="Botho University">Botho University</option>
+              <option value="ABM University College">ABM University College</option>
+              <option value="Gaborone University College of Law and Professional Studies">GUC</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          
           {/* Optional email for reply */}
           <div className="mt-3">
             <label className="flex items-center gap-2 cursor-pointer">
@@ -101,6 +130,7 @@ function FeedbackForm({ pageContext }) {
                   setIsExpanded(false);
                   setMessage('');
                   setEmail('');
+                  setUniversity('');
                   setWantsReply(false);
                 }}
                 className="font-sans text-sm text-nubia-text-muted hover:text-nubia-text transition-colors"
