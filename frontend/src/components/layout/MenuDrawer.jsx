@@ -77,7 +77,7 @@ function MenuDrawer({ isOpen, onClose, topics = [], loading = false }) {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-nubia-border">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
               <NubiaLogo className="w-5 h-3 text-white" />
             </div>
             <span className="font-sans text-base font-semibold text-nubia-text">Nubia</span>
@@ -101,7 +101,7 @@ function MenuDrawer({ isOpen, onClose, topics = [], loading = false }) {
               onClick={goHome}
               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-nubia-surface-alt transition-colors"
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
                 <NubiaLogo className="w-5 h-3 text-white" />
               </div>
               <span className="font-sans text-sm font-medium text-nubia-text">Home</span>

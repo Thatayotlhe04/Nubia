@@ -206,9 +206,9 @@ function StackingFeatureCards({ features }) {
               key={index}
               className={`rounded-full transition-all duration-300 ${
                 isActive 
-                  ? 'w-2 h-2 bg-amber-500 shadow-sm' 
+                  ? 'w-2 h-2 bg-rose-500 shadow-sm' 
                   : isPast 
-                    ? 'w-1.5 h-1.5 bg-amber-500/50' 
+                    ? 'w-1.5 h-1.5 bg-rose-500/50' 
                     : 'w-1.5 h-1.5 bg-nubia-border'
               }`}
             />
@@ -293,8 +293,9 @@ function Home() {
       {/* Hero Section */}
       <header className="mb-12 md:mb-16">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+          <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center shadow-lg">
             <NubiaLogo className="w-9 h-6 md:w-10 md:h-7 text-white" />
+          </div>
           </div>
           <div>
             <h1 className="nubia-heading-1 text-3xl md:text-4xl">
@@ -312,7 +313,7 @@ function Home() {
 
       {/* Search Section */}
       <section className="mb-12 md:mb-16">
-        <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 rounded-2xl p-6 md:p-8 border border-amber-200/50">
+        <div className="bg-gradient-to-br from-rose-50 via-pink-50 to-fuchsia-50 rounded-2xl p-6 md:p-8 border border-rose-200/50">
           <h2 className="font-sans text-lg font-semibold text-gray-800 mb-2">Search Finance Topics</h2>
           <p className="font-sans text-sm text-gray-600 mb-4">
             Find topic explanations, formulas, calculators, and academic resources.
@@ -326,11 +327,11 @@ function Home() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for topics like 'Time Value of Money', 'NPV', 'Bond Pricing'..."
-              className="w-full pl-12 pr-4 py-4 bg-white border border-amber-200 rounded-xl text-base text-gray-800 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 transition-all shadow-sm"
+              className="w-full pl-12 pr-4 py-4 bg-white border border-rose-200 rounded-xl text-base text-gray-800 placeholder-gray-400 focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200 transition-all shadow-sm"
             />
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all shadow-sm"
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-gradient-to-r from-rose-400 to-rose-500 text-white font-medium rounded-lg hover:from-rose-500 hover:to-rose-600 transition-all shadow-sm"
             >
               Search
             </button>
@@ -415,7 +416,7 @@ function Home() {
       {/* Footer note */}
       <footer className="text-center py-8 border-t border-nubia-border-subtle">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
             <NubiaLogo className="w-4 h-3 text-white" />
           </div>
           <span className="font-sans text-sm font-medium text-nubia-text">Nubia</span>

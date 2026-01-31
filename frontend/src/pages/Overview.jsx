@@ -134,7 +134,7 @@ function Overview() {
       {/* Page Header */}
       <header className="mb-12 md:mb-16">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-md">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center shadow-md">
             <NubiaLogo className="w-6 h-4 text-white" />
           </div>
           <h1 className="nubia-heading-1 text-2xl md:text-3xl">
@@ -334,14 +334,14 @@ function Overview() {
 
       {/* Student Reviews Section */}
       <Section id="reviews" title="Student Reviews">
-        <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 rounded-2xl p-6 md:p-8 border border-amber-200/50">
+        <div className="bg-gradient-to-br from-rose-50 via-pink-50 to-fuchsia-50 rounded-2xl p-6 md:p-8 border border-rose-200/50">
           <p className="font-serif text-base text-gray-700 mb-6 leading-relaxed">
             Read what fellow students have to say about their experience with Nubia, 
             or share your own feedback to help improve the platform.
           </p>
           
           {/* Review Form */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 mb-6 border border-amber-200/30 shadow-sm">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 md:p-5 mb-6 border border-rose-200/30 shadow-sm">
             <h4 className="font-sans text-sm font-semibold text-nubia-text mb-3">Share Your Experience</h4>
             <p className="font-sans text-xs text-nubia-text-muted mb-4">Your feedback is anonymous and helps improve Nubia for all students.</p>
             <form onSubmit={handleReviewSubmit} className="space-y-4">
@@ -439,19 +439,14 @@ function Overview() {
           <div className="nubia-card p-5 md:p-6">
             <div className="flex flex-col sm:flex-row gap-6">
               <div className="flex-shrink-0">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center shadow-lg">
                   <NubiaLogo className="w-12 h-8 text-white" />
                 </div>
               </div>
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h3 className="font-sans text-lg font-semibold text-nubia-text">
-                    Thatayotlhe Tsenang
-                  </h3>
-                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                    <NubiaLogo className="w-4 h-3 text-white" />
-                  </div>
-                </div>
+                <h3 className="font-sans text-lg font-semibold text-nubia-text mb-2">
+                  Thatayotlhe Tsenang
+                </h3>
                 <p className="font-sans text-sm text-nubia-text-muted mb-4">
                   Creator and Developer
                 </p>
@@ -482,7 +477,7 @@ function Overview() {
             </div>
           </div>
           
-          <div className="mt-6 p-4 border-l-2 border-amber-500 bg-gradient-to-r from-amber-50 to-transparent">
+          <div className="mt-6 p-4 border-l-2 border-rose-500 bg-gradient-to-r from-rose-50 to-transparent">
             <p className="text-sm text-nubia-text-secondary italic">
               "I built Nubia because I wanted something I could rely on during my own studies. 
               If it helps even one other student understand finance concepts better, then the 
@@ -499,7 +494,7 @@ function Overview() {
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
                 <NubiaLogo className="w-5 h-3 text-white" />
               </div>
               <span className="font-sans text-lg font-semibold text-nubia-text">Nubia</span>
