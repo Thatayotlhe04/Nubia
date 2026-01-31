@@ -77,7 +77,7 @@ function MenuDrawer({ isOpen, onClose, topics = [], loading = false }) {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-nubia-border">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
               <NubiaLogo className="w-5 h-3 text-white" />
             </div>
             <span className="font-sans text-base font-semibold text-nubia-text">Nubia</span>

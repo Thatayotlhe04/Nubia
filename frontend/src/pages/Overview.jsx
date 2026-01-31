@@ -134,7 +134,7 @@ function Overview() {
       {/* Page Header */}
       <header className="mb-12 md:mb-16">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center shadow-md">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center shadow-md">
             <NubiaLogo className="w-6 h-4 text-white" />
           </div>
           <h1 className="nubia-heading-1 text-2xl md:text-3xl">
@@ -494,7 +494,7 @@ function Overview() {
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
                 <NubiaLogo className="w-5 h-3 text-white" />
               </div>
               <span className="font-sans text-lg font-semibold text-nubia-text">Nubia</span>

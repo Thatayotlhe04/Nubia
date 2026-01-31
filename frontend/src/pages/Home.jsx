@@ -293,7 +293,7 @@ function Home() {
       {/* Hero Section */}
       <header className="mb-12 md:mb-16">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center shadow-lg">
+          <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center shadow-lg">
             <NubiaLogo className="w-9 h-6 md:w-10 md:h-7 text-white" />
           </div>
           </div>

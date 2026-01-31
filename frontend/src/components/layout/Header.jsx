@@ -41,7 +41,7 @@ function Header({ onToggleMenu, menuOpen }) {
         
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 md:gap-2.5 group">
-          <div className="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+          <div className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
             <NubiaLogo className="w-6 h-4 md:w-7 md:h-5 text-white" />
           </div>
           <span className="font-sans text-base md:text-lg font-semibold text-nubia-text tracking-tight">
