@@ -1,6 +1,7 @@
 /* ============================================
    NUBIA DESIGN SYSTEM
    A calm, editorial, academic aesthetic
+   Supports light and dark mode
    ============================================ */
 
 @tailwind base;
@@ -9,7 +10,7 @@
 
 @layer base {
   :root {
-    /* Color tokens */
+    /* Light Mode Colors (default) */
     --nubia-bg: #FAFAF8;
     --nubia-bg-warm: #F7F6F3;
     --nubia-surface: #FFFFFF;
@@ -28,6 +29,13 @@
     --nubia-border-subtle: #EFEFED;
     --nubia-border-strong: #D1D1CF;
     
+    --nubia-success: #3D7A5F;
+    --nubia-success-subtle: #E8F3ED;
+    --nubia-warning: #9A7B4F;
+    --nubia-warning-subtle: #F9F5ED;
+    --nubia-error: #9B4F4F;
+    --nubia-error-subtle: #F9EDEE;
+    
     /* Spacing scale */
     --space-xs: 0.25rem;
     --space-sm: 0.5rem;
@@ -38,6 +46,36 @@
     --space-3xl: 4rem;
   }
 
+  /* Dark Mode Colors */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --nubia-bg: #0F0F0F;
+      --nubia-bg-warm: #141414;
+      --nubia-surface: #1A1A1A;
+      --nubia-surface-alt: #242424;
+      
+      --nubia-text: #F5F5F5;
+      --nubia-text-secondary: #B3B3B3;
+      --nubia-text-muted: #808080;
+      --nubia-text-faint: #666666;
+      
+      --nubia-accent: #94A3B8;
+      --nubia-accent-subtle: #2D3748;
+      --nubia-accent-hover: #CBD5E1;
+      
+      --nubia-border: #2D2D2D;
+      --nubia-border-subtle: #252525;
+      --nubia-border-strong: #404040;
+      
+      --nubia-success: #4ADE80;
+      --nubia-success-subtle: #14532D;
+      --nubia-warning: #FBBF24;
+      --nubia-warning-subtle: #422006;
+      --nubia-error: #F87171;
+      --nubia-error-subtle: #450A0A;
+    }
+  }
+
   html {
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
@@ -45,22 +83,23 @@
   }
 
   body {
-    background-color: #FAFAF8;
-    color: #1A1A1A;
+    background-color: var(--nubia-bg);
+    color: var(--nubia-text);
     font-family: 'Source Serif 4', serif;
     font-feature-settings: 'kern' 1, 'liga' 1;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   /* Focus styles */
   *:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px #4A5568;
+    box-shadow: 0 0 0 2px var(--nubia-accent);
   }
 
   /* Selection */
   ::selection {
-    background-color: #E8EBF0;
-    color: #1A1A1A;
+    background-color: var(--nubia-accent-subtle);
+    color: var(--nubia-text);
   }
 }
 
@@ -80,14 +119,14 @@
   .nubia-sidebar {
     width: 16rem;
     flex-shrink: 0;
-    border-right: 1px solid #E5E5E3;
-    background-color: #FFFFFF;
+    border-right: 1px solid var(--nubia-border);
+    background-color: var(--nubia-surface);
   }
 
   .nubia-main {
     flex: 1 1 0%;
     min-width: 0;
-    background-color: #FAFAF8;
+    background-color: var(--nubia-bg);
   }
 
   .nubia-content {
@@ -141,7 +180,7 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 1.875rem;
     font-weight: 600;
-    color: #1A1A1A;
+    color: var(--nubia-text);
     letter-spacing: -0.025em;
   }
 
@@ -149,7 +188,7 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1A1A1A;
+    color: var(--nubia-text);
     letter-spacing: -0.025em;
   }
 
@@ -157,41 +196,41 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 1.25rem;
     font-weight: 500;
-    color: #1A1A1A;
+    color: var(--nubia-text);
   }
 
   .nubia-heading-4 {
     font-family: 'DM Sans', sans-serif;
     font-size: 1.125rem;
     font-weight: 500;
-    color: #1A1A1A;
+    color: var(--nubia-text);
   }
 
   .nubia-body {
     font-family: 'Source Serif 4', serif;
     font-size: 1rem;
-    color: #1A1A1A;
+    color: var(--nubia-text);
     line-height: 1.625;
   }
 
   .nubia-body-small {
     font-family: 'Source Serif 4', serif;
     font-size: 0.875rem;
-    color: #5C5C5C;
+    color: var(--nubia-text-secondary);
     line-height: 1.625;
   }
 
   .nubia-caption {
     font-family: 'DM Sans', sans-serif;
     font-size: 0.875rem;
-    color: #8A8A8A;
+    color: var(--nubia-text-muted);
   }
 
   .nubia-label {
     font-family: 'DM Sans', sans-serif;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #5C5C5C;
+    color: var(--nubia-text-secondary);
   }
 
   /* ============================================
@@ -203,19 +242,19 @@
     padding: 0.625rem 1rem;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.875rem;
-    color: #5C5C5C;
+    color: var(--nubia-text-secondary);
     border-radius: 0.375rem;
     transition: color 150ms, background-color 150ms;
   }
 
   .nubia-nav-item:hover {
-    background-color: #F5F4F1;
-    color: #1A1A1A;
+    background-color: var(--nubia-surface-alt);
+    color: var(--nubia-text);
   }
 
   .nubia-nav-item-active {
-    background-color: #E8EBF0;
-    color: #4A5568;
+    background-color: var(--nubia-accent-subtle);
+    color: var(--nubia-accent);
     font-weight: 500;
   }
 
@@ -224,7 +263,7 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #8A8A8A;
+    color: var(--nubia-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -234,14 +273,14 @@
      ============================================ */
 
   .nubia-card {
-    background-color: #FFFFFF;
-    border: 1px solid #E5E5E3;
+    background-color: var(--nubia-surface);
+    border: 1px solid var(--nubia-border);
     border-radius: 0.5rem;
   }
 
   .nubia-card-elevated {
-    background-color: #FFFFFF;
-    border: 1px solid #F0F0F0;
+    background-color: var(--nubia-surface);
+    border: 1px solid var(--nubia-border-subtle);
     border-radius: 0.5rem;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   }
@@ -253,8 +292,8 @@
   .nubia-formula-block {
     margin: 2rem 0;
     padding: 1.5rem;
-    background-color: #F5F4F1;
-    border: 1px solid #E5E5E3;
+    background-color: var(--nubia-surface-alt);
+    border: 1px solid var(--nubia-border);
     border-radius: 0.5rem;
     overflow-x: auto;
   }
@@ -263,7 +302,7 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #5C5C5C;
+    color: var(--nubia-text-secondary);
     margin-bottom: 0.75rem;
   }
 
@@ -276,10 +315,10 @@
   .nubia-formula-explanation {
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #F0F0F0;
+    border-top: 1px solid var(--nubia-border-subtle);
     font-family: 'Source Serif 4', serif;
     font-size: 0.875rem;
-    color: #5C5C5C;
+    color: var(--nubia-text-secondary);
   }
 
   /* ============================================
@@ -289,8 +328,8 @@
   .nubia-calculator {
     margin: 2rem 0;
     padding: 1.5rem;
-    background-color: #FFFFFF;
-    border: 1px solid #E5E5E3;
+    background-color: var(--nubia-surface);
+    border: 1px solid var(--nubia-border);
     border-radius: 0.5rem;
   }
 
@@ -298,10 +337,10 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 1.125rem;
     font-weight: 500;
-    color: #1A1A1A;
+    color: var(--nubia-text);
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid #F0F0F0;
+    border-bottom: 1px solid var(--nubia-border-subtle);
   }
 
   .nubia-input-group {
@@ -313,7 +352,7 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #5C5C5C;
+    color: var(--nubia-text-secondary);
     margin-bottom: 0.5rem;
   }
 
@@ -322,24 +361,24 @@
     padding: 0.75rem 1rem;
     font-family: 'JetBrains Mono', monospace;
     font-size: 1rem;
-    color: #1A1A1A;
-    background-color: #FAFAF8;
-    border: 1px solid #E5E5E3;
+    color: var(--nubia-text);
+    background-color: var(--nubia-bg);
+    border: 1px solid var(--nubia-border);
     border-radius: 0.375rem;
     transition: color 150ms, background-color 150ms, border-color 150ms;
   }
 
   .nubia-input::placeholder {
-    color: #ADADAD;
+    color: var(--nubia-text-faint);
   }
 
   .nubia-input:hover {
-    border-color: #D1D1D1;
+    border-color: var(--nubia-border-strong);
   }
 
   .nubia-input:focus {
-    border-color: #4A5568;
-    box-shadow: 0 0 0 1px #4A5568;
+    border-color: var(--nubia-accent);
+    box-shadow: 0 0 0 1px var(--nubia-accent);
     outline: none;
   }
 
@@ -347,7 +386,7 @@
     margin-top: 0.375rem;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.75rem;
-    color: #8A8A8A;
+    color: var(--nubia-text-muted);
   }
 
   .nubia-input-unit {
@@ -357,7 +396,7 @@
     transform: translateY(-50%);
     font-family: 'DM Sans', sans-serif;
     font-size: 0.875rem;
-    color: #8A8A8A;
+    color: var(--nubia-text-muted);
     pointer-events: none;
   }
 
@@ -366,9 +405,9 @@
     padding: 0.75rem 1rem;
     font-family: 'DM Sans', sans-serif;
     font-size: 1rem;
-    color: #1A1A1A;
-    background-color: #FAFAF8;
-    border: 1px solid #E5E5E3;
+    color: var(--nubia-text);
+    background-color: var(--nubia-bg);
+    border: 1px solid var(--nubia-border);
     border-radius: 0.375rem;
     transition: color 150ms, background-color 150ms, border-color 150ms;
     appearance: none;
@@ -381,20 +420,20 @@
   }
 
   .nubia-select:hover {
-    border-color: #D1D1D1;
+    border-color: var(--nubia-border-strong);
   }
 
   .nubia-select:focus {
-    border-color: #4A5568;
-    box-shadow: 0 0 0 1px #4A5568;
+    border-color: var(--nubia-accent);
+    box-shadow: 0 0 0 1px var(--nubia-accent);
     outline: none;
   }
 
   .nubia-result {
     margin-top: 1.5rem;
     padding: 1.25rem;
-    background-color: #E8EBF0;
-    border: 1px solid rgba(74, 85, 104, 0.2);
+    background-color: var(--nubia-accent-subtle);
+    border: 1px solid var(--nubia-border);
     border-radius: 0.5rem;
   }
 
@@ -402,7 +441,7 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #4A5568;
+    color: var(--nubia-accent);
     margin-bottom: 0.25rem;
   }
 
@@ -410,7 +449,7 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 1.5rem;
     font-weight: 500;
-    color: #1A1A1A;
+    color: var(--nubia-text);
   }
 
   /* ============================================
@@ -419,33 +458,33 @@
 
   .nubia-example {
     margin: 2rem 0;
-    border: 1px solid #E5E5E3;
+    border: 1px solid var(--nubia-border);
     border-radius: 0.5rem;
     overflow: hidden;
   }
 
   .nubia-example-header {
     padding: 1rem 1.5rem;
-    background-color: #F5F4F1;
-    border-bottom: 1px solid #E5E5E3;
+    background-color: var(--nubia-surface-alt);
+    border-bottom: 1px solid var(--nubia-border);
   }
 
   .nubia-example-title {
     font-family: 'DM Sans', sans-serif;
     font-size: 1rem;
     font-weight: 500;
-    color: #1A1A1A;
+    color: var(--nubia-text);
   }
 
   .nubia-example-body {
     padding: 1.5rem;
-    background-color: #FFFFFF;
+    background-color: var(--nubia-surface);
   }
 
   .nubia-example-scenario {
     font-family: 'Source Serif 4', serif;
     font-size: 1rem;
-    color: #1A1A1A;
+    color: var(--nubia-text);
     line-height: 1.625;
     margin-bottom: 1.5rem;
   }
@@ -453,7 +492,7 @@
   .nubia-example-step {
     padding-top: 1rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid #F0F0F0;
+    border-bottom: 1px solid var(--nubia-border-subtle);
   }
 
   .nubia-example-step:last-child {
@@ -470,8 +509,8 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #4A5568;
-    background-color: #E8EBF0;
+    color: var(--nubia-accent);
+    background-color: var(--nubia-accent-subtle);
     border-radius: 9999px;
   }
 
@@ -479,7 +518,7 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #1A1A1A;
+    color: var(--nubia-text);
   }
 
   .nubia-example-step-content {
@@ -487,7 +526,7 @@
     margin-left: 2.25rem;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.875rem;
-    color: #5C5C5C;
+    color: var(--nubia-text-secondary);
     white-space: pre-wrap;
     line-height: 1.625;
   }
@@ -495,12 +534,12 @@
   .nubia-example-answer {
     margin-top: 1.5rem;
     padding: 1.25rem;
-    background-color: #F0FFF4;
-    border: 1px solid rgba(56, 161, 105, 0.2);
+    background-color: var(--nubia-success-subtle);
+    border: 1px solid var(--nubia-success);
     border-radius: 0.5rem;
     font-family: 'Source Serif 4', serif;
     font-size: 1rem;
-    color: #1A1A1A;
+    color: var(--nubia-text);
     line-height: 1.625;
   }
 
@@ -519,25 +558,25 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #8A8A8A;
+    color: var(--nubia-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     text-align: left;
-    background-color: #F5F4F1;
-    border-bottom: 1px solid #E5E5E3;
+    background-color: var(--nubia-surface-alt);
+    border-bottom: 1px solid var(--nubia-border);
   }
 
   .nubia-variable-table td {
     padding: 0.75rem 1rem;
     font-family: 'Source Serif 4', serif;
     font-size: 0.875rem;
-    color: #1A1A1A;
-    border-bottom: 1px solid #EFEFED;
+    color: var(--nubia-text);
+    border-bottom: 1px solid var(--nubia-border-subtle);
   }
 
   .nubia-variable-table td:first-child {
     font-family: 'JetBrains Mono', monospace;
-    color: #4A5568;
+    color: var(--nubia-accent);
   }
 
   /* ============================================
@@ -547,7 +586,7 @@
   .nubia-prose {
     font-family: 'Source Serif 4', serif;
     font-size: 1rem;
-    color: #1A1A1A;
+    color: var(--nubia-text);
     line-height: 1.625;
   }
 
@@ -555,7 +594,7 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1A1A1A;
+    color: var(--nubia-text);
     margin-top: 2.5rem;
     margin-bottom: 1rem;
     letter-spacing: -0.025em;
@@ -565,7 +604,7 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 1.125rem;
     font-weight: 500;
-    color: #1A1A1A;
+    color: var(--nubia-text);
     margin-top: 2rem;
     margin-bottom: 0.75rem;
   }
@@ -576,7 +615,7 @@
 
   .nubia-prose strong {
     font-weight: 600;
-    color: #1A1A1A;
+    color: var(--nubia-text);
   }
 
   .nubia-prose ul,
@@ -609,22 +648,22 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.875rem;
     font-weight: 600;
-    color: #5C5C5C;
+    color: var(--nubia-text-secondary);
     text-align: left;
-    background-color: #F5F4F1;
-    border-bottom: 1px solid #E5E5E3;
+    background-color: var(--nubia-surface-alt);
+    border-bottom: 1px solid var(--nubia-border);
   }
 
   .nubia-prose td {
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
-    border-bottom: 1px solid #EFEFED;
+    border-bottom: 1px solid var(--nubia-border-subtle);
   }
 
   .nubia-prose code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.875rem;
-    background-color: #F5F4F1;
+    background-color: var(--nubia-surface-alt);
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;
   }
@@ -636,7 +675,7 @@
   .nubia-feedback-form {
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid #E5E5E3;
+    border-top: 1px solid var(--nubia-border);
   }
 
   .nubia-textarea {
@@ -644,25 +683,25 @@
     padding: 0.75rem 1rem;
     font-family: 'Source Serif 4', serif;
     font-size: 1rem;
-    color: #1A1A1A;
-    background-color: #FAFAF8;
-    border: 1px solid #E5E5E3;
+    color: var(--nubia-text);
+    background-color: var(--nubia-bg);
+    border: 1px solid var(--nubia-border);
     border-radius: 0.375rem;
     transition: border-color 150ms;
     resize: none;
   }
 
   .nubia-textarea::placeholder {
-    color: #ADADAD;
+    color: var(--nubia-text-faint);
   }
 
   .nubia-textarea:hover {
-    border-color: #D1D1CF;
+    border-color: var(--nubia-border-strong);
   }
 
   .nubia-textarea:focus {
-    border-color: #4A5568;
-    box-shadow: 0 0 0 1px #4A5568;
+    border-color: var(--nubia-accent);
+    box-shadow: 0 0 0 1px var(--nubia-accent);
     outline: none;
   }
 
@@ -675,7 +714,7 @@
     font-size: 0.875rem;
     font-weight: 500;
     color: #FFFFFF;
-    background-color: #4A5568;
+    background-color: var(--nubia-accent);
     border-radius: 0.375rem;
     transition: background-color 150ms;
     border: none;
@@ -683,7 +722,7 @@
   }
 
   .nubia-button:hover {
-    background-color: #3D4756;
+    background-color: var(--nubia-accent-hover);
   }
 
   .nubia-button:disabled {
@@ -699,17 +738,17 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #5C5C5C;
-    background-color: #FFFFFF;
-    border: 1px solid #E5E5E3;
+    color: var(--nubia-text-secondary);
+    background-color: var(--nubia-surface);
+    border: 1px solid var(--nubia-border);
     border-radius: 0.375rem;
     transition: background-color 150ms, color 150ms;
     cursor: pointer;
   }
 
   .nubia-button-secondary:hover {
-    background-color: #F5F4F1;
-    color: #1A1A1A;
+    background-color: var(--nubia-surface-alt);
+    color: var(--nubia-text);
   }
 
   /* ============================================
@@ -726,7 +765,7 @@
   }
 
   .katex-display > .katex {
-    color: #1A1A1A;
+    color: var(--nubia-text);
   }
 
   /* ============================================
@@ -762,7 +801,7 @@
      ============================================ */
 
   .nubia-divider {
-    border-top: 1px solid #E5E5E3;
+    border-top: 1px solid var(--nubia-border);
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
@@ -772,11 +811,11 @@
   }
 
   .nubia-success {
-    color: #3D7A5F;
+    color: var(--nubia-success);
   }
 
   .nubia-error {
-    color: #9B4F4F;
+    color: var(--nubia-error);
   }
 }
 

@@ -31,14 +31,14 @@ function StackingFeatureCards({ features }) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Card color palette - warm, vibrant colors
+  // Card color palette - warm, vibrant colors with dark mode support
   const cardColors = [
-    { bg: 'bg-gradient-to-br from-amber-50 to-amber-100', border: 'border-amber-200', icon: 'bg-amber-500 text-white' },
-    { bg: 'bg-gradient-to-br from-rose-50 to-rose-100', border: 'border-rose-200', icon: 'bg-rose-500 text-white' },
-    { bg: 'bg-gradient-to-br from-emerald-50 to-emerald-100', border: 'border-emerald-200', icon: 'bg-emerald-500 text-white' },
-    { bg: 'bg-gradient-to-br from-orange-50 to-orange-100', border: 'border-orange-200', icon: 'bg-orange-500 text-white' },
-    { bg: 'bg-gradient-to-br from-teal-50 to-teal-100', border: 'border-teal-200', icon: 'bg-teal-500 text-white' },
-    { bg: 'bg-gradient-to-br from-purple-50 to-purple-100', border: 'border-purple-200', icon: 'bg-purple-500 text-white' },
+    { bg: 'bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900', border: 'border-amber-200 dark:border-amber-800', icon: 'bg-amber-500 text-white', textColor: 'text-gray-800 dark:text-amber-100' },
+    { bg: 'bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-950 dark:to-rose-900', border: 'border-rose-200 dark:border-rose-800', icon: 'bg-rose-500 text-white', textColor: 'text-gray-800 dark:text-rose-100' },
+    { bg: 'bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900', border: 'border-emerald-200 dark:border-emerald-800', icon: 'bg-emerald-500 text-white', textColor: 'text-gray-800 dark:text-emerald-100' },
+    { bg: 'bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900', border: 'border-orange-200 dark:border-orange-800', icon: 'bg-orange-500 text-white', textColor: 'text-gray-800 dark:text-orange-100' },
+    { bg: 'bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-950 dark:to-teal-900', border: 'border-teal-200 dark:border-teal-800', icon: 'bg-teal-500 text-white', textColor: 'text-gray-800 dark:text-teal-100' },
+    { bg: 'bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900', border: 'border-purple-200 dark:border-purple-800', icon: 'bg-purple-500 text-white', textColor: 'text-gray-800 dark:text-purple-100' },
   ];
 
   useEffect(() => {
@@ -95,10 +95,10 @@ function StackingFeatureCards({ features }) {
                   <div className="scale-125">{feature.icon}</div>
                 </div>
                 <div>
-                  <h3 className="font-sans text-lg font-bold text-gray-800 mb-2">
+                  <h3 className={`font-sans text-lg font-bold ${colors.textColor} mb-2`}>
                     {feature.title}
                   </h3>
-                  <p className="font-serif text-base text-gray-600 leading-relaxed">
+                  <p className="font-serif text-base text-gray-600 dark:text-gray-300 leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -180,10 +180,10 @@ function StackingFeatureCards({ features }) {
                     <div className="scale-125">{feature.icon}</div>
                   </div>
                   <div>
-                    <h3 className="font-sans text-lg font-bold text-gray-800 mb-2">
+                    <h3 className={`font-sans text-lg font-bold ${colors.textColor} mb-2`}>
                       {feature.title}
                     </h3>
-                    <p className="font-serif text-base text-gray-600 leading-relaxed">
+                    <p className="font-serif text-base text-gray-600 dark:text-gray-300 leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
@@ -310,13 +310,13 @@ function Home() {
 
       {/* Search Section */}
       <section className="mb-12 md:mb-16">
-        <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-2xl p-6 md:p-8 border border-orange-200/50">
-          <h2 className="font-sans text-lg font-semibold text-gray-800 mb-2">Search Finance Topics</h2>
-          <p className="font-sans text-sm text-gray-600 mb-4">
+        <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-orange-950 dark:via-amber-950 dark:to-yellow-950 rounded-2xl p-6 md:p-8 border border-orange-200/50 dark:border-orange-800/50">
+          <h2 className="font-sans text-lg font-semibold text-gray-800 dark:text-orange-100 mb-2">Search Finance Topics</h2>
+          <p className="font-sans text-sm text-gray-600 dark:text-orange-200/70 mb-4">
             Find topic explanations, formulas, calculators, and academic resources.
           </p>
           <form onSubmit={handleSearch} className="relative">
-            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
@@ -324,7 +324,7 @@ function Home() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for topics like 'Time Value of Money', 'NPV', 'Bond Pricing'..."
-              className="w-full pl-12 pr-4 py-4 bg-white border border-orange-200 rounded-xl text-base text-gray-800 placeholder-gray-400 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all shadow-sm"
+              className="w-full pl-12 pr-4 py-4 bg-white dark:bg-gray-900 border border-orange-200 dark:border-orange-800 rounded-xl text-base text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-orange-400 dark:focus:border-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-800 transition-all shadow-sm"
             />
             <button
               type="submit"
@@ -358,54 +358,54 @@ function Home() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Link 
             to="/overview" 
-            className="bg-white border border-nubia-border rounded-xl p-4 hover:border-amber-300 hover:shadow-md transition-all group"
+            className="bg-white dark:bg-nubia-surface border border-nubia-border rounded-xl p-4 hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition-all group"
           >
-            <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center mb-3 group-hover:bg-amber-200 transition-colors">
-              <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center mb-3 group-hover:bg-amber-200 dark:group-hover:bg-amber-800/50 transition-colors">
+              <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h3 className="font-sans text-sm font-semibold text-gray-800">Overview</h3>
-            <p className="font-sans text-xs text-gray-500">Platform features</p>
+            <h3 className="font-sans text-sm font-semibold text-gray-800 dark:text-gray-100">Overview</h3>
+            <p className="font-sans text-xs text-gray-500 dark:text-gray-400">Platform features</p>
           </Link>
 
           <Link 
             to="/overview#reviews" 
-            className="bg-white border border-nubia-border rounded-xl p-4 hover:border-rose-300 hover:shadow-md transition-all group"
+            className="bg-white dark:bg-nubia-surface border border-nubia-border rounded-xl p-4 hover:border-rose-300 dark:hover:border-rose-700 hover:shadow-md transition-all group"
           >
-            <div className="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center mb-3 group-hover:bg-rose-200 transition-colors">
-              <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center mb-3 group-hover:bg-rose-200 dark:group-hover:bg-rose-800/50 transition-colors">
+              <svg className="w-5 h-5 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
-            <h3 className="font-sans text-sm font-semibold text-gray-800">Reviews</h3>
-            <p className="font-sans text-xs text-gray-500">Student feedback</p>
+            <h3 className="font-sans text-sm font-semibold text-gray-800 dark:text-gray-100">Reviews</h3>
+            <p className="font-sans text-xs text-gray-500 dark:text-gray-400">Student feedback</p>
           </Link>
 
           <Link 
             to="/overview#about" 
-            className="bg-white border border-nubia-border rounded-xl p-4 hover:border-emerald-300 hover:shadow-md transition-all group"
+            className="bg-white dark:bg-nubia-surface border border-nubia-border rounded-xl p-4 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-md transition-all group"
           >
-            <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center mb-3 group-hover:bg-emerald-200 transition-colors">
-              <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center mb-3 group-hover:bg-emerald-200 dark:group-hover:bg-emerald-800/50 transition-colors">
+              <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="font-sans text-sm font-semibold text-gray-800">About</h3>
-            <p className="font-sans text-xs text-gray-500">About Nubia</p>
+            <h3 className="font-sans text-sm font-semibold text-gray-800 dark:text-gray-100">About</h3>
+            <p className="font-sans text-xs text-gray-500 dark:text-gray-400">About Nubia</p>
           </Link>
 
           <Link 
             to="/summarizer" 
-            className="bg-white border border-nubia-border rounded-xl p-4 hover:border-purple-300 hover:shadow-md transition-all group"
+            className="bg-white dark:bg-nubia-surface border border-nubia-border rounded-xl p-4 hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-md transition-all group"
           >
-            <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center mb-3 group-hover:bg-purple-200 transition-colors">
-              <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center mb-3 group-hover:bg-purple-200 dark:group-hover:bg-purple-800/50 transition-colors">
+              <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h3 className="font-sans text-sm font-semibold text-gray-800">PDF Summarizer</h3>
-            <p className="font-sans text-xs text-gray-500">AI-powered tool</p>
+            <h3 className="font-sans text-sm font-semibold text-gray-800 dark:text-gray-100">PDF Summarizer</h3>
+            <p className="font-sans text-xs text-gray-500 dark:text-gray-400">AI-powered tool</p>
           </Link>
         </div>
       </section>

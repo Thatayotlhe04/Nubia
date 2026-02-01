@@ -4,40 +4,41 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'media', // Automatically detect system preference
   theme: {
     extend: {
       colors: {
         // Nubia Design System - Calm, Editorial, Academic
         nubia: {
           // Backgrounds
-          'bg': '#FAFAF8',
-          'bg-warm': '#F7F6F3',
-          'surface': '#FFFFFF',
-          'surface-alt': '#F5F4F1',
+          'bg': 'var(--nubia-bg)',
+          'bg-warm': 'var(--nubia-bg-warm)',
+          'surface': 'var(--nubia-surface)',
+          'surface-alt': 'var(--nubia-surface-alt)',
           
           // Text
-          'text': '#1A1A1A',
-          'text-secondary': '#5C5C5C',
-          'text-muted': '#8A8A8A',
-          'text-faint': '#ADADAD',
+          'text': 'var(--nubia-text)',
+          'text-secondary': 'var(--nubia-text-secondary)',
+          'text-muted': 'var(--nubia-text-muted)',
+          'text-faint': 'var(--nubia-text-faint)',
           
           // Accent - Muted slate blue
-          'accent': '#4A5568',
-          'accent-subtle': '#E8EBF0',
-          'accent-hover': '#3D4756',
+          'accent': 'var(--nubia-accent)',
+          'accent-subtle': 'var(--nubia-accent-subtle)',
+          'accent-hover': 'var(--nubia-accent-hover)',
           
           // Borders
-          'border': '#E5E5E3',
-          'border-subtle': '#EFEFED',
-          'border-strong': '#D1D1CF',
+          'border': 'var(--nubia-border)',
+          'border-subtle': 'var(--nubia-border-subtle)',
+          'border-strong': 'var(--nubia-border-strong)',
           
           // Semantic
-          'success': '#3D7A5F',
-          'success-subtle': '#E8F3ED',
-          'warning': '#9A7B4F',
-          'warning-subtle': '#F9F5ED',
-          'error': '#9B4F4F',
-          'error-subtle': '#F9EDEE',
+          'success': 'var(--nubia-success)',
+          'success-subtle': 'var(--nubia-success-subtle)',
+          'warning': 'var(--nubia-warning)',
+          'warning-subtle': 'var(--nubia-warning-subtle)',
+          'error': 'var(--nubia-error)',
+          'error-subtle': 'var(--nubia-error-subtle)',
         }
       },
       fontFamily: {
