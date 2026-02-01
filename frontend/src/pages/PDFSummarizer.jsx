@@ -827,6 +827,24 @@ function PDFSummarizer() {
           </div>
         </div>
       </div>
+
+      {/* Limitations Notice */}
+      <div className="mt-4 p-4 bg-blue-900/20 border border-blue-700/50 rounded-lg">
+        <div className="flex items-start gap-3">
+          <svg className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <h3 className="font-sans font-semibold text-blue-300 mb-1">Limitations</h3>
+            <ul className="text-sm text-blue-200/80 space-y-1">
+              <li>• <strong>Diagrams & charts</strong> (binomial trees, graphs, flowcharts) cannot be extracted - they're stored as images</li>
+              <li>• <strong>Mathematical formulas</strong> in image form may not appear in the summary</li>
+              <li>• <strong>Scanned PDFs</strong> contain images of text, not actual text</li>
+              <li>• For diagram-heavy content, review the original PDF alongside this summary</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
