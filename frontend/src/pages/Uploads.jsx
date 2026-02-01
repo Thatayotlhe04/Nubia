@@ -1,21 +1,86 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+
+// Helper to convert file to base64 for localStorage persistence
+const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
+// Helper to convert base64 back to blob URL
+const base64ToUrl = (base64) => {
+  const byteString = atob(base64.split(',')[1]);
+  const mimeString = base64.split(',')[0].split(':')[1].split(';')[0];
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  const blob = new Blob([ab], { type: mimeString });
+  return URL.createObjectURL(blob);
+};
 
 function Uploads() {
   const [uploads, setUploads] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const fileInputRef = useRef(null);
 
-  const handleFiles = useCallback((files) => {
-    const newUploads = Array.from(files)
-      .filter(file => file.type === 'application/pdf')
-      .map(file => ({
-        id: Date.now() + Math.random(),
-        name: file.name,
-        size: (file.size / 1024 / 1024).toFixed(2), // MB
-        date: new Date().toLocaleDateString(),
-        url: URL.createObjectURL(file),
-        file: file
-      }));
+  // Load saved uploads from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('nubia-uploads');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Convert base64 back to blob URLs
+        const restored = parsed.map(upload => ({
+          ...upload,
+          url: base64ToUrl(upload.base64)
+        }));
+        setUploads(restored);
+      }
+    } catch (error) {
+      console.error('Error loading uploads:', error);
+    }
+    setIsLoading(false);
+  }, []);
+
+  // Save uploads to localStorage whenever they change
+  useEffect(() => {
+    if (isLoading) return; // Don't save during initial load
+    
+    const saveToStorage = async () => {
+      try {
+        // Only save metadata and base64, not blob URLs
+        const toSave = uploads.map(({ url, file, ...rest }) => rest);
+        localStorage.setItem('nubia-uploads', JSON.stringify(toSave));
+      } catch (error) {
+        console.error('Error saving uploads:', error);
+      }
+    };
+    
+    saveToStorage();
+  }, [uploads, isLoading]);
+
+  const handleFiles = useCallback(async (files) => {
+    const validFiles = Array.from(files).filter(file => file.type === 'application/pdf');
+    
+    const newUploads = await Promise.all(
+      validFiles.map(async (file) => {
+        const base64 = await fileToBase64(file);
+        return {
+          id: Date.now() + Math.random(),
+          name: file.name,
+          size: (file.size / 1024 / 1024).toFixed(2), // MB
+          date: new Date().toLocaleDateString(),
+          url: URL.createObjectURL(file),
+          base64: base64 // Store base64 for persistence
+        };
+      })
+    );
     
     if (newUploads.length > 0) {
       setUploads(prev => [...prev, ...newUploads]);
@@ -174,10 +239,11 @@ function Uploads() {
       <div className="mt-8 p-5 bg-nubia-surface-alt border border-nubia-border rounded-lg">
         <h2 className="font-sans text-lg font-semibold text-nubia-text mb-3">📁 About Your Uploads</h2>
         <ul className="space-y-2 text-sm text-nubia-text-secondary">
-          <li>• Files are stored locally in your browser and will persist until you clear browser data</li>
-          <li>• Maximum recommended file size: 25MB per PDF</li>
+          <li>• Files are saved in your browser and will persist across sessions</li>
+          <li>• Maximum recommended file size: 10MB per PDF (for storage efficiency)</li>
           <li>• Supported format: PDF only</li>
           <li>• Click on the eye icon to view a PDF in a new tab</li>
+          <li>• Clearing browser data will remove all saved uploads</li>
         </ul>
       </div>
     </div>

@@ -310,7 +310,7 @@ function Home() {
 
       {/* Search Section */}
       <section className="mb-12 md:mb-16">
-        <div className="bg-gradient-to-br from-rose-50 via-pink-50 to-fuchsia-50 rounded-2xl p-6 md:p-8 border border-rose-200/50">
+        <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-2xl p-6 md:p-8 border border-orange-200/50">
           <h2 className="font-sans text-lg font-semibold text-gray-800 mb-2">Search Finance Topics</h2>
           <p className="font-sans text-sm text-gray-600 mb-4">
             Find topic explanations, formulas, calculators, and academic resources.
@@ -324,11 +324,11 @@ function Home() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for topics like 'Time Value of Money', 'NPV', 'Bond Pricing'..."
-              className="w-full pl-12 pr-4 py-4 bg-white border border-rose-200 rounded-xl text-base text-gray-800 placeholder-gray-400 focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200 transition-all shadow-sm"
+              className="w-full pl-12 pr-4 py-4 bg-white border border-orange-200 rounded-xl text-base text-gray-800 placeholder-gray-400 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all shadow-sm"
             />
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-gradient-to-r from-rose-400 to-rose-500 text-white font-medium rounded-lg hover:from-rose-500 hover:to-rose-600 transition-all shadow-sm"
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-500 text-white font-medium rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all shadow-sm"
             >
               Search
             </button>
