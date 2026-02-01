@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { NubiaLogo } from '../../pages/Home';
+import { useAuth } from '../../contexts/AuthContext';
 
-function Header({ onToggleMenu, menuOpen }) {
+function Header({ onToggleMenu, menuOpen, onOpenAuth }) {
+  const { user, getDisplayName } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const navigate = useNavigate();
@@ -68,6 +70,28 @@ function Header({ onToggleMenu, menuOpen }) {
             className="w-48 lg:w-64 pl-9 pr-3 py-1.5 bg-nubia-bg border border-nubia-border rounded-md text-sm text-nubia-text placeholder-nubia-text-muted focus:border-nubia-accent focus:outline-none transition-colors"
           />
         </form>
+        
+        {/* Optional Sign In Button */}
+        {user ? (
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-nubia-accent/20 flex items-center justify-center">
+              <span className="text-sm font-medium text-nubia-accent">
+                {getDisplayName().charAt(0).toUpperCase()}
+              </span>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={onOpenAuth}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-nubia-text-secondary hover:text-nubia-text hover:bg-nubia-surface-alt rounded-md transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span className="hidden lg:inline">Sign In</span>
+          </button>
+        )}
+        
         <span className="hidden lg:inline font-sans text-xs text-nubia-text-faint">
           University of Botswana
         </span>
@@ -84,6 +108,25 @@ function Header({ onToggleMenu, menuOpen }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </button>
+        
+        {/* Mobile User/Sign In */}
+        {user ? (
+          <div className="w-8 h-8 rounded-full bg-nubia-accent/20 flex items-center justify-center">
+            <span className="text-sm font-medium text-nubia-accent">
+              {getDisplayName().charAt(0).toUpperCase()}
+            </span>
+          </div>
+        ) : (
+          <button
+            onClick={onOpenAuth}
+            className="p-2 rounded-md hover:bg-nubia-surface-alt transition-colors"
+            aria-label="Sign In"
+          >
+            <svg className="w-5 h-5 text-nubia-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* Mobile Search Overlay */}

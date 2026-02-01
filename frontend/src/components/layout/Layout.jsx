@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import MenuDrawer from './MenuDrawer';
+import AuthModal from '../auth/AuthModal';
 import { getTopics } from '../../utils/api';
 
 // Floating Back Button Component
@@ -30,6 +31,7 @@ function Layout() {
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
     async function loadTopics() {
@@ -50,6 +52,7 @@ function Layout() {
       <Header 
         onToggleMenu={() => setMenuOpen(!menuOpen)}
         menuOpen={menuOpen}
+        onOpenAuth={() => setAuthModalOpen(true)}
       />
       
       <main className="nubia-main flex-1">
@@ -64,6 +67,13 @@ function Layout() {
         onClose={() => setMenuOpen(false)}
         topics={topics}
         loading={loading}
+        onOpenAuth={() => setAuthModalOpen(true)}
+      />
+      
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
       />
       
       {/* Floating Back Button */}

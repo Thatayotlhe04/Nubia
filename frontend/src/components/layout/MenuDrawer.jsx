@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, NavLink } from 'react-router-dom';
 import { NubiaLogo } from '../../pages/Home';
+import { useAuth } from '../../contexts/AuthContext';
 
-function MenuDrawer({ isOpen, onClose, topics = [], loading = false }) {
+function MenuDrawer({ isOpen, onClose, topics = [], loading = false, onOpenAuth }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [expandedSections, setExpandedSections] = useState({ overview: true, topics: false, tools: false });
+  
+  const { user, isAuthenticated, signOut, getDisplayName, loading: authLoading } = useAuth();
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -93,6 +96,50 @@ function MenuDrawer({ isOpen, onClose, topics = [], loading = false }) {
         
         {/* Menu Content */}
         <div className="overflow-y-auto h-[calc(100%-4rem)]">
+          {/* User Section */}
+          <div className="border-b border-nubia-border p-4">
+            {isAuthenticated ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-nubia-accent-subtle flex items-center justify-center">
+                    <span className="text-sm font-semibold text-nubia-accent">
+                      {getDisplayName().charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-nubia-text">{getDisplayName()}</p>
+                    <p className="text-xs text-nubia-text-muted truncate max-w-[140px]">{user?.email}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={async () => {
+                    await signOut();
+                    onClose();
+                  }}
+                  className="p-2 text-nubia-text-muted hover:text-nubia-error hover:bg-nubia-error-subtle rounded-md transition-colors"
+                  title="Sign out"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  onClose();
+                  onOpenAuth?.();
+                }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-nubia-accent-subtle hover:bg-nubia-accent/10 text-nubia-accent rounded-lg transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span className="text-sm font-medium">Sign In (Optional)</span>
+              </button>
+            )}
+          </div>
+
           {/* Home - Direct link */}
           <div className="border-b border-nubia-border">
             <button
