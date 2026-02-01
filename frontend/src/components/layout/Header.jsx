@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { NubiaLogo } from '../../pages/Home';
+import UserMenu from '../auth/UserMenu';
+import AuthModal from '../auth/AuthModal';
 
 function Header({ onToggleMenu, menuOpen }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState('signin');
   const navigate = useNavigate();
+
+  const handleOpenAuth = (mode = 'signin') => {
+    setAuthModalMode(mode);
+    setShowAuthModal(true);
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -71,6 +80,7 @@ function Header({ onToggleMenu, menuOpen }) {
         <span className="hidden lg:inline font-sans text-xs text-nubia-text-faint">
           University of Botswana
         </span>
+        <UserMenu onOpenAuth={handleOpenAuth} />
       </div>
 
       {/* Search Icon - Mobile */}
@@ -84,6 +94,7 @@ function Header({ onToggleMenu, menuOpen }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </button>
+        <UserMenu onOpenAuth={handleOpenAuth} />
       </div>
 
       {/* Mobile Search Overlay */}
@@ -110,6 +121,13 @@ function Header({ onToggleMenu, menuOpen }) {
           </form>
         </div>
       )}
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        initialMode={authModalMode}
+      />
     </header>
   );
 }

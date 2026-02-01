@@ -6,6 +6,8 @@ import { FormulaBlock } from '../components/content/FormulaBlock';
 import ExampleBlock from '../components/content/ExampleBlock';
 import Calculator from '../components/calculator/Calculator';
 import FeedbackForm from '../components/feedback/FeedbackForm';
+import Notes from '../components/notes/Notes';
+import AuthModal from '../components/auth/AuthModal';
 
 // Fallback topic content when backend is unavailable
 const fallbackTopics = {
@@ -1119,6 +1121,11 @@ function Topic() {
   const [topic, setTopic] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const handleOpenAuth = (mode = 'signin') => {
+    setShowAuthModal(true);
+  };
 
   useEffect(() => {
     async function loadTopic() {
@@ -1251,8 +1258,22 @@ function Topic() {
         </section>
       )}
 
+      {/* Personal Notes */}
+      <Notes
+        topicId={topicId}
+        topicTitle={topic.title}
+        onOpenAuth={handleOpenAuth}
+      />
+
       {/* Feedback */}
       <FeedbackForm pageContext={`topic:${topicId}`} />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        initialMode="signin"
+      />
     </article>
   );
 }

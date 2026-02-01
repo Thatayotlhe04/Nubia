@@ -1,4 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import SignInCTA from '../components/auth/SignInCTA';
+import AuthModal from '../components/auth/AuthModal';
 
 // Helper to convert file to base64 for localStorage persistence
 const fileToBase64 = (file) => {
@@ -27,7 +30,13 @@ function Uploads() {
   const [uploads, setUploads] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const fileInputRef = useRef(null);
+  const { isAuthenticated } = useAuth();
+
+  const handleOpenAuth = (mode = 'signin') => {
+    setShowAuthModal(true);
+  };
 
   // Load saved uploads from localStorage on mount
   useEffect(() => {
@@ -235,6 +244,13 @@ function Uploads() {
         </div>
       )}
       
+      {/* Sign In CTA for guests with uploads */}
+      {!isAuthenticated && uploads.length > 0 && (
+        <div className="mt-6">
+          <SignInCTA onOpenAuth={handleOpenAuth} context="uploads" variant="inline" />
+        </div>
+      )}
+
       {/* Info Section */}
       <div className="mt-8 p-5 bg-nubia-surface-alt border border-nubia-border rounded-lg">
         <h2 className="font-sans text-lg font-semibold text-nubia-text mb-3">📁 About Your Uploads</h2>
@@ -244,8 +260,18 @@ function Uploads() {
           <li>• Supported format: PDF only</li>
           <li>• Click on the eye icon to view a PDF in a new tab</li>
           <li>• Clearing browser data will remove all saved uploads</li>
+          {isAuthenticated && (
+            <li className="text-nubia-accent">• Your account is connected - cloud sync coming soon!</li>
+          )}
         </ul>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        initialMode="signin"
+      />
     </div>
   );
 }
