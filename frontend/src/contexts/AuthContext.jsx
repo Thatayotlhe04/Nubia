@@ -121,6 +121,46 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Sign in with Google
+  const signInWithGoogle = async () => {
+    setError(null);
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        }
+      });
+      
+      if (error) throw error;
+      
+      return { success: true, data };
+    } catch (err) {
+      setError(err.message);
+      return { success: false, error: err.message };
+    }
+  };
+
+  // Sign in with Apple
+  const signInWithApple = async () => {
+    setError(null);
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: window.location.origin,
+        }
+      });
+      
+      if (error) throw error;
+      
+      return { success: true, data };
+    } catch (err) {
+      setError(err.message);
+      return { success: false, error: err.message };
+    }
+  };
+
   // Clear error
   const clearError = () => setError(null);
 
@@ -139,6 +179,8 @@ export function AuthProvider({ children }) {
     signIn,
     signOut,
     resetPassword,
+    signInWithGoogle,
+    signInWithApple,
     clearError,
     getDisplayName,
     supabase, // Expose supabase client for advanced usage
