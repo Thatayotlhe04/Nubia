@@ -97,6 +97,7 @@ const curatedResources = [
 // Category colors
 const categoryColors = {
   'Finance': 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700',
+  'Accounting': 'bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 border-teal-300 dark:border-teal-700',
   'Economics': 'bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-700',
   'Mathematics': 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700',
   'Statistics': 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-700',
@@ -111,11 +112,19 @@ const categoryColors = {
 function detectCategory(paper) {
   const text = `${paper.title || ''} ${paper.abstract || ''} ${(paper.fieldsOfStudy || []).join(' ')}`.toLowerCase();
   
+  // Check Accounting first (more specific)
+  if (text.includes('accounting') || text.includes('auditing') || text.includes('bookkeeping') ||
+      text.includes('gaap') || text.includes('ifrs') || text.includes('financial statement') ||
+      text.includes('ledger') || text.includes('journal entry') || text.includes('depreciation') ||
+      text.includes('amortization') || text.includes('accounts receivable') || text.includes('accounts payable')) {
+    return 'Accounting';
+  }
   if (text.includes('finance') || text.includes('investment') || text.includes('portfolio') || 
       text.includes('stock') || text.includes('bond') || text.includes('asset pricing') ||
       text.includes('capital') || text.includes('valuation') || text.includes('risk management') ||
       text.includes('banking') || text.includes('taxation') || text.includes('corporate') ||
-      text.includes('equity') || text.includes('derivative') || text.includes('hedge')) {
+      text.includes('equity') || text.includes('derivative') || text.includes('hedge') ||
+      text.includes('swap') || text.includes('option') || text.includes('futures')) {
     return 'Finance';
   }
   if (text.includes('economics') || text.includes('economic') || text.includes('market') || 
@@ -367,7 +376,7 @@ function Search() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [activeSource, setActiveSource] = useState('all');
+  const [activeCategory, setActiveCategory] = useState('All');
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [apiStatus, setApiStatus] = useState({ semantic: true, openalex: true, crossref: true });
 
@@ -483,12 +492,10 @@ function Search() {
     setSearchParams({});
   };
 
-  // Filter results by source
-  const filteredResults = activeSource === 'all' 
+  // Filter results by category/field
+  const filteredResults = activeCategory === 'All' 
     ? results 
-    : activeSource === 'curated'
-    ? results.filter(r => r.isCurated)
-    : results.filter(r => r.source.toLowerCase().includes(activeSource));
+    : results.filter(r => r.category === activeCategory);
 
   // Finance-focused suggestions
   const suggestions = [
@@ -594,27 +601,31 @@ function Search() {
         </div>
       )}
 
-      {/* Source Filter */}
+      {/* Category Filter */}
       {searchPerformed && results.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <span className="text-sm text-nubia-text-muted">Filter:</span>
+          <span className="text-sm text-nubia-text-muted">Filter by field:</span>
           {[
-            { key: 'all', label: 'All Sources' },
-            { key: 'semantic', label: 'Semantic Scholar' },
-            { key: 'openalex', label: 'OpenAlex' },
-            { key: 'crossref', label: 'CrossRef' },
-            { key: 'curated', label: 'Nubia Picks' }
-          ].map(source => (
+            'All',
+            'Finance',
+            'Accounting',
+            'Economics',
+            'Business',
+            'Statistics',
+            'Mathematics',
+            'Computer Science',
+            'Physics'
+          ].map(category => (
             <button
-              key={source.key}
-              onClick={() => setActiveSource(source.key)}
+              key={category}
+              onClick={() => setActiveCategory(category)}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                activeSource === source.key
+                activeCategory === category
                   ? 'bg-nubia-accent text-white'
                   : 'bg-nubia-surface border border-nubia-border text-nubia-text-secondary hover:border-nubia-accent'
               }`}
             >
-              {source.label}
+              {category}
             </button>
           ))}
         </div>
