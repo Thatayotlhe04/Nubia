@@ -4,14 +4,20 @@ import * as pdfjsLib from 'pdfjs-dist';
 // Set up PDF.js worker - use unpkg as fallback CDN
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
+// Hugging Face Inference API for AI summarization (free tier)
+const AI_SUMMARY_ENDPOINT = 'https://api-inference.huggingface.co/models/facebook/bart-large-cnn';
+
 function PDFSummarizer() {
   const [file, setFile] = useState(null);
   const [extractedText, setExtractedText] = useState('');
   const [summary, setSummary] = useState(null);
+  const [aiSummary, setAiSummary] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [progress, setProgress] = useState({ stage: '', percent: 0 });
+  const [summaryMode, setSummaryMode] = useState('basic'); // 'basic' or 'ai'
   const fileInputRef = useRef(null);
 
   // Text extraction from PDF - sequential for reliability
@@ -178,6 +184,78 @@ function PDFSummarizer() {
     };
   };
 
+  // AI-powered summarization using Hugging Face's free API
+  const generateAISummary = async (text) => {
+    setIsAiLoading(true);
+    setAiSummary(null);
+    
+    try {
+      // Clean and truncate text for API (BART handles up to ~1024 tokens)
+      const cleanText = text
+        .replace(/\s+/g, ' ')
+        .replace(/\n+/g, ' ')
+        .trim()
+        .slice(0, 4000); // Limit to ~4000 chars for best results
+      
+      // Make request to Hugging Face Inference API
+      const response = await fetch(AI_SUMMARY_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          inputs: cleanText,
+          parameters: {
+            max_length: 250,
+            min_length: 80,
+            do_sample: false
+          }
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        
+        // Handle model loading state (common with free tier)
+        if (errorData.error?.includes('loading')) {
+          return {
+            loading: true,
+            message: 'AI model is warming up. Please try again in 20-30 seconds.',
+            estimatedTime: errorData.estimated_time || 30
+          };
+        }
+        
+        throw new Error(errorData.error || 'AI summarization failed');
+      }
+
+      const result = await response.json();
+      
+      if (Array.isArray(result) && result[0]?.summary_text) {
+        return {
+          summary: result[0].summary_text,
+          success: true
+        };
+      }
+      
+      throw new Error('Unexpected response format');
+    } catch (err) {
+      console.error('AI Summary error:', err);
+      return {
+        error: true,
+        message: err.message || 'Failed to generate AI summary. Try again or use basic summary.'
+      };
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
+  const handleAISummarize = async () => {
+    if (!extractedText) return;
+    
+    const result = await generateAISummary(extractedText);
+    setAiSummary(result);
+  };
+
   const handleFile = useCallback(async (selectedFile) => {
     if (!selectedFile || selectedFile.type !== 'application/pdf') {
       setError('Please upload a PDF file');
@@ -245,7 +323,9 @@ function PDFSummarizer() {
     setFile(null);
     setExtractedText('');
     setSummary(null);
+    setAiSummary(null);
     setError(null);
+    setSummaryMode('basic');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -359,6 +439,113 @@ function PDFSummarizer() {
             </button>
           </div>
 
+          {/* Summary Mode Toggle */}
+          <div className="flex items-center gap-2 p-1 bg-nubia-surface-alt rounded-lg w-fit">
+            <button
+              onClick={() => setSummaryMode('basic')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                summaryMode === 'basic'
+                  ? 'bg-nubia-surface text-nubia-text shadow-sm'
+                  : 'text-nubia-text-secondary hover:text-nubia-text'
+              }`}
+            >
+              Basic Summary
+            </button>
+            <button
+              onClick={() => {
+                setSummaryMode('ai');
+                if (!aiSummary) {
+                  handleAISummarize();
+                }
+              }}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
+                summaryMode === 'ai'
+                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm'
+                  : 'text-nubia-text-secondary hover:text-nubia-text'
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              AI Summary
+            </button>
+          </div>
+
+          {/* AI Summary Section */}
+          {summaryMode === 'ai' && (
+            <div className="p-5 bg-gradient-to-br from-purple-900/20 to-indigo-900/20 border border-purple-700/50 rounded-lg">
+              <h2 className="font-sans text-lg font-semibold text-nubia-text mb-3 flex items-center gap-2">
+                <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                AI-Powered Summary
+                <span className="text-xs font-normal px-2 py-0.5 bg-purple-600/30 text-purple-300 rounded-full">
+                  Powered by BART
+                </span>
+              </h2>
+              
+              {isAiLoading && (
+                <div className="flex items-center gap-3 py-4">
+                  <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                  <p className="text-nubia-text-secondary">Generating AI summary...</p>
+                </div>
+              )}
+              
+              {aiSummary?.loading && (
+                <div className="p-4 bg-amber-900/20 border border-amber-700/50 rounded-lg">
+                  <p className="text-amber-300 flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {aiSummary.message}
+                  </p>
+                  <button
+                    onClick={handleAISummarize}
+                    className="mt-3 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-md text-sm font-medium transition-colors"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              )}
+              
+              {aiSummary?.error && (
+                <div className="p-4 bg-red-900/20 border border-red-700/50 rounded-lg">
+                  <p className="text-red-300">{aiSummary.message}</p>
+                  <button
+                    onClick={handleAISummarize}
+                    className="mt-3 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-md text-sm font-medium transition-colors"
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
+              
+              {aiSummary?.success && (
+                <p className="text-nubia-text-secondary leading-relaxed">{aiSummary.summary}</p>
+              )}
+              
+              {!isAiLoading && !aiSummary && (
+                <button
+                  onClick={handleAISummarize}
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-md text-sm font-medium transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Generate AI Summary
+                </button>
+              )}
+              
+              <p className="text-xs text-nubia-text-muted mt-4">
+                Uses Facebook's BART model via Hugging Face. Free tier may have occasional delays.
+              </p>
+            </div>
+          )}
+
+          {/* Basic Summary Section */}
+          {summaryMode === 'basic' && (
+            <>
+
           {/* Overview */}
           <div className="p-5 bg-nubia-surface border border-nubia-border rounded-lg">
             <h2 className="font-sans text-lg font-semibold text-nubia-text mb-3 flex items-center gap-2">
@@ -428,6 +615,8 @@ function PDFSummarizer() {
                 ))}
               </ul>
             </div>
+          )}
+          </>
           )}
 
           {/* Full Text Toggle */}

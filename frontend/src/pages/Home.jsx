@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import StudyInsightsCard from '../components/insights/StudyInsightsCard';
 
 // Nubia Logo Component - Pulse/Heartbeat style
 export function NubiaLogo({ className = "w-8 h-8" }) {
@@ -290,23 +291,36 @@ function Home() {
 
   return (
     <div className="animate-fade-in">
+      {/* Warm gradient background accent */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-orange-200/30 via-amber-200/20 to-transparent dark:from-orange-900/20 dark:via-amber-900/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 -left-20 w-60 h-60 bg-gradient-to-br from-rose-200/20 via-pink-200/10 to-transparent dark:from-rose-900/10 dark:via-pink-900/5 rounded-full blur-3xl" />
+      </div>
+
       {/* Hero Section */}
-      <header className="mb-12 md:mb-16">
+      <header className="mb-10 md:mb-12">
         <div className="flex items-center gap-3 mb-6">
-          <NubiaLogo className="w-14 h-9 md:w-16 md:h-10 text-nubia-accent" />
+          <div className="p-2 bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/50 dark:to-amber-900/50 rounded-xl">
+            <NubiaLogo className="w-12 h-8 md:w-14 md:h-9 text-orange-500" />
+          </div>
           <div>
-            <h1 className="nubia-heading-1 text-3xl md:text-4xl">
+            <h1 className="font-sans text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 dark:from-gray-100 dark:via-gray-200 dark:to-gray-300 bg-clip-text text-transparent">
               Nubia
             </h1>
-            <p className="font-sans text-sm text-nubia-text-muted">Finance Study Companion</p>
+            <p className="font-sans text-sm text-orange-600 dark:text-orange-400 font-medium">Finance Study Companion</p>
           </div>
         </div>
-        <p className="nubia-body text-base md:text-lg text-nubia-text-secondary leading-relaxed max-w-3xl">
+        <p className="nubia-body text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl">
           A self-contained finance study environment designed for Batswana university students. 
           Nubia brings together core concepts, verified formulas, interactive calculators, and 
           curated academic resources in one structured workspace.
         </p>
       </header>
+
+      {/* Study Insights Card - Today's Progress */}
+      <section className="mb-10 md:mb-12">
+        <StudyInsightsCard />
+      </section>
 
       {/* Search Section */}
       <section className="mb-12 md:mb-16">
@@ -355,13 +369,14 @@ function Home() {
 
       {/* Quick Links */}
       <section className="mb-12">
+        <h2 className="font-sans text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Quick Access</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Link 
             to="/overview" 
-            className="bg-white dark:bg-nubia-surface border border-nubia-border rounded-xl p-4 hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition-all group"
+            className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/50 dark:to-orange-950/50 border border-amber-200/50 dark:border-amber-800/50 rounded-xl p-4 hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md hover:scale-[1.02] transition-all group"
           >
-            <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center mb-3 group-hover:bg-amber-200 dark:group-hover:bg-amber-800/50 transition-colors">
-              <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mb-3 shadow-sm group-hover:shadow-md transition-all">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
@@ -371,10 +386,10 @@ function Home() {
 
           <Link 
             to="/overview#reviews" 
-            className="bg-white dark:bg-nubia-surface border border-nubia-border rounded-xl p-4 hover:border-rose-300 dark:hover:border-rose-700 hover:shadow-md transition-all group"
+            className="bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/50 dark:to-pink-950/50 border border-rose-200/50 dark:border-rose-800/50 rounded-xl p-4 hover:border-rose-300 dark:hover:border-rose-700 hover:shadow-md hover:scale-[1.02] transition-all group"
           >
-            <div className="w-10 h-10 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center mb-3 group-hover:bg-rose-200 dark:group-hover:bg-rose-800/50 transition-colors">
-              <svg className="w-5 h-5 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center mb-3 shadow-sm group-hover:shadow-md transition-all">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
@@ -384,10 +399,10 @@ function Home() {
 
           <Link 
             to="/overview#about" 
-            className="bg-white dark:bg-nubia-surface border border-nubia-border rounded-xl p-4 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-md transition-all group"
+            className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/50 dark:to-teal-950/50 border border-emerald-200/50 dark:border-emerald-800/50 rounded-xl p-4 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-md hover:scale-[1.02] transition-all group"
           >
-            <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center mb-3 group-hover:bg-emerald-200 dark:group-hover:bg-emerald-800/50 transition-colors">
-              <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mb-3 shadow-sm group-hover:shadow-md transition-all">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -397,10 +412,10 @@ function Home() {
 
           <Link 
             to="/summarizer" 
-            className="bg-white dark:bg-nubia-surface border border-nubia-border rounded-xl p-4 hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-md transition-all group"
+            className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/50 dark:to-indigo-950/50 border border-purple-200/50 dark:border-purple-800/50 rounded-xl p-4 hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-md hover:scale-[1.02] transition-all group"
           >
-            <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center mb-3 group-hover:bg-purple-200 dark:group-hover:bg-purple-800/50 transition-colors">
-              <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center mb-3 shadow-sm group-hover:shadow-md transition-all">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>

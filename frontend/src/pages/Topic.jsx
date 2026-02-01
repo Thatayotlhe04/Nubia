@@ -6,6 +6,7 @@ import { FormulaBlock } from '../components/content/FormulaBlock';
 import ExampleBlock from '../components/content/ExampleBlock';
 import Calculator from '../components/calculator/Calculator';
 import FeedbackForm from '../components/feedback/FeedbackForm';
+import { useStudyInsights } from '../contexts/StudyInsightsContext';
 
 // Fallback topic content when backend is unavailable
 const fallbackTopics = {
@@ -1119,6 +1120,7 @@ function Topic() {
   const [topic, setTopic] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { trackTopicView } = useStudyInsights();
 
   useEffect(() => {
     async function loadTopic() {
@@ -1128,11 +1130,14 @@ function Topic() {
       try {
         const data = await getTopic(topicId);
         setTopic(data);
+        // Track topic view
+        trackTopicView(topicId, data?.title || topicId);
       } catch (err) {
         console.error('Failed to load topic from API, using fallback:', err);
         // Use fallback topic content when API is unavailable
         if (fallbackTopics[topicId]) {
           setTopic(fallbackTopics[topicId]);
+          trackTopicView(topicId, fallbackTopics[topicId]?.title || topicId);
         } else {
           setError('Topic not found.');
         }
@@ -1142,7 +1147,7 @@ function Topic() {
     }
     
     loadTopic();
-  }, [topicId]);
+  }, [topicId, trackTopicView]);
 
   // Loading state
   if (loading) {

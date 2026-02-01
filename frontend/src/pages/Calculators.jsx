@@ -4,7 +4,7 @@ import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
 
 // Simple Present Value Calculator
-function PresentValueCalculator() {
+function PresentValueCalculator({ onCalculate }) {
   const [fv, setFv] = useState('');
   const [rate, setRate] = useState('');
   const [periods, setPeriods] = useState('');
@@ -25,6 +25,7 @@ function PresentValueCalculator() {
       pv: pv.toFixed(2),
       formula: `PV = \\frac{${futureValue}}{(1 + ${(r).toFixed(4)})^{${n}}} = ${pv.toFixed(2)}`
     });
+    onCalculate && onCalculate();
   };
 
   return (
@@ -102,7 +103,7 @@ function PresentValueCalculator() {
 }
 
 // Future Value Calculator
-function FutureValueCalculator() {
+function FutureValueCalculator({ onCalculate }) {
   const [pv, setPv] = useState('');
   const [rate, setRate] = useState('');
   const [periods, setPeriods] = useState('');
@@ -123,6 +124,7 @@ function FutureValueCalculator() {
       fv: futureValue.toFixed(2),
       formula: `FV = ${presentValue} \\times (1 + ${(r).toFixed(4)})^{${n}} = ${futureValue.toFixed(2)}`
     });
+    onCalculate && onCalculate();
   };
 
   return (
@@ -200,7 +202,7 @@ function FutureValueCalculator() {
 }
 
 // NPV Calculator
-function NPVCalculator() {
+function NPVCalculator({ onCalculate }) {
   const [initialInvestment, setInitialInvestment] = useState('');
   const [rate, setRate] = useState('');
   const [cashFlows, setCashFlows] = useState('');
@@ -225,6 +227,7 @@ function NPVCalculator() {
       npv: npv.toFixed(2),
       profitable: npv > 0
     });
+    onCalculate && onCalculate();
   };
 
   return (
@@ -303,7 +306,7 @@ function NPVCalculator() {
 }
 
 // Compound Interest Calculator
-function CompoundInterestCalculator() {
+function CompoundInterestCalculator({ onCalculate }) {
   const [principal, setPrincipal] = useState('');
   const [rate, setRate] = useState('');
   const [time, setTime] = useState('');
@@ -328,6 +331,7 @@ function CompoundInterestCalculator() {
       amount: amount.toFixed(2),
       interest: interest.toFixed(2)
     });
+    onCalculate && onCalculate();
   };
 
   return (
