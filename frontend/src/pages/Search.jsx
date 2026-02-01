@@ -104,61 +104,116 @@ const categoryColors = {
   'Physics': 'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 border-orange-300 dark:border-orange-700',
   'Business': 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700',
   'Computer Science': 'bg-pink-100 dark:bg-pink-900/40 text-pink-700 dark:text-pink-300 border-pink-300 dark:border-pink-700',
-  'Medicine': 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700',
   'General': 'bg-slate-100 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600'
 };
+
+// Categories to exclude from results (unrelated to finance)
+const excludedCategories = ['Chemistry', 'Biology', 'Medicine'];
 
 // Detect category from paper data
 function detectCategory(paper) {
   const text = `${paper.title || ''} ${paper.abstract || ''} ${(paper.fieldsOfStudy || []).join(' ')}`.toLowerCase();
   
-  // Check Accounting first (more specific)
+  // Use fieldsOfStudy from API if available (most accurate)
+  const fields = (paper.fieldsOfStudy || []).map(f => f.toLowerCase());
+  if (fields.includes('chemistry')) return 'Chemistry';
+  if (fields.includes('biology')) return 'Biology';
+  if (fields.includes('medicine')) return 'Medicine';
+  if (fields.includes('economics')) return 'Economics';
+  if (fields.includes('business')) return 'Business';
+  if (fields.includes('mathematics')) return 'Mathematics';
+  if (fields.includes('physics')) return 'Physics';
+  if (fields.includes('computer science')) return 'Computer Science';
+  
+  // Check Chemistry/Biology FIRST to exclude them
+  if (text.includes('chemistry') || text.includes('chemical') || text.includes('molecule') ||
+      text.includes('synthesis') || text.includes('catalyst') || text.includes('organic compound') ||
+      text.includes('spectroscopy') || text.includes('polymer') || text.includes('enzyme') ||
+      text.includes('pharmaceutical') || text.includes('amino acid') || text.includes('solvent') ||
+      text.includes('titration') || text.includes('stoichiometry') || text.includes('reagent')) {
+    return 'Chemistry';
+  }
+  
+  if (text.includes('biology') || text.includes('biological') || text.includes('organism') ||
+      text.includes('cell') || text.includes('dna') || text.includes('rna') || text.includes('gene') ||
+      text.includes('protein') || text.includes('evolution') || text.includes('species') ||
+      text.includes('ecology') || text.includes('microbiology') || text.includes('bacteria') ||
+      text.includes('virus') || text.includes('tissue') || text.includes('anatomy')) {
+    return 'Biology';
+  }
+  
+  if (text.includes('medical') || text.includes('clinical') || text.includes('disease') ||
+      text.includes('patient') || text.includes('treatment') || text.includes('diagnosis') ||
+      text.includes('therapy') || text.includes('surgery') || text.includes('hospital')) {
+    return 'Medicine';
+  }
+  
+  // Check Mathematics BEFORE Finance - "derivative" in math context
+  const hasMathContext = text.includes('calculus') || text.includes('integral') || 
+      text.includes('antiderivative') || text.includes('differentiation') || 
+      text.includes('theorem') || text.includes('proof') || text.includes('algebra') ||
+      text.includes('geometry') || text.includes('topology') || text.includes('mathematical') ||
+      (text.includes('function') && text.includes('limit')) ||
+      text.includes('taylor series') || text.includes('fourier') || text.includes('laplace');
+  
+  if (hasMathContext) {
+    return 'Mathematics';
+  }
+  
+  // Check Accounting (more specific than Finance)
   if (text.includes('accounting') || text.includes('auditing') || text.includes('bookkeeping') ||
       text.includes('gaap') || text.includes('ifrs') || text.includes('financial statement') ||
       text.includes('ledger') || text.includes('journal entry') || text.includes('depreciation') ||
       text.includes('amortization') || text.includes('accounts receivable') || text.includes('accounts payable')) {
     return 'Accounting';
   }
+  
+  // Check Finance - "derivative" here means financial derivatives
+  const hasFinanceDerivative = (text.includes('derivative') && 
+      (text.includes('financial') || text.includes('instrument') || text.includes('credit') ||
+       text.includes('option') || text.includes('swap') || text.includes('futures') ||
+       text.includes('hedge') || text.includes('trading') || text.includes('otc')));
+  
   if (text.includes('finance') || text.includes('investment') || text.includes('portfolio') || 
-      text.includes('stock') || text.includes('bond') || text.includes('asset pricing') ||
-      text.includes('capital') || text.includes('valuation') || text.includes('risk management') ||
-      text.includes('banking') || text.includes('taxation') || text.includes('corporate') ||
-      text.includes('equity') || text.includes('derivative') || text.includes('hedge') ||
-      text.includes('swap') || text.includes('option') || text.includes('futures')) {
+      text.includes('stock') || text.includes('asset pricing') ||
+      text.includes('capital market') || text.includes('valuation') || text.includes('risk management') ||
+      text.includes('banking') || text.includes('corporate finance') ||
+      text.includes('equity') || hasFinanceDerivative || text.includes('hedge fund') ||
+      text.includes('credit default swap') || text.includes('interest rate swap') ||
+      text.includes('option pricing') || text.includes('black-scholes') || text.includes('capm')) {
     return 'Finance';
   }
-  if (text.includes('economics') || text.includes('economic') || text.includes('market') || 
-      text.includes('trade') || text.includes('gdp') || text.includes('monetary') ||
-      text.includes('fiscal') || text.includes('macroeconomic') || text.includes('microeconomic') ||
-      text.includes('inflation') || text.includes('unemployment')) {
+  
+  if (text.includes('economics') || text.includes('economic') || 
+      text.includes('gdp') || text.includes('monetary policy') ||
+      text.includes('fiscal policy') || text.includes('macroeconomic') || text.includes('microeconomic') ||
+      text.includes('inflation') || text.includes('unemployment') || text.includes('keynesian')) {
     return 'Economics';
   }
+  
   if (text.includes('statistic') || text.includes('probability') || text.includes('regression') ||
-      text.includes('bayesian') || text.includes('inference') || text.includes('hypothesis') ||
-      text.includes('variance') || text.includes('correlation')) {
+      text.includes('bayesian') || text.includes('inference') || text.includes('hypothesis test') ||
+      text.includes('variance') || text.includes('correlation') || text.includes('sampling')) {
     return 'Statistics';
   }
-  if (text.includes('mathematic') || text.includes('calculus') || text.includes('algebra') ||
-      text.includes('geometry') || text.includes('theorem') || text.includes('equation') ||
-      text.includes('integral') || text.includes('differential')) {
-    return 'Mathematics';
-  }
+  
   if (text.includes('physics') || text.includes('quantum') || text.includes('thermodynamic') ||
-      text.includes('mechanics') || text.includes('electromagnetic') || text.includes('relativity')) {
+      text.includes('mechanics') || text.includes('electromagnetic') || text.includes('relativity') ||
+      text.includes('particle')) {
     return 'Physics';
   }
+  
   if (text.includes('computer') || text.includes('algorithm') || text.includes('machine learning') ||
-      text.includes('artificial intelligence') || text.includes('programming') || text.includes('neural')) {
+      text.includes('artificial intelligence') || text.includes('programming') || text.includes('neural network') ||
+      text.includes('software') || text.includes('database')) {
     return 'Computer Science';
   }
+  
   if (text.includes('business') || text.includes('management') || text.includes('organization') ||
-      text.includes('marketing') || text.includes('strategy')) {
+      text.includes('marketing') || text.includes('strategy') || text.includes('leadership')) {
     return 'Business';
   }
-  if (text.includes('medical') || text.includes('clinical') || text.includes('disease') ||
-      text.includes('patient') || text.includes('treatment') || text.includes('health')) {
-    return 'Medicine';
-  }
+  
   return 'General';
 }
 
@@ -492,10 +547,11 @@ function Search() {
     setSearchParams({});
   };
 
-  // Filter results by category/field
+  // Filter results by category/field (exclude Chemistry, Biology, Medicine - unrelated to finance)
+  const relevantResults = results.filter(r => !excludedCategories.includes(r.category));
   const filteredResults = activeCategory === 'All' 
-    ? results 
-    : results.filter(r => r.category === activeCategory);
+    ? relevantResults 
+    : relevantResults.filter(r => r.category === activeCategory);
 
   // Finance-focused suggestions
   const suggestions = [
