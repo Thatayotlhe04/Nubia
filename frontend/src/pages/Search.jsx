@@ -96,15 +96,15 @@ const curatedResources = [
 
 // Category colors
 const categoryColors = {
-  'Finance': 'bg-emerald-900/30 text-emerald-400 border-emerald-700',
-  'Economics': 'bg-cyan-900/30 text-cyan-400 border-cyan-700',
-  'Mathematics': 'bg-blue-900/30 text-blue-400 border-blue-700',
-  'Statistics': 'bg-purple-900/30 text-purple-400 border-purple-700',
-  'Physics': 'bg-orange-900/30 text-orange-400 border-orange-700',
-  'Business': 'bg-amber-900/30 text-amber-400 border-amber-700',
-  'Computer Science': 'bg-pink-900/30 text-pink-400 border-pink-700',
-  'Medicine': 'bg-red-900/30 text-red-400 border-red-700',
-  'General': 'bg-slate-800/50 text-slate-300 border-slate-600'
+  'Finance': 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700',
+  'Economics': 'bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-700',
+  'Mathematics': 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700',
+  'Statistics': 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-700',
+  'Physics': 'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 border-orange-300 dark:border-orange-700',
+  'Business': 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700',
+  'Computer Science': 'bg-pink-100 dark:bg-pink-900/40 text-pink-700 dark:text-pink-300 border-pink-300 dark:border-pink-700',
+  'Medicine': 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700',
+  'General': 'bg-slate-100 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600'
 };
 
 // Detect category from paper data
@@ -273,7 +273,7 @@ function ResultCard({ result }) {
           </span>
         )}
         {result.hasOpenAccess && (
-          <span className="text-xs font-medium px-2 py-0.5 rounded bg-green-900/30 text-green-400 border border-green-700 inline-flex items-center gap-1">
+          <span className="text-xs font-medium px-2 py-0.5 rounded bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-700 inline-flex items-center gap-1">
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
             Open Access
           </span>
@@ -513,7 +513,7 @@ function Search() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <h1 className="font-sans text-2xl md:text-3xl font-bold text-nubia-text">Academic Search</h1>
-          <span className="px-2 py-0.5 text-xs font-medium bg-green-900/30 text-green-400 border border-green-700 rounded animate-pulse">
+          <span className="px-2 py-0.5 text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-700 rounded animate-pulse">
             Live API
           </span>
         </div>
@@ -654,14 +654,14 @@ function Search() {
 
       {/* Error State */}
       {error && (
-        <div className="mb-6 p-4 bg-red-900/20 border border-red-700 rounded-lg">
-          <p className="text-red-400 mb-3">{error}</p>
+        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+          <p className="text-red-600 dark:text-red-300 mb-3">{error}</p>
           <div className="flex flex-wrap gap-2">
             <a
               href={`https://scholar.google.com/scholar?q=${encodeURIComponent(query)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 bg-yellow-900/20 text-yellow-400 border border-yellow-700 rounded text-xs hover:bg-yellow-900/40 transition-colors"
+              className="px-3 py-1.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700 rounded text-xs hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-colors"
             >
               Try Google Scholar →
             </a>
@@ -669,7 +669,7 @@ function Search() {
               href={`https://www.jstor.org/action/doBasicSearch?Query=${encodeURIComponent(query)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 bg-red-900/20 text-red-400 border border-red-700 rounded text-xs hover:bg-red-900/40 transition-colors"
+              className="px-3 py-1.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-700 rounded text-xs hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
             >
               Try JSTOR →
             </a>
@@ -696,7 +696,7 @@ function Search() {
                   href={`https://scholar.google.com/scholar?q=${encodeURIComponent(query)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2.5 bg-yellow-900/20 text-yellow-400 border border-yellow-700 rounded-lg text-sm font-medium hover:bg-yellow-900/40 transition-colors flex items-center gap-2"
+                  className="px-4 py-2.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700 rounded-lg text-sm font-medium hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-colors flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
                   Google Scholar
@@ -705,7 +705,7 @@ function Search() {
                   href={`https://www.jstor.org/action/doBasicSearch?Query=${encodeURIComponent(query)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2.5 bg-red-900/20 text-red-400 border border-red-700 rounded-lg text-sm font-medium hover:bg-red-900/40 transition-colors flex items-center gap-2"
+                  className="px-4 py-2.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-700 rounded-lg text-sm font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                   JSTOR
@@ -714,7 +714,7 @@ function Search() {
                   href={`https://arxiv.org/search/?query=${encodeURIComponent(query)}&searchtype=all`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2.5 bg-orange-900/20 text-orange-400 border border-orange-700 rounded-lg text-sm font-medium hover:bg-orange-900/40 transition-colors flex items-center gap-2"
+                  className="px-4 py-2.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-700 rounded-lg text-sm font-medium hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                   arXiv
@@ -723,7 +723,7 @@ function Search() {
                   href={`https://papers.ssrn.com/sol3/results.cfm?txtKey_Words=${encodeURIComponent(query)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2.5 bg-blue-900/20 text-blue-400 border border-blue-700 rounded-lg text-sm font-medium hover:bg-blue-900/40 transition-colors flex items-center gap-2"
+                  className="px-4 py-2.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                   SSRN
@@ -747,7 +747,7 @@ function Search() {
                     href={`https://scholar.google.com/scholar?q=${encodeURIComponent(query)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1.5 bg-yellow-900/20 text-yellow-400 border border-yellow-700 rounded text-xs hover:bg-yellow-900/40 transition-colors"
+                    className="px-3 py-1.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700 rounded text-xs hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-colors"
                   >
                     Google Scholar →
                   </a>
@@ -755,7 +755,7 @@ function Search() {
                     href={`https://www.jstor.org/action/doBasicSearch?Query=${encodeURIComponent(query)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1.5 bg-red-900/20 text-red-400 border border-red-700 rounded text-xs hover:bg-red-900/40 transition-colors"
+                    className="px-3 py-1.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-700 rounded text-xs hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
                   >
                     JSTOR →
                   </a>
@@ -763,7 +763,7 @@ function Search() {
                     href={`https://www.worldbank.org/en/search?q=${encodeURIComponent(query)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1.5 bg-cyan-900/20 text-cyan-400 border border-cyan-700 rounded text-xs hover:bg-cyan-900/40 transition-colors"
+                    className="px-3 py-1.5 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-700 rounded text-xs hover:bg-cyan-200 dark:hover:bg-cyan-900/50 transition-colors"
                   >
                     World Bank →
                   </a>
@@ -771,7 +771,7 @@ function Search() {
                     href={`https://www.imf.org/en/Search#q=${encodeURIComponent(query)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1.5 bg-blue-900/20 text-blue-400 border border-blue-700 rounded text-xs hover:bg-blue-900/40 transition-colors"
+                    className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-700 rounded text-xs hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
                   >
                     IMF →
                   </a>

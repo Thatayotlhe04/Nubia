@@ -101,9 +101,9 @@ const examples = [
 
 function ExampleCard({ example, isExpanded, onToggle }) {
   const difficultyColors = {
-    'Basic': 'bg-green-900/30 text-green-400 border-green-700',
-    'Intermediate': 'bg-yellow-900/30 text-yellow-400 border-yellow-700',
-    'Advanced': 'bg-red-900/30 text-red-400 border-red-700'
+    'Basic': 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700',
+    'Intermediate': 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300 border-yellow-300 dark:border-yellow-700',
+    'Advanced': 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700'
   };
 
   return (
