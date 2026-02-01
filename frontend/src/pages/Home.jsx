@@ -301,7 +301,7 @@ function Home() {
       <header className="mb-10 md:mb-12">
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2 bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/50 dark:to-amber-900/50 rounded-xl">
-            <NubiaLogo className="w-12 h-8 md:w-14 md:h-9 text-orange-500" />
+            <NubiaLogo className="w-12 h-8 md:w-14 md:h-9" />
           </div>
           <div>
             <h1 className="font-sans text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 dark:from-gray-100 dark:via-gray-200 dark:to-gray-300 bg-clip-text text-transparent">
