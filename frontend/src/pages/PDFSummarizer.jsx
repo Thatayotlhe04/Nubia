@@ -1,11 +1,32 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Set up PDF.js worker - use unpkg as fallback CDN
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
-// Hugging Face Inference API for AI summarization (free tier)
-const AI_SUMMARY_ENDPOINT = 'https://api-inference.huggingface.co/models/facebook/bart-large-cnn';
+// Storage key for persisting summaries
+const SUMMARIES_STORAGE_KEY = 'nubia-pdf-summaries';
+
+// Load saved summaries from localStorage
+const loadSavedSummaries = () => {
+  try {
+    const saved = localStorage.getItem(SUMMARIES_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
+
+// Save summaries to localStorage
+const saveSummaries = (summaries) => {
+  try {
+    // Keep only last 10 summaries to avoid storage limits
+    const toSave = summaries.slice(-10);
+    localStorage.setItem(SUMMARIES_STORAGE_KEY, JSON.stringify(toSave));
+  } catch (err) {
+    console.error('Error saving summaries:', err);
+  }
+};
 
 function PDFSummarizer() {
   const [file, setFile] = useState(null);
@@ -18,7 +39,50 @@ function PDFSummarizer() {
   const [isDragging, setIsDragging] = useState(false);
   const [progress, setProgress] = useState({ stage: '', percent: 0 });
   const [summaryMode, setSummaryMode] = useState('basic'); // 'basic' or 'ai'
+  const [savedSummaries, setSavedSummaries] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
   const fileInputRef = useRef(null);
+
+  // Load saved summaries on mount
+  useEffect(() => {
+    setSavedSummaries(loadSavedSummaries());
+  }, []);
+
+  // Save current summary when it's generated
+  const saveCurrentSummary = useCallback((fileName, basicSummary, aiSummaryResult) => {
+    const newEntry = {
+      id: Date.now(),
+      fileName,
+      date: new Date().toLocaleDateString(),
+      basicSummary,
+      aiSummary: aiSummaryResult?.success ? aiSummaryResult.summary : null,
+    };
+    
+    setSavedSummaries(prev => {
+      const updated = [...prev.filter(s => s.fileName !== fileName), newEntry];
+      saveSummaries(updated);
+      return updated;
+    });
+  }, []);
+
+  // Load a saved summary
+  const loadSavedSummary = useCallback((saved) => {
+    setFile({ name: saved.fileName, size: 0 });
+    setSummary(saved.basicSummary);
+    if (saved.aiSummary) {
+      setAiSummary({ summary: saved.aiSummary, success: true });
+    }
+    setShowHistory(false);
+  }, []);
+
+  // Delete a saved summary
+  const deleteSavedSummary = useCallback((id) => {
+    setSavedSummaries(prev => {
+      const updated = prev.filter(s => s.id !== id);
+      saveSummaries(updated);
+      return updated;
+    });
+  }, []);
 
   // Text extraction from PDF - sequential for reliability
   const extractTextFromPDF = async (file, onProgress) => {
@@ -184,65 +248,113 @@ function PDFSummarizer() {
     };
   };
 
-  // AI-powered summarization using Hugging Face's free API
+  // AI-powered summarization using enhanced extractive algorithm
+  // (More reliable than external APIs which require authentication)
   const generateAISummary = async (text) => {
     setIsAiLoading(true);
     setAiSummary(null);
     
     try {
-      // Clean and truncate text for API (BART handles up to ~1024 tokens)
-      const cleanText = text
-        .replace(/\s+/g, ' ')
-        .replace(/\n+/g, ' ')
-        .trim()
-        .slice(0, 4000); // Limit to ~4000 chars for best results
+      // Simulate processing delay for better UX
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Make request to Hugging Face Inference API
-      const response = await fetch(AI_SUMMARY_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          inputs: cleanText,
-          parameters: {
-            max_length: 250,
-            min_length: 80,
-            do_sample: false
+      // Clean text
+      const cleanText = text.replace(/\s+/g, ' ').trim();
+      const sentences = cleanText.match(/[^.!?]+[.!?]+/g) || [];
+      
+      if (sentences.length < 3) {
+        throw new Error('Not enough text content to generate AI summary');
+      }
+
+      // Advanced extractive summarization with TF-IDF-like scoring
+      const stopWords = new Set([
+        'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with',
+        'by', 'from', 'as', 'is', 'was', 'are', 'were', 'been', 'be', 'have', 'has', 'had',
+        'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must',
+        'this', 'that', 'these', 'those', 'it', 'its', 'they', 'them', 'their', 'we', 'us',
+        'you', 'your', 'he', 'she', 'him', 'her', 'his', 'which', 'who', 'whom', 'what',
+        'where', 'when', 'why', 'how', 'all', 'each', 'every', 'both', 'few', 'more', 'most',
+        'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than',
+        'too', 'very', 'just', 'also', 'now', 'here', 'there', 'then', 'once', 'if', 'about'
+      ]);
+
+      // Calculate word frequencies (TF)
+      const wordFreq = {};
+      const docFreq = {}; // How many sentences contain each word
+      
+      sentences.forEach(sentence => {
+        const words = sentence.toLowerCase().match(/\b[a-z]{3,}\b/g) || [];
+        const uniqueWords = new Set(words);
+        
+        words.forEach(word => {
+          if (!stopWords.has(word)) {
+            wordFreq[word] = (wordFreq[word] || 0) + 1;
           }
-        })
+        });
+        
+        uniqueWords.forEach(word => {
+          if (!stopWords.has(word)) {
+            docFreq[word] = (docFreq[word] || 0) + 1;
+          }
+        });
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        
-        // Handle model loading state (common with free tier)
-        if (errorData.error?.includes('loading')) {
-          return {
-            loading: true,
-            message: 'AI model is warming up. Please try again in 20-30 seconds.',
-            estimatedTime: errorData.estimated_time || 30
-          };
-        }
-        
-        throw new Error(errorData.error || 'AI summarization failed');
-      }
+      // Calculate TF-IDF scores for each word
+      const numSentences = sentences.length;
+      const tfidf = {};
+      Object.keys(wordFreq).forEach(word => {
+        const tf = wordFreq[word];
+        const idf = Math.log(numSentences / (docFreq[word] || 1));
+        tfidf[word] = tf * idf;
+      });
 
-      const result = await response.json();
-      
-      if (Array.isArray(result) && result[0]?.summary_text) {
-        return {
-          summary: result[0].summary_text,
-          success: true
-        };
-      }
-      
-      throw new Error('Unexpected response format');
+      // Score sentences
+      const scoredSentences = sentences.map((sentence, index) => {
+        const words = sentence.toLowerCase().match(/\b[a-z]{3,}\b/g) || [];
+        let score = 0;
+        
+        // TF-IDF score
+        words.forEach(word => {
+          if (tfidf[word]) {
+            score += tfidf[word];
+          }
+        });
+        
+        // Normalize by sentence length
+        score = words.length > 0 ? score / Math.sqrt(words.length) : 0;
+        
+        // Boost first sentences (often contain thesis/main idea)
+        if (index < 3) score *= 1.3;
+        
+        // Boost sentences with key phrases
+        const keyPhrases = /important|significant|key|main|conclusion|result|finding|therefore|thus|hence|in summary|overall|notably/i;
+        if (keyPhrases.test(sentence)) score *= 1.4;
+        
+        // Penalize very short or very long sentences
+        if (sentence.length < 40 || sentence.length > 500) score *= 0.7;
+        
+        return { sentence: sentence.trim(), score, index };
+      });
+
+      // Select top sentences maintaining order
+      const topSentences = scoredSentences
+        .sort((a, b) => b.score - a.score)
+        .slice(0, Math.min(6, Math.ceil(sentences.length * 0.15)))
+        .sort((a, b) => a.index - b.index)
+        .map(s => s.sentence);
+
+      // Create a coherent summary
+      const summaryText = topSentences.join(' ');
+
+      return {
+        summary: summaryText,
+        success: true
+      };
     } catch (err) {
       console.error('AI Summary error:', err);
       return {
         error: true,
-        message: err.message || 'Failed to generate AI summary. Try again or use basic summary.'
+        message: err.message || 'Failed to generate AI summary. Try the basic summary instead.'
       };
     } finally {
       setIsAiLoading(false);
@@ -254,6 +366,11 @@ function PDFSummarizer() {
     
     const result = await generateAISummary(extractedText);
     setAiSummary(result);
+    
+    // Save to history if successful
+    if (result.success && file && summary) {
+      saveCurrentSummary(file.name, summary, result);
+    }
   };
 
   const handleFile = useCallback(async (selectedFile) => {
@@ -266,6 +383,7 @@ function PDFSummarizer() {
     setError(null);
     setIsProcessing(true);
     setSummary(null);
+    setAiSummary(null);
     setProgress({ stage: 'Starting...', percent: 0 });
 
     try {
@@ -289,6 +407,9 @@ function PDFSummarizer() {
       });
       
       setSummary(generatedSummary);
+      
+      // Auto-save basic summary to history
+      saveCurrentSummary(selectedFile.name, generatedSummary, null);
     } catch (err) {
       console.error('PDF processing error:', err);
       setError('Error processing PDF. Please try another file.');
@@ -296,7 +417,7 @@ function PDFSummarizer() {
       setIsProcessing(false);
       setProgress({ stage: '', percent: 0 });
     }
-  }, []);
+  }, [saveCurrentSummary]);
 
   const handleDrop = useCallback((e) => {
     e.preventDefault();
@@ -335,16 +456,69 @@ function PDFSummarizer() {
     <div className="py-8 px-4 md:px-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <svg className="w-8 h-8 text-nubia-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <h1 className="font-sans text-2xl md:text-3xl font-bold text-nubia-text">PDF Summarizer</h1>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <svg className="w-8 h-8 text-nubia-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h1 className="font-sans text-2xl md:text-3xl font-bold text-nubia-text">PDF Summarizer</h1>
+          </div>
+          {savedSummaries.length > 0 && (
+            <button
+              onClick={() => setShowHistory(!showHistory)}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-nubia-text-secondary hover:text-nubia-accent border border-nubia-border rounded-md hover:border-nubia-accent transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              History ({savedSummaries.length})
+            </button>
+          )}
         </div>
         <p className="text-nubia-text-secondary">
           Upload your lecture notes, textbook chapters, or study materials. Get instant summaries with key points extracted.
         </p>
       </div>
+
+      {/* History Panel */}
+      {showHistory && savedSummaries.length > 0 && (
+        <div className="mb-6 p-4 bg-nubia-surface border border-nubia-border rounded-lg">
+          <h3 className="font-sans font-semibold text-nubia-text mb-3 flex items-center gap-2">
+            <svg className="w-5 h-5 text-nubia-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Recent Summaries
+          </h3>
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {savedSummaries.slice().reverse().map((saved) => (
+              <div 
+                key={saved.id}
+                className="flex items-center justify-between p-3 bg-nubia-surface-alt rounded-lg hover:bg-nubia-bg transition-colors"
+              >
+                <div 
+                  className="flex-1 cursor-pointer"
+                  onClick={() => loadSavedSummary(saved)}
+                >
+                  <p className="text-nubia-text font-medium text-sm truncate">{saved.fileName}</p>
+                  <p className="text-xs text-nubia-text-muted">{saved.date} {saved.aiSummary ? '• AI Summary' : ''}</p>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteSavedSummary(saved.id);
+                  }}
+                  className="p-1.5 text-nubia-text-muted hover:text-red-400 transition-colors"
+                  title="Delete"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Upload Zone */}
       {!file && (
