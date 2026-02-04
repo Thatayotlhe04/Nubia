@@ -3,12 +3,34 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import db from './db.js';
 
+function safeJsonParse(str, fallback = null) {
+  try {
+    return JSON.parse(str);
+  } catch {
+    console.error('Malformed JSON in database:', str?.substring(0, 100));
+    return fallback;
+  }
+}
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : ['http://localhost:3000', 'http://localhost:3001'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (server-to-server, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  }
+}));
+app.use(express.json({ limit: '10kb' }));
 
 // Rate limiting for feedback endpoint
 const feedbackLimiter = rateLimit({
@@ -66,20 +88,20 @@ app.get('/api/topics/:id', (req, res) => {
     // Parse JSON fields in formulas
     const parsedFormulas = formulas.map(f => ({
       ...f,
-      variables: JSON.parse(f.variables)
+      variables: safeJsonParse(f.variables, [])
     }));
 
     // Get examples
     const examples = db.prepare(`
-      SELECT * FROM examples 
-      WHERE topic_id = ? 
+      SELECT * FROM examples
+      WHERE topic_id = ?
       ORDER BY display_order ASC
     `).all(id);
 
     // Parse JSON fields in examples
     const parsedExamples = examples.map(e => ({
       ...e,
-      steps: JSON.parse(e.steps)
+      steps: safeJsonParse(e.steps, [])
     }));
 
     // Get calculator config
@@ -89,7 +111,7 @@ app.get('/api/topics/:id', (req, res) => {
 
     const parsedCalculator = calculator ? {
       ...calculator,
-      inputs: JSON.parse(calculator.inputs)
+      inputs: safeJsonParse(calculator.inputs, [])
     } : null;
 
     res.json({
@@ -125,7 +147,7 @@ app.get('/api/formulas', (req, res) => {
 
     const parsedFormulas = formulas.map(f => ({
       ...f,
-      variables: JSON.parse(f.variables)
+      variables: safeJsonParse(f.variables, [])
     }));
 
     res.json({ formulas: parsedFormulas });
@@ -154,7 +176,7 @@ app.get('/api/examples', (req, res) => {
 
     const parsedExamples = examples.map(e => ({
       ...e,
-      steps: JSON.parse(e.steps)
+      steps: safeJsonParse(e.steps, [])
     }));
 
     res.json({ examples: parsedExamples });
@@ -173,14 +195,22 @@ app.post('/api/feedback', feedbackLimiter, (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
+    if (message.trim().length === 0) {
+      return res.status(400).json({ error: 'Message cannot be empty' });
+    }
+
     if (message.length > 2000) {
       return res.status(400).json({ error: 'Message too long (max 2000 characters)' });
     }
 
+    const sanitizedContext = (pageContext && typeof pageContext === 'string')
+      ? pageContext.substring(0, 500)
+      : null;
+
     const result = db.prepare(`
       INSERT INTO feedback (message, page_context)
       VALUES (?, ?)
-    `).run(message, pageContext || null);
+    `).run(message.trim(), sanitizedContext);
 
     res.status(201).json({ 
       success: true, 
@@ -212,8 +242,20 @@ app.use('/api/*', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Nubia API server running on port ${PORT}`);
 });
+
+// Graceful shutdown
+function shutdown(signal) {
+  console.log(`\n${signal} received. Shutting down gracefully...`);
+  server.close(() => {
+    console.log('Server closed.');
+    process.exit(0);
+  });
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
 export default app;

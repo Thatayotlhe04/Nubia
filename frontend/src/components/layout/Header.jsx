@@ -19,7 +19,7 @@ function Header({ onToggleMenu, menuOpen, onOpenAuth }) {
   };
 
   return (
-    <header className="h-14 flex items-center px-4 md:px-6 border-b border-nubia-border bg-nubia-surface flex-shrink-0">
+    <header className="h-14 flex items-center px-4 md:px-6 border-b border-nubia-border/60 glass flex-shrink-0 sticky top-0 z-30">
       <div className="flex items-center gap-3 md:gap-4">
         {/* Menu toggle - hamburger on left */}
         <button
@@ -43,7 +43,7 @@ function Header({ onToggleMenu, menuOpen, onOpenAuth }) {
         
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 md:gap-2.5 group">
-          <NubiaLogo className="w-10 h-6 md:w-12 md:h-7 text-nubia-accent group-hover:text-nubia-accent-hover transition-colors" />
+          <NubiaLogo className="w-10 h-6 md:w-12 md:h-7 text-nubia-accent group-hover:text-nubia-accent-hover transition-all duration-300 group-hover:scale-110" />
           <span className="font-sans text-base md:text-lg font-semibold text-nubia-text tracking-tight">
             Nubia
           </span>
@@ -67,7 +67,7 @@ function Header({ onToggleMenu, menuOpen, onOpenAuth }) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search finance topics..."
-            className="w-48 lg:w-64 pl-9 pr-3 py-1.5 bg-nubia-bg border border-nubia-border rounded-md text-sm text-nubia-text placeholder-nubia-text-muted focus:border-nubia-accent focus:outline-none transition-colors"
+            className="w-48 lg:w-64 pl-9 pr-3 py-1.5 bg-nubia-bg border border-nubia-border rounded-lg text-sm text-nubia-text placeholder-nubia-text-muted focus:border-nubia-accent focus:outline-none focus:w-72 lg:focus:w-80 focus:shadow-lg focus:shadow-nubia-accent/5 transition-all duration-300"
           />
         </form>
         
@@ -131,7 +131,7 @@ function Header({ onToggleMenu, menuOpen, onOpenAuth }) {
 
       {/* Mobile Search Overlay */}
       {showMobileSearch && (
-        <div className="absolute top-14 left-0 right-0 bg-nubia-surface border-b border-nubia-border p-3 md:hidden z-40">
+        <div className="absolute top-14 left-0 right-0 glass border-b border-nubia-border/60 p-3 md:hidden z-40 animate-slide-down">
           <form onSubmit={handleSearch} className="relative">
             <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-nubia-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

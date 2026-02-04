@@ -120,26 +120,31 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Review ID is required' });
       }
 
-      // Get current likes
-      const { data: current, error: fetchError } = await supabase
-        .from('reviews')
-        .select('likes')
-        .eq('id', id)
-        .single();
-
-      if (fetchError) throw fetchError;
-
-      // Increment likes
+      // Atomic increment to prevent race conditions
       const { data, error } = await supabase
-        .from('reviews')
-        .update({ likes: (current.likes || 0) + 1 })
-        .eq('id', id)
-        .select()
-        .single();
+        .rpc('increment_review_likes', { review_id: id });
 
-      if (error) throw error;
+      if (error) {
+        // Fallback to non-atomic update if RPC doesn't exist
+        const { data: current, error: fetchError } = await supabase
+          .from('reviews')
+          .select('likes')
+          .eq('id', id)
+          .single();
+        if (fetchError) throw fetchError;
 
-      return res.status(200).json({ success: true, likes: data.likes });
+        const { data: updated, error: updateError } = await supabase
+          .from('reviews')
+          .update({ likes: (current.likes || 0) + 1 })
+          .eq('id', id)
+          .select()
+          .single();
+        if (updateError) throw updateError;
+
+        return res.status(200).json({ success: true, likes: updated.likes });
+      }
+
+      return res.status(200).json({ success: true, likes: data });
     } catch (error) {
       console.error('Error liking review:', error);
       return res.status(500).json({ error: 'Failed to like review' });

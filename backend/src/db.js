@@ -116,7 +116,11 @@ const dbWrapper = {
       run(...params) {
         db.run(sql, params);
         saveDatabase();
-        return { changes: db.getRowsModified() };
+        const lastId = db.exec('SELECT last_insert_rowid() as id');
+        return {
+          changes: db.getRowsModified(),
+          lastInsertRowid: lastId.length > 0 ? lastId[0].values[0][0] : undefined
+        };
       },
       get(...params) {
         const stmt = db.prepare(sql);

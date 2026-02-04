@@ -1,6 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import StudyInsightsCard from '../components/insights/StudyInsightsCard';
+
+// Hook for scroll-triggered reveal animations
+function useScrollReveal() {
+  const ref = useRef(null);
+  const [isRevealed, setIsRevealed] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsRevealed(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return [ref, isRevealed];
+}
 
 // Nubia Logo Component - Pulse/Heartbeat style
 export function NubiaLogo({ className = "w-8 h-8" }) {
@@ -291,10 +314,11 @@ function Home() {
 
   return (
     <div className="animate-fade-in">
-      {/* Warm gradient background accent */}
+      {/* Animated floating gradient orbs */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-orange-200/30 via-amber-200/20 to-transparent dark:from-orange-900/20 dark:via-amber-900/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 -left-20 w-60 h-60 bg-gradient-to-br from-rose-200/20 via-pink-200/10 to-transparent dark:from-rose-900/10 dark:via-pink-900/5 rounded-full blur-3xl" />
+        <div className="floating-orb -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-orange-200/40 via-amber-200/25 to-transparent dark:from-orange-900/25 dark:via-amber-900/15" />
+        <div className="floating-orb top-1/3 -left-20 w-72 h-72 bg-gradient-to-br from-rose-200/25 via-pink-200/15 to-transparent dark:from-rose-900/15 dark:via-pink-900/8" />
+        <div className="floating-orb bottom-1/4 right-1/4 w-60 h-60 bg-gradient-to-br from-purple-200/20 via-indigo-200/10 to-transparent dark:from-purple-900/10 dark:via-indigo-900/5" />
       </div>
 
       {/* Hero Section */}

@@ -3,10 +3,15 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL || 'https://xeehtoxfleyvydnqznxg.supabase.co';
-const supabaseKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlZWh0b3hmbGV5dnlkbnF6bnhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3OTkzMzAsImV4cCI6MjA4NTM3NTMzMH0.7ry95_wLdyTgDUwjQ4EO401HF31ddCrHV-1bGW72JbI';
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Initialize Supabase client - requires env vars to be set
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('Missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables');
+}
+
+const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 export default async function handler(req, res) {
   // CORS headers
@@ -16,6 +21,10 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
+  }
+
+  if (!supabase) {
+    return res.status(503).json({ error: 'Service unavailable: database not configured' });
   }
 
   // POST - Submit feedback

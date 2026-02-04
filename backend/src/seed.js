@@ -1,5 +1,10 @@
 import db from './db.js';
 
+// Wrap entire seed in a transaction for atomicity
+db.exec('BEGIN TRANSACTION');
+
+try {
+
 // Clear existing data
 db.exec(`
   DELETE FROM feedback;
@@ -629,7 +634,15 @@ db.prepare(`
   2
 );
 
+db.exec('COMMIT');
+
 console.log('Database seeded successfully with 3 topics:');
 console.log('1. Time Value of Money');
 console.log('2. Compound Interest');
 console.log('3. Net Present Value');
+
+} catch (error) {
+  db.exec('ROLLBACK');
+  console.error('Seed failed, rolled back all changes:', error);
+  process.exit(1);
+}
